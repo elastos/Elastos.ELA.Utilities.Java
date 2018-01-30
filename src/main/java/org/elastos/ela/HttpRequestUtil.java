@@ -80,7 +80,6 @@ public class HttpRequestUtil {
                 method.setEntity(entity);
             }
             HttpResponse result = httpClient.execute(method);
-            url = URLDecoder.decode(url, "UTF-8");
             /**请求发送成功，并得到响应**/
             if (result.getStatusLine().getStatusCode() == 200) {
                 String str = "";

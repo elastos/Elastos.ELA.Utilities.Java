@@ -1,14 +1,15 @@
 package org.elastos.ela;
 
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
-import javafx.scene.chart.PieChart;
+
+import net.sf.json.JSONObject;
 
 import javax.xml.bind.DatatypeConverter;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by nan on 18/1/10.
@@ -23,7 +24,7 @@ public class Ela {
      * @return  原始交易数据 可以使用rest接口api/v1/transaction发送给节点
      * @throws IOException
      */
-    public static String makeAndSignTx(UTXOTxInput[] inputs, TxOutput[] outputs) throws IOException {
+    public static RawTx makeAndSignTx(UTXOTxInput[] inputs, TxOutput[] outputs) throws IOException {
         Tx tx = Tx.NewTransferAssetTransaction( inputs, outputs);
         byte[][] phashes = tx.getUniqAndOrdedProgramHashes();
         for(int i=0;i<phashes.length;i++){
@@ -39,7 +40,10 @@ public class Ela {
 
         tx.Serialize(dos);
 
-        return DatatypeConverter.printHexBinary(baos.toByteArray());
+        String rawTxString = DatatypeConverter.printHexBinary(baos.toByteArray());
+        String txHash = DatatypeConverter.printHexBinary(tx.getHash());
+
+        return new RawTx(txHash,rawTxString);
 
     }
 
@@ -72,7 +76,4 @@ public class Ela {
         ECKey ec = ECKey.fromPrivate(DatatypeConverter.parseHexBinary(privateKey));
         return ec.toAddress();
     }
-
-
-
 }

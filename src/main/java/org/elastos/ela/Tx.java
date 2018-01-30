@@ -1,5 +1,6 @@
 package org.elastos.ela;
 
+import org.elastos.ela.bitcoinj.Sha256Hash;
 import org.elastos.ela.bitcoinj.Utils;
 
 import javax.xml.bind.DatatypeConverter;
@@ -148,6 +149,18 @@ class Tx {
         return;
     }
 
+    public byte[] getHash() throws IOException {
+        if(this.hash == null){
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            DataOutputStream dos = new DataOutputStream(baos);
+            this.SerializeUnsigned(dos);
+            byte[] txUnsigned = baos.toByteArray();
+            Sha256Hash sh = Sha256Hash.twiceOf(txUnsigned);
+            this.hash = sh.getReversedBytes();
+        }
+        return this.hash;
+    }
+    
     public byte[] GetMessage() {
         return new byte[0];
     }
