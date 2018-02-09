@@ -2,6 +2,7 @@
 <project version="4">
   <component name="CompilerConfiguration">
     <bytecodeTargetLevel>
+      <module name="ela_tool" target="1.5" />
       <module name="elatool" target="1.5" />
     </bytecodeTargetLevel>
   </component>

@@ -3,9 +3,7 @@
     <CLASSES>
       <root url="jar://$MAVEN_REPOSITORY$/com/google/guava/guava/22.0-android/guava-22.0-android.jar!/" />
     </CLASSES>
-    <JAVADOC>
-      <root url="jar://$MAVEN_REPOSITORY$/com/google/guava/guava/22.0-android/guava-22.0-android-javadoc.jar!/" />
-    </JAVADOC>
+    <JAVADOC />
     <SOURCES>
       <root url="jar://$MAVEN_REPOSITORY$/com/google/guava/guava/22.0-android/guava-22.0-android-sources.jar!/" />
     </SOURCES>

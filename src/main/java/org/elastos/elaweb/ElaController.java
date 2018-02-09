@@ -10,7 +10,7 @@ import java.util.*;
  * Created by mdj17 on 2018/1/28.
  */
 public class ElaController {
-    public static final String TXURL = "http://127.0.0.1:20334/api/v1/transaction";
+
 
     /**
      * 处理请求
@@ -56,43 +56,46 @@ public class ElaController {
      */
     public static String genRawTransaction(JSONObject inputsAddOutpus) throws Exception{
 
-            final JSONArray transaction = inputsAddOutpus.getJSONArray("Transactions");
-            JSONObject json_transaction = (JSONObject) transaction.get(0);
-            final JSONArray utxoInputs = json_transaction.getJSONArray("UTXOInputs");
+        final JSONArray transaction = inputsAddOutpus.getJSONArray("Transactions");
+        JSONObject json_transaction = (JSONObject) transaction.get(0);
+        final JSONArray utxoInputs = json_transaction.getJSONArray("UTXOInputs");
 
-            List<UTXOTxInput> inputList = new LinkedList<UTXOTxInput>();
-            for (int i = 0 ; i < utxoInputs.size() ; i++){
-                JSONObject utxoInput = (JSONObject)utxoInputs.get(i);
-                String txid = utxoInput.getString("txid");
-                String index = utxoInput.getString("index");
-                String privateKey = utxoInput.getString("privateKey");
-                String address = utxoInput.getString("address");
+        //解析inputs
+        List<UTXOTxInput> inputList = new LinkedList<UTXOTxInput>();
+        for (int i = 0 ; i < utxoInputs.size() ; i++){
+            JSONObject utxoInput = (JSONObject)utxoInputs.get(i);
+            String txid = utxoInput.getString("txid");
+            String index = utxoInput.getString("index");
+            String privateKey = utxoInput.getString("privateKey");
+            String address = utxoInput.getString("address");
 
-                inputList.add(new UTXOTxInput(txid,Integer.parseInt(index),privateKey,address));
-            }
+            inputList.add(new UTXOTxInput(txid,Integer.parseInt(index),privateKey,address));
+        }
 
-            final JSONArray outputs = json_transaction.getJSONArray("Outputs");
-            List<TxOutput>  outputList = new LinkedList<TxOutput>();
-            for (int j = 0 ; j < outputs.size() ; j ++){
-                JSONObject output = (JSONObject)outputs.get(j);
-                String address = output.getString("address");
-                String amountStr = output.getString("amount");
-                outputList.add(new TxOutput(address,Integer.parseInt(amountStr)));
-            }
-            LinkedHashMap<String, Object> resultMap = new LinkedHashMap<String, Object>();
-            RawTx rawTx = Ela.makeAndSignTx(inputList.toArray(new UTXOTxInput[utxoInputs.size()]),outputList.toArray(new TxOutput[outputs.size()]));
-            resultMap.put("rawTx:",rawTx.getRawTxString());
-            resultMap.put("txHash:",rawTx.getTxHash());
+        //解析outputs
+        final JSONArray outputs = json_transaction.getJSONArray("Outputs");
+        List<TxOutput>  outputList = new LinkedList<TxOutput>();
+        for (int j = 0 ; j < outputs.size() ; j ++){
+            JSONObject output = (JSONObject)outputs.get(j);
+            String address = output.getString("address");
+            String amountStr = output.getString("amount");
+            outputList.add(new TxOutput(address,Integer.parseInt(amountStr)));
+        }
 
-            LinkedHashMap<String, Object> map = new LinkedHashMap<String, Object>();
-            map.put("Action","genRawTransaction");
-            map.put("Desc","SUCCESS");
-            map.put("Result",resultMap);
+        //创建rawTransaction
+        LinkedHashMap<String, Object> resultMap = new LinkedHashMap<String, Object>();
+        RawTx rawTx = Ela.makeAndSignTx(inputList.toArray(new UTXOTxInput[utxoInputs.size()]),outputList.toArray(new TxOutput[outputs.size()]));
+        resultMap.put("rawTx:",rawTx.getRawTxString());
+        resultMap.put("txHash:",rawTx.getTxHash());
 
-            JSONObject jsonParam = new JSONObject();
-            jsonParam.accumulateAll(map);
-            return jsonParam.toString();
+        LinkedHashMap<String, Object> map = new LinkedHashMap<String, Object>();
+        map.put("Action","genRawTransaction");
+        map.put("Desc","SUCCESS");
+        map.put("Result",resultMap);
 
+        JSONObject jsonParam = new JSONObject();
+        jsonParam.accumulateAll(map);
+        return jsonParam.toString();
     }
 
     /**
@@ -179,25 +182,18 @@ public class ElaController {
      * 发送Rawtransaction
      * @param rawTx
      */
-    public static void sendRawTransaction(String rawTx){
+    public static String sendRawTransaction(String rawTx ,String txUrl) {
         //构造json格式
         Map<String, Object> map = new HashMap<String, Object>();
-        map.put("Action","sendrawtransaction");
-        map.put("Version","1.0.0");
-        map.put("Type",2);
-        map.put("Data",rawTx);
+        map.put("Action", "sendrawtransaction");
+        map.put("Version", "1.0.0");
+        map.put("Type", 2);
+        map.put("Data", rawTx);
 
         //发送RowTransaction
         JSONObject jsonParam = new JSONObject();
         jsonParam.accumulateAll(map);
-        JSONObject responseJSONObject = HttpRequestUtil.httpPost(TXURL, jsonParam);
-        System.out.println("Send Row Transaction Returning Data = "+ responseJSONObject);
-        if("SUCCESS".equals(responseJSONObject.get("Desc"))) {
-            System.out.println("Send Row Transaction Success");
-        }else {
-            System.out.println("Send Row Transaction process fail");
-        }
+        JSONObject responseJSONObject = HttpRequestUtil.httpPost(txUrl, jsonParam);
+        return responseJSONObject.toString();
     }
-
-
 }

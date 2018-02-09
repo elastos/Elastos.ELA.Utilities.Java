@@ -4,6 +4,8 @@ import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.elastos.ela.bitcoinj.Utils;
 import org.elastos.elaweb.ElaController;
+import org.elastos.framework.node.Runner;
+import org.elastos.framework.rpc.Rpc;
 import org.junit.Test;
 
 import javax.xml.bind.DatatypeConverter;
@@ -11,8 +13,10 @@ import javax.xml.bind.DatatypeConverter;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -117,6 +121,53 @@ public class ElaTest {
         //生成地址
         String address = Ela.getAddressFromPrivate(privateKey);
         System.out.println("Address = " + address);
+    }
 
+    @Test
+    public void test_(){
+        int count = 5 ;
+        LinkedList<Map> linkedList = new LinkedList<Map>();
+        for (int k = 0 ;k < count ; k++ ) {
+            Map<String ,String> map = new HashMap<String, String>();
+            String privateKey = Ela.getPrivateKey();
+            String address = Ela.getAddressFromPrivate(privateKey);
+
+            map.put("privateKey",privateKey);
+            map.put("address",address);
+            linkedList.add(map);
+        }
+        System.out.println("likedList : " + linkedList);
+
+        for (int i = 0 ; i <count; i++){
+            String privateKey = (String) linkedList.get(i).get("privateKey");
+            String address = (String) linkedList.get(i).get("address");
+
+            System.out.println("privateKey : " + privateKey);
+            System.out.println("address : " + address);
+        }
+
+    }
+
+    /**
+     * 多输出转账
+     */
+    @Test
+    public void batchOutTransaction(){
+        String url = (String) Runner.nodeList.get(0).get("rpc1");
+        Map[] batchOut = new Map[3];
+        LinkedList<Map> linkedList = new LinkedList<Map>();
+        for (int k = 0 ; k < 3 ; k++){
+            Map<String, String> map = new HashMap<String, String>();
+            String privateKey = Ela.getPrivateKey();
+            String address = Ela.getAddressFromPrivate(privateKey);
+            map.put("Address",address);
+            map.put("Value","0.01");
+            batchOut[k] = map;
+            linkedList.add(map);
+        }
+
+        System.out.println("batchOut = " + batchOut);
+        String TxId = Rpc.sendBatchOutTransaction(batchOut, "0.001", url);
+        System.out.println("TxId :" + TxId );
     }
 }

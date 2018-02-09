@@ -1,0 +1,43 @@
+﻿{
+  "Configuration": {
+    "Magic": 1234567,
+    "Version": 23,
+    "SeedList": [
+      ""
+    ],
+    "HttpInfoPort": 20333,
+    "HttpInfoStart": true,
+    "HttpRestPort": 20334,
+    "HttpWsPort":20335,
+    "WsHeartbeatInterval":60,
+    "HttpJsonPort": 20336,
+    "NoticeServerUrl": "",
+    "OauthServerUrl": "",
+    "NodePort": 20338,
+    "PrintLevel": 1,
+    "IsTLS": true,
+    "CertPath": "./sample-cert.pem",
+    "KeyPath": "./sample-cert-key.pem",
+    "CAPath": "./sample-ca.pem",
+    "MultiCoreNum": 4,
+    "MaxTransactionInBlock": 10000,
+    "MaxBlockSize": 8000000,
+    "ConsensusType": "pow",
+    "PowConfiguration":{
+    "Switch": "enable",
+    "PayToAddr": "8ZNizBf4KhhPjeJRGpox6rPcHE5Np6tFx3",
+    "MiningServerIP": "127.0.0.1",
+    "MiningServerPort": 5555,
+    "MiningSelfPort": 20339,
+    "WalletVersion": 1,
+    "ProtocolVersion":1,
+    "TestNet":false,
+    "Proxy":"tcp://*:8888",
+    "CoMining":false,
+    "AutoMining": false,
+    "MinerInfo": "ELA",
+	"MinTxFee": 100,
+    "ActiveNet": "MainNet"
+    }
+  }
+}
