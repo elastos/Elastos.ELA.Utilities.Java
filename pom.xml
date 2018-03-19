@@ -69,10 +69,5 @@
             <version>9.0.2.v20130417</version>
         </dependency>
 
-<!--        <dependency>
-            <groupId>org.eclipse.jetty</groupId>
-            <artifactId>jetty-client</artifactId>
-            <version>9.4.8.v20171121</version>
-        </dependency>-->
     </dependencies>
 </project>
