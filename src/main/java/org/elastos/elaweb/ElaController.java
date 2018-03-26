@@ -27,7 +27,7 @@ public class ElaController {
             if (method.equals("genPrivateKey") ) {
                 return  genPrivateKey();
             }
-            if (method.equals("gen_priv_put_addr")) {
+            if (method.equals("gen_priv_pub_addr")) {
                 return gen_priv_pub_addr();
             }
         }
@@ -103,7 +103,6 @@ public class ElaController {
      * @return 返回json字符串
      */
     public static String genPrivateKey(){
-
         String privateKey = Ela.getPrivateKey();
         LinkedHashMap<String, Object> map = new LinkedHashMap<String, Object>();
         map.put("Action","genPrivateKey");

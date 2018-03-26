@@ -132,11 +132,28 @@ public static void sendRawTransaction(String rawTx){}
 
 #####Request
 ```
-{"method":"gen_priv_put_addr","id":0,"params":[]}
+{"method":"gen_priv_pub_addr","id":0,"params":[]}
 ```
 
 #####Response
 ```
 {"Action":"genAddress","Desc":"SUCCESS","Result":{"PrivateKey":"579750E68061727B023FD0AB8A5ABFEE9FC00491220BA2C82402463E5AF3E84A","PublicKey":"0278421F86F850D73A458680EEA36B49679CD09BE3F0D56E969AF8F0761E94BC46","Address":"EZ4u7ewRX3LhUCJYZGENpRVPbeCWU2AdXQ"}}
 
+```
+
+### JAR package
+ ```
+File -> Project Structure -> Artifacts -> + -> JAR -> From modules with 
+1、-> Main Class
+2、-> extract to the target JAR
+3、-> META-INF PATH （C:\DNA\src\ela_tool\src\main\resources）
+4、ok ->  Include in project build -> Apply ->ok
+
+run : java -cp ela_tool.jar  org.elastos.elaweb.HttpServer
+ ```
+
+###notice
+```
+ - Execute the following command in the JAR directory to avoid invalid signature file exception information.
+ - Execute ： zip -d ela_tool.jar 'META-INF/*.SF' 'META-INF/*.RSA' 'META-INF/*SF'
 ```
