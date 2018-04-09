@@ -78,8 +78,8 @@ public class ElaController {
         for (int j = 0 ; j < outputs.size() ; j ++){
             JSONObject output = (JSONObject)outputs.get(j);
             String address = output.getString("address");
-            String amountStr = output.getString("amount");
-            outputList.add(new TxOutput(address,Integer.parseInt(amountStr)));
+            long amount = output.getLong("amount");
+            outputList.add(new TxOutput(address,amount));
         }
 
         //创建rawTransaction

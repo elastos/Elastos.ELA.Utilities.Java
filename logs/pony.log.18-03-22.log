@@ -1,6 +1,0 @@
-2018-03-22 21:53:14,806 [INFO ] [main] : jetty-9.0.2.v20130417
-2018-03-22 21:53:14,876 [INFO ] [main] : Started ServerConnector@769c9116{HTTP/1.1}{0.0.0.0:8989}
-2018-03-22 22:29:47,845 [INFO ] [main] : jetty-9.0.2.v20130417
-2018-03-22 22:29:47,901 [INFO ] [main] : Started ServerConnector@769c9116{HTTP/1.1}{0.0.0.0:8989}
-2018-03-22 23:29:05,460 [INFO ] [main] : jetty-9.0.z-SNAPSHOT
-2018-03-22 23:29:05,508 [INFO ] [main] : Started ServerConnector@39a054a5{HTTP/1.1}{0.0.0.0:8989}
