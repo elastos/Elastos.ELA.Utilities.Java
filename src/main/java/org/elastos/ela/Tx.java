@@ -5,6 +5,7 @@ import org.elastos.ela.bitcoinj.Utils;
 
 import javax.xml.bind.DatatypeConverter;
 import java.io.ByteArrayOutputStream;
+import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.*;
@@ -12,7 +13,7 @@ import java.util.*;
 /**
  * Created by nan on 18/1/10.
  */
-class Tx {
+public class Tx {
     byte TxType;
     byte PayloadVersion;
     //Payload        Payload
@@ -79,6 +80,9 @@ class Tx {
         return;
     }
 
+    public static Map DeSerialize(DataInputStream o) throws IOException {
+        return DeSerializeUnsigned(o);
+    }
 
     public byte[][] getUniqAndOrdedProgramHashes() {
 
@@ -147,6 +151,40 @@ class Tx {
 
 
         return;
+    }
+
+    public static Map DeSerializeUnsigned(DataInputStream o) throws IOException {
+        //txType
+        byte TxType = o.readByte();
+
+        //PayloadVersion
+        byte PayloadVersion = o.readByte();
+
+        //[]*txAttribute
+        long len = 0;
+        len = Util.ReadVarUint(o);
+        TxAttribute.DeSerialize(o);
+
+        //[]*UTXOInputs
+        len =  Util.ReadVarUint(o);
+        List<Map>  inputList = new LinkedList<Map>();
+        for (int i = 0 ; i < len ; i++){
+            Map inputMap = UTXOTxInput.DeSerialize(o);
+            inputList.add(inputMap);
+        }
+
+        //[]*Outputs
+        List<Map> outputList = new LinkedList<Map>();
+        len =  Util.ReadVarUint(o);
+        for (int i = 0 ; i < len ; i++){
+            Map outputMap = TxOutput.DeSerialize(o);
+            outputList.add(outputMap);
+        }
+
+        Map<String, List<Map>> resultmap = new LinkedHashMap<String, List<Map>>();
+        resultmap.put("UTXOInputs:",inputList);
+        resultmap.put("Outputs:",outputList);
+        return resultmap;
     }
 
     public byte[] getHash() throws IOException {

@@ -4,6 +4,7 @@ import org.elastos.ela.bitcoinj.Base58;
 import org.elastos.ela.bitcoinj.Sha256Hash;
 import org.elastos.ela.bitcoinj.Utils;
 
+import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.math.BigInteger;
@@ -28,8 +29,7 @@ public class Util {
             int n = Integer.reverseBytes((int)value);
             writer.writeInt(n);
         } else {
-            writer.writeByte(0xFE);
-
+            writer.writeByte(0xFF);
             long l = Long.reverseBytes(value);
             writer.writeLong(l);
         }
@@ -38,6 +38,27 @@ public class Util {
     public static void WriteVarBytes(DataOutputStream writer,byte[] value) throws IOException {
         WriteVarUint(writer,value.length);
         writer.write(value);
+    }
+
+
+    public static long ReadVarUint(DataInputStream read) throws IOException {
+        byte n = read.readByte();
+        if ((n & 0xFF) < 0xFD) {
+            return n & 0xFF;
+        } if ((n & 0xFF) == 0xFD) {
+            short shortNumber = read.readShort();
+            short number = FormatTransfer.reverseShort(shortNumber);
+            return number;
+        }else if ((n & 0xFF) == 0xFE){
+            int intNumber = read.readInt();
+            int number = Integer.reverseBytes(intNumber);
+            return number;
+        }else if ((n & 0xFF) == 0xFF){
+            long longNumber = read.readLong();
+            long number = Long.reverseBytes(longNumber);
+            return number;
+        }
+        return 0;
     }
 
     /**
@@ -131,7 +152,6 @@ public class Util {
                 for(int i=ba1.length-1;i>=0;i--){
                     ret = (ba1[i]&0xff) - (ba2[i]&0xff);
                     if(ret !=0 ) return ret;
-
                 }
                 return 0;
             }

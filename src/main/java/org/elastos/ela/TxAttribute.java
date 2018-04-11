@@ -1,5 +1,6 @@
 package org.elastos.ela;
 
+import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.Random;
@@ -18,6 +19,17 @@ public class TxAttribute {
 
         return;
     }
+
+    public static void DeSerialize(DataInputStream o) throws IOException {
+        // Usage
+        o.readByte();
+
+        //Data
+        int len = (int)Util.ReadVarUint(o);
+        byte[] b = new  byte[len];
+        o.read(b,0,len);
+    }
+
     public static TxAttribute NewTxNonceAttribute()
     {
         Random r = new Random();

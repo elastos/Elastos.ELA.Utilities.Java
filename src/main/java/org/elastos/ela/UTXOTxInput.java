@@ -3,8 +3,11 @@ package org.elastos.ela;
 import org.elastos.ela.bitcoinj.Utils;
 
 import javax.xml.bind.DatatypeConverter;
+import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by nan on 18/1/10.
@@ -65,5 +68,22 @@ public class UTXOTxInput {
         o.write(this.ReferTxID);
         o.writeShort(Short.reverseBytes((short)this.ReferTxOutputIndex));
         o.writeInt(Integer.reverseBytes(this.Sequence));
+    }
+
+    public static Map DeSerialize(DataInputStream o) throws IOException {
+        //ReferTxID
+        byte[] buf = new byte[32];
+        o.read(buf,0,32);
+        String Txid = DatatypeConverter.printHexBinary(Utils.reverseBytes(buf));
+
+        Map<String, Object> inputMap = new HashMap<String, Object>();
+        inputMap.put("Txid:",Txid);
+
+        //ReferTxOutputIndex
+        Short.reverseBytes(o.readShort());
+        //Sequence
+        Integer.reverseBytes(o.readInt());
+
+        return inputMap;
     }
 }

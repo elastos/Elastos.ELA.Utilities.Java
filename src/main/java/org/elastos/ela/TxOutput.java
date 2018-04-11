@@ -1,7 +1,13 @@
 package org.elastos.ela;
 
+import org.elastos.ela.bitcoinj.Utils;
+
+import javax.xml.bind.DatatypeConverter;
+import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * Created by nan on 18/1/10.
@@ -31,6 +37,32 @@ public class TxOutput {
         o.writeInt(Integer.reverseBytes((int)this.OutputLock));
         o.write(this.ProgramHash);
 
+    }
+
+    public static Map DeSerialize(DataInputStream o) throws IOException {
+        // AssetID
+        byte[] buf = new byte[32];
+        o.read(buf,0,32);
+        DatatypeConverter.printHexBinary(Utils.reverseBytes(buf));
+
+        // Value
+        long value =  o.readLong();
+        long v = Long.reverseBytes(value);
+
+        // OutputLock
+        long outputLock =  o.readInt();
+        Long.reverseBytes(outputLock);
+
+        // ProgramHash
+        byte[] program = new byte[21];
+        o.read(program,0,21);
+        byte[] programHash = program;
+        String address = Util.ToAddress(programHash);
+
+        Map<String, Object> outputMap = new LinkedHashMap<String, Object>();
+        outputMap.put("Address:",address);
+        outputMap.put("Value:",v);
+        return outputMap;
     }
 
     public byte[] getAssetID() {

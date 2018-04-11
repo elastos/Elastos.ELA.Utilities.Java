@@ -4,6 +4,10 @@ import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.elastos.ela.*;
 
+import javax.xml.bind.DatatypeConverter;
+import java.io.ByteArrayInputStream;
+import java.io.DataInputStream;
+import java.io.IOException;
 import java.util.*;
 
 /**
@@ -43,6 +47,10 @@ public class ElaController {
             }
             if (method.equals("genRawTransaction")){
                 return genRawTransaction(param);
+            }
+            if (method.equals("decodeRawTransaction")){
+                String rawTransaction = param.getString("RawTransaction");
+                return decodeRawTransaction(rawTransaction);
             }
         }
         return null ;
@@ -194,5 +202,29 @@ public class ElaController {
         jsonParam.accumulateAll(map);
         JSONObject responseJSONObject = HttpRequestUtil.httpPost(txUrl, jsonParam);
         return responseJSONObject.toString();
+    }
+
+    /**
+     * 反解析rawTransaction得到TXid,address,value
+     * @param rawTransaction
+     * @return
+     * @throws IOException
+     */
+    public static String decodeRawTransaction(String rawTransaction) throws IOException {
+
+        byte[] rawTxByte = DatatypeConverter.parseHexBinary(rawTransaction);
+        ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(rawTxByte);
+        DataInputStream dos = new DataInputStream(byteArrayInputStream);
+        Map resultMap = Tx.DeSerialize(dos);
+
+        LinkedHashMap<String, Object> map = new LinkedHashMap<String, Object>();
+        map.put("Action","decodeRawTransaction");
+        map.put("Desc","SUCCESS");
+        map.put("Result",resultMap);
+
+        JSONObject jsonParam = new JSONObject();
+        jsonParam.accumulateAll(map);
+
+        return jsonParam.toString();
     }
 }
