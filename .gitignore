@@ -1,0 +1,14 @@
+# Intellij  
+.idea/  
+*.iml  
+*.iws  
+
+
+# java  
+*.class  
+*.war  
+*.ear 
+logs/
+.DS_Store 
+/out
+/target

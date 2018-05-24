@@ -58,7 +58,7 @@ public class UTXOTxInput {
      * @param address utxo所属账户的地址
      */
     public UTXOTxInput(String txid,int index,String privateKey,String address){
-        this.ReferTxID = Utils.reverseBytes(DatatypeConverter.parseHexBinary(txid));
+        this.ReferTxID = DatatypeConverter.parseHexBinary(txid);
         this.privateKey = privateKey;
         this.ReferTxOutputIndex = index;
         this.programHash = DatatypeConverter.printHexBinary(Util.ToScriptHash(address));
