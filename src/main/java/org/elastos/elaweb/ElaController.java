@@ -190,16 +190,19 @@ public class ElaController {
      * @param rawTx
      */
     public static String sendRawTransaction(String rawTx ,String txUrl) {
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("data" , rawTx);
+
         //构造json格式
         Map<String, Object> map = new HashMap<String, Object>();
-        map.put("Action", "sendrawtransaction");
-        map.put("Version", "1.0.0");
-        map.put("Type", 2);
-        map.put("Data", rawTx);
+        map.put("method", "sendrawtransaction");
+        map.put("params", params);
 
         //发送RowTransaction
         JSONObject jsonParam = new JSONObject();
         jsonParam.accumulateAll(map);
+        System.out.println("url = " + txUrl);
+        System.out.println("json = " + jsonParam);
         JSONObject responseJSONObject = HttpRequestUtil.httpPost(txUrl, jsonParam);
         return responseJSONObject.toString();
     }
