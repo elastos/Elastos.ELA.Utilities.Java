@@ -3,35 +3,35 @@
  - ela_tools is a tool for generating transaction signature,there are two forms of signature,one is to call the API，the other one is the web request
 
 
-
-
 ## API
 
 
- - ##### getPrivateKey
+ - ##### genPrivateKey
 ```
 /**
-* 生成私钥
-* @return 返回 json 字符串 
+* generate privatekey
+* @return returns a json string 
 */
 public static String genPrivateKey(){}
 ```
 
- - ##### getPublicKey
+ - ##### genPublicKey
 ```
 /**
-* 生成公钥
-* @param privateKey 私钥 * @return 返回 json 字符串 
+* generate publickey
+* @param privateKey  
+* @return returns a json string 
 */
 public static String genPublicKey(String privateKey){}
 ```
 
 
- - ##### getAddress
+ - ##### genAddress
 ```
 /**
-* 生成地址
-* @param privateKye 私钥 *@return 返回Json字符串 
+* generate Address
+* @param privateKye  
+* @return returns a json string 
 */
 public static String genAddress(String privateKye){}
 ```
@@ -40,17 +40,19 @@ public static String genAddress(String privateKye){}
  - ##### generate privateKey 、 publickKey 、 address
 ```
 /**
-* 生成私钥、公钥、地址 *@return 返回json字符串 
+* generate privatekey、publickey、address 
+* @return returns a json string  
 */
 public static String gen_priv_pub_addr(){}
 ```
 
 
- - ##### getRawTransaction
+ - ##### genRawTransaction
 ```
 /**
-* 生成 RawTrnsaction
-* @param inputsAddOutpus 交易输入和交易输出的 json 字符串 *@return 返回RawTransaction的json字符串
+* generate rawTrnsaction
+* @param  inputsAddOutpus , The json string of transaction input and transaction output
+* @return returns a json string
 * @throws Exception
 */
 public static String genRawTransaction(JSONObject inputsAddOutpus) throws Exception{}
@@ -60,7 +62,7 @@ public static String genRawTransaction(JSONObject inputsAddOutpus) throws Except
  - ##### sendRawTransaction
 ```
 /**
-* 发送 Rawtransaction 
+* send Rawtransaction 
 * @param rawTx
 */
 public static void sendRawTransaction(String rawTx){}
@@ -69,7 +71,7 @@ public static void sendRawTransaction(String rawTx){}
  - ##### decodeRawTransaction
 ```
  /**
- * 反解析rawTransaction得到TXid,address,value
+ * Anti parsing rawTransaction gets TXid,address,value
  * @param rawTransaction
  * @return
  * @throws IOException
