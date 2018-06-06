@@ -93,8 +93,8 @@ public class ElaController {
         //创建rawTransaction
         LinkedHashMap<String, Object> resultMap = new LinkedHashMap<String, Object>();
         RawTx rawTx = Ela.makeAndSignTx(inputList.toArray(new UTXOTxInput[utxoInputs.size()]),outputList.toArray(new TxOutput[outputs.size()]));
-        resultMap.put("rawTx:",rawTx.getRawTxString());
-        resultMap.put("txHash:",rawTx.getTxHash());
+        resultMap.put("rawTx",rawTx.getRawTxString());
+        resultMap.put("txHash",rawTx.getTxHash());
 
         LinkedHashMap<String, Object> map = new LinkedHashMap<String, Object>();
         map.put("Action","genRawTransaction");
