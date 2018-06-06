@@ -22,27 +22,6 @@ public class SignToolTest {
     }
 
     /**
-     * 获取rawTransaction
-     * @throws Exception
-     */
-    @Test
-    public void makeAndSignTx_memo() throws Exception {
-        List<UTXOTxInput> inputs = new LinkedList<UTXOTxInput>();
-        inputs.add(new UTXOTxInput(
-                "d15a0f16facde5e0d0ee88947bd2d2de1cd335218d985538ef8410566d8df1ff",
-                1, //矿工为1，转账为0
-                "5FA927E5664E563F019F50DCD4D7E2D9404F2D5D49E31F9482912E23D6D7B9EB",
-                "EQSpUzE4XYJhBSx5j7Tf2cteaKdFdixfVB"));
-        List<TxOutput>  outputs = new LinkedList<TxOutput>();
-        outputs.add(new TxOutput("Eazj14ifau5eH1SP5F8MJRuiSsPMiGbJV1",1));
-
-        String memo = "测试徐晨";
-        RawTx rawTx = Ela.makeAndSignTx(inputs.toArray(new UTXOTxInput[inputs.size()]),outputs.toArray(new TxOutput[outputs.size()]),memo);
-        System.out.println("rawTx:"+rawTx.getRawTxString());
-        System.out.println("txHash:"+rawTx.getTxHash());
-    }
-
-    /**
      * 发送rawTransaciton
      */
     @Test
