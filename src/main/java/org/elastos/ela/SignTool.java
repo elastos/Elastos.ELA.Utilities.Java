@@ -18,8 +18,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public class SignTool {
     public static byte[] doSign(byte[] data, byte[] privateKey) {
         BigInteger privateKeyForSigning = new BigInteger(1,privateKey) ;
-        //ECDSASigner signer = new ECDSASigner(new HMacDSAKCalculator(new SHA256Digest()));
-        ECDSASigner signer = new ECDSASigner(new RandomDSAKCalculator());
+        ECDSASigner signer = new ECDSASigner(new HMacDSAKCalculator(new SHA256Digest()));
+//        ECDSASigner signer = new ECDSASigner(new RandomDSAKCalculator());
         ECPrivateKeyParameters privKey = new ECPrivateKeyParameters(privateKeyForSigning, ECKey.CURVE);
         signer.init(true, privKey);
 
