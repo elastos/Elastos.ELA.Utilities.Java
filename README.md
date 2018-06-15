@@ -91,6 +91,8 @@ public static void sendRawTransaction(String rawTx){}
 
 ##### Request
 ```
+Note: amount is an integer and the smallest unit is sela (1/100000000)
+
 {
     "method":"genRawTransaction",
     "id":0,
