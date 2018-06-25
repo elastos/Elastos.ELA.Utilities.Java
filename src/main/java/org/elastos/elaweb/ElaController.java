@@ -52,6 +52,9 @@ public class ElaController {
                 String rawTransaction = param.getString("RawTransaction");
                 return decodeRawTransaction(rawTransaction);
             }
+            if (method.equals("genRawTransactionByPrivateKey")) {
+                return genRawTransactionByPrivateKey(param);
+            }
         }
         return null ;
     }
@@ -228,6 +231,83 @@ public class ElaController {
         JSONObject jsonParam = new JSONObject();
         jsonParam.accumulateAll(map);
 
+        return jsonParam.toString();
+    }
+
+    /**
+     * 根据私钥获取utxo生成RawTrnsaction
+     *
+     * @param inputsAddOutpus 交易输入和交易输出的json字符串
+     * @return 返回RawTransaction的json字符串
+     * @throws Exception
+     */
+    public static String genRawTransactionByPrivateKey(JSONObject inputsAddOutpus) throws Exception {
+
+        final JSONArray transaction = inputsAddOutpus.getJSONArray("Transactions");
+        JSONObject json_transaction = (JSONObject) transaction.get(0);
+        final JSONArray PrivateKeys = json_transaction.getJSONArray("PrivateKeys");
+
+        //解析inputs
+        List<String> privateList = new LinkedList<String>();
+        for (int i = 0; i < PrivateKeys.size(); i++) {
+            JSONObject utxoInput = (JSONObject) PrivateKeys.get(i);
+            privateList.add(utxoInput.getString("privateKey"));
+        }
+
+        //解析outputs
+        final JSONArray outputs = json_transaction.getJSONArray("Outputs");
+        LinkedList<TxOutput> outputList = ParsingOutputs(outputs);
+
+
+        String zeroAddress = json_transaction.getString("ZeroAddress");
+
+        //创建rawTransaction
+        LinkedHashMap<String, Object> resultMap = new LinkedHashMap<String, Object>();
+        String rawTx = FinishUtxo.finishUtxo(privateList, outputList, zeroAddress);
+        if (rawTx.length() > 80){
+            resultMap.put("rawTx", rawTx);
+            resultMap.put("txHash", FinishUtxo.txHash);
+            return formatJson(resultMap, "genRawTransaction");
+        }else {
+            resultMap.put("error",rawTx);
+            return formatJson_error(resultMap, "genRawTransaction");
+        }
+    }
+
+
+
+    public static LinkedList<TxOutput> ParsingOutputs(JSONArray outputs){
+        LinkedList<TxOutput> outputList = new LinkedList<TxOutput>();
+        for (int t = 0; t < outputs.size(); t++) {
+            JSONObject output = (JSONObject) outputs.get(t);
+            long amount = output.getLong("amount");
+            String address = output.getString("address");
+            outputList.add(new TxOutput(address, amount));
+        }
+        return outputList;
+    }
+
+
+
+    public static String  formatJson(Object resultMap, String action) {
+        LinkedHashMap<String, Object> map = new LinkedHashMap<String, Object>();
+        map.put("Action", action);
+        map.put("Desc", "SUCCESS");
+        map.put("Result", resultMap);
+
+        JSONObject jsonParam = new JSONObject();
+        jsonParam.accumulateAll(map);
+        return jsonParam.toString();
+    }
+
+    public static String  formatJson_error(Object resultMap, String action) {
+        LinkedHashMap<String, Object> map = new LinkedHashMap<String, Object>();
+        map.put("Action", action);
+        map.put("Desc", 40000);
+        map.put("Result", resultMap);
+
+        JSONObject jsonParam = new JSONObject();
+        jsonParam.accumulateAll(map);
         return jsonParam.toString();
     }
 }

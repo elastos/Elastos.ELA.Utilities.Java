@@ -158,5 +158,28 @@ public class Util {
         });
     }
 
+    public static long IntByString(String value){
+        String[] split = value.split("\\.");
+        if (split.length == 2){
+            long front = (long) Integer.parseInt(split[0]) * 100000000;
+
+            String after = split[1];
+            if (after.length() == 8){
+                long afterInt = (long)Integer.parseInt(after);
+                long Value = front + afterInt;
+                return Value;
+
+            }else{
+                after = after + '0' * (8 - after.length());
+                long afterInt = (long)Integer.parseInt(after);
+                long Value = front + afterInt;
+                return Value;
+            }
+        }else {
+            long Value = (long) Integer.parseInt(value) * 100000000;
+            return Value;
+        }
+    }
+
 }
 
