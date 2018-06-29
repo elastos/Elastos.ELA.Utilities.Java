@@ -91,7 +91,11 @@ public static void sendRawTransaction(String rawTx){}
 
 ##### Request
 ```
-Note: amount is an integer and the smallest unit is sela (1/100000000)
+
+Note: amount is an integer and the smallest unit is sela (1/100000000).
+
+Index is the 'Vout' of the transaction information.
+Index is the 'n' of the block information Vout.
 
 {
     "method":"genRawTransaction",
@@ -103,7 +107,7 @@ Note: amount is an integer and the smallest unit is sela (1/100000000)
                     "UTXOInputs":[
                         {
                             "txid":"61c22a83bb96d958f473148fa64f3b2be02653c66ede506e83b82e522200d446",
-                            "index":0,
+                            "index":0,  
                             "privateKey":"5FA927E5664E563F019F50DCD4D7E2D9404F2D5D49E31F9482912E23D6D7B9EB",
                             "address":"EQSpUzE4XYJhBSx5j7Tf2cteaKdFdixfVB"
                         },
