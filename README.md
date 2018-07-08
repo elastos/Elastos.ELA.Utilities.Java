@@ -78,8 +78,17 @@ public static void sendRawTransaction(String rawTx){}
  */
  public static String decodeRawTransaction(String rawTransaction) throws IOException {
 ```     
-     
-     
+
+- ##### checkAddress
+ ```
+/**
+ * whether the checkout address is ELA legal address
+ * @param addresses The address of a dictionary format or an array format
+ * @return
+ */
+public static String checkAddress(JSONObject addresses){
+ ```      
+
 ## Web Request
 
  - start command : java -cp ela_tool.jar  org.elastos.elaweb.HttpServer
@@ -293,7 +302,7 @@ Index is the 'n' of the block information Vout.
 
 
 ```
-Java-config.json configuration to the Elastos.ELA.AutoTest.Java.jar statistics directory，Host is the IP and port of getting the node server，Fee is a transfer transaction fee
+Java-config.json configuration to the Elastos.ELA.AutoTest.Java.jar same level directory，Host is the IP and port of getting the node server，Fee is a transfer transaction fee
 
 {
   "Host": "127.0.0.1:11336",
@@ -351,6 +360,62 @@ Java-config.json configuration to the Elastos.ELA.AutoTest.Java.jar statistics d
 }
 ```
 
+ - #### checkAddress
+
+##### Request
+```
+checkout address support dictionary format and array format
+
+{
+    "method":"checkAddress",
+    "id":0,
+    "params":[
+        {
+            "Addresses":[
+            	{
+            		"address":"EXgtxGg4ep6vM6uCqWuxkP9KG4AGFyufZz"
+            	},
+            	{
+            		"address":"1C1mCxRukix1KfegAY5zQQJV7samAciZpv"
+            	},
+            	{
+            		"address":"8Frmgg4KMudMEPc5Wow5tYXH8XBgctT8QT"
+            	},
+            	{
+            		"address":"XQd1DCi6H62NQdWZQhJCRnrPn7sF9CTjaU"
+            	}
+            	]
+        }
+    ]
+}
+
+or 
+
+{
+    "method":"checkAddress",
+    "id":0,
+    "params":[
+        {
+            "Addresses":["EXgtxGg4ep6vM6uCqWuxkP9KG4AGFyufZz","1C1mCxRukix1KfegAY5zQQJV7samAciZpv","8Frmgg4KMudMEPc5Wow5tYXH8XBgctT8QT","XQd1DCi6H62NQdWZQhJCRnrPn7sF9CTjaU"]
+        }
+    ]
+}
+```
+
+##### Response
+```
+{
+    "Action": "checkAddress",
+    "Desc": "SUCCESS",
+    "Result": {
+        "EXgtxGg4ep6vM6uCqWuxkP9KG4AGFyufZz": true,
+        "1C1mCxRukix1KfegAY5zQQJV7samAciZpv": false,
+        "8Frmgg4KMudMEPc5Wow5tYXH8XBgctT8QT": true,
+        "XQd1DCi6H62NQdWZQhJCRnrPn7sF9CTjaU": false
+    }
+}
+
+```
 
 
 ### JAR package

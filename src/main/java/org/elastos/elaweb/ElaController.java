@@ -55,8 +55,37 @@ public class ElaController {
             if (method.equals("genRawTransactionByPrivateKey")) {
                 return genRawTransactionByPrivateKey(param);
             }
+            if (method.equals("checkAddress")) {
+                return checkAddress(param);
+            }
         }
         return null ;
+    }
+
+    /**
+     * 校验地址是否为ela合法地址
+     * @param addresses 字典格式或者数组格式的地址
+     * @return
+     */
+    public static String checkAddress(JSONObject addresses){
+        LinkedHashMap<String, Object> resultMap = new LinkedHashMap<String, Object>();
+        JSONArray addressesJSONArray = addresses.getJSONArray("Addresses");
+        Object addressesObject = addressesJSONArray.get(0);
+        if (addressesObject instanceof String){
+            for (int i = 0 ; i < addressesJSONArray.size() ; i ++){
+                boolean boo =  Util.checkAddress((String)addressesJSONArray.get(i));
+                resultMap.put((String)addressesJSONArray.get(i),boo);
+            }
+        }else {
+            for (int i = 0 ; i < addressesJSONArray.size() ; i ++){
+                JSONObject o = (JSONObject) addressesJSONArray.get(i);
+                String address = o.getString("address");
+                boolean boo =  Util.checkAddress(address);
+                resultMap.put(address,boo);
+            }
+        }
+
+        return formatJson("checkAddress",resultMap) ;
     }
 
     /**
@@ -267,10 +296,10 @@ public class ElaController {
         if (rawTx.length() > 80){
             resultMap.put("rawTx", rawTx);
             resultMap.put("txHash", FinishUtxo.txHash);
-            return formatJson(resultMap, "genRawTransaction");
+            return formatJson("genRawTransaction" ,resultMap);
         }else {
             resultMap.put("error",rawTx);
-            return formatJson_error(resultMap, "genRawTransaction");
+            return formatJson_error("genRawTransaction" ,resultMap);
         }
     }
 
@@ -289,7 +318,7 @@ public class ElaController {
 
 
 
-    public static String  formatJson(Object resultMap, String action) {
+    public static String  formatJson(String action , Object resultMap) {
         LinkedHashMap<String, Object> map = new LinkedHashMap<String, Object>();
         map.put("Action", action);
         map.put("Desc", "SUCCESS");
@@ -300,7 +329,7 @@ public class ElaController {
         return jsonParam.toString();
     }
 
-    public static String  formatJson_error(Object resultMap, String action) {
+    public static String  formatJson_error(String action , Object resultMap) {
         LinkedHashMap<String, Object> map = new LinkedHashMap<String, Object>();
         map.put("Action", action);
         map.put("Desc", 40000);
