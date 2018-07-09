@@ -302,7 +302,7 @@ Index is the 'n' of the block information Vout.
 
 
 ```
-Java-config.json configuration to the Elastos.ELA.AutoTest.Java.jar same level directory，Host is the IP and port of getting the node server，Fee is a transfer transaction fee
+java-config.json configuration to the Elastos.ELA.AutoTest.Java.jar same level directory，Host is the IP and port of getting the node server，Fee is a transfer transaction fee
 
 {
   "Host": "127.0.0.1:11336",
