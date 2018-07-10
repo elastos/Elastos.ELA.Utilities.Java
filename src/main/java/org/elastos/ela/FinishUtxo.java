@@ -82,6 +82,8 @@ public class FinishUtxo {
             }
         }
 
+        Collections.sort(UTXOInputList);
+
         //outputs.amount > 可用utxo.amout
         inputList = new LinkedList<UTXOTxInput>();
 
@@ -101,6 +103,9 @@ public class FinishUtxo {
 
             inputValue += input.getAmount();
             inputList.add(new UTXOTxInput(inputTxid,inputVont,"",inputAddress));
+            if (inputValue > outputValue + FEE){
+                break;
+            }
         }
 
         if (inputValue > outputValue + FEE){
