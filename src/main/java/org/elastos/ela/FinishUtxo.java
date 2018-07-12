@@ -103,12 +103,12 @@ public class FinishUtxo {
 
             inputValue += input.getAmount();
             inputList.add(new UTXOTxInput(inputTxid,inputVont,"",inputAddress));
-            if (inputValue > outputValue + FEE){
+            if (inputValue >= outputValue + FEE){
                 break;
             }
         }
 
-        if (inputValue > outputValue + FEE){
+        if (inputValue >= outputValue + FEE){
 
             long zeroValue = inputValue - outputValue - FEE;
             outputs.add(new TxOutput(zeroAddress, zeroValue));
