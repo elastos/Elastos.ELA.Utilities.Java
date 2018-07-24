@@ -90,9 +90,26 @@ public class Util {
         }catch (Exception ex){
             return false;
         }
-
     }
 
+    /**
+     * 检查金额是否为int或者long
+     * @param amount
+     */
+    public static boolean checkAmount(Object amount){
+        if (amount instanceof Long || amount instanceof Integer){
+            return true;
+        }else {
+            return false;
+        }
+    }
+
+    public static boolean checkPrivateKey(String prvateKey){
+        if (prvateKey.length() != 64){
+            return false;
+        }
+        return true;
+    }
 
     /**
      * 公钥/脚本合约 到 公钥/脚本合约 哈希 转换 单向

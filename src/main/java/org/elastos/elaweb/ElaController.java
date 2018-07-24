@@ -8,12 +8,30 @@ import javax.xml.bind.DatatypeConverter;
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
+import java.lang.Error;
 import java.util.*;
 
 /**
  * Created by mdj17 on 2018/1/28.
  */
 public class ElaController {
+    private static String  INVALIDTXID          = "Invalid Txid";
+    private static String  INVALIDINDEX         = "Invalid Index";
+    private static String  INVALIDPRPVATEKEY    = "Invalid PrivateKey";
+    private static String  INVALIDADDRESS       = "Invalid Address";
+    private static String  INVALIDCHANGEADDRESS = "Invalid ChangeAddress";
+    private static String  INVALIDAMOUNT        = "Invalid Amount";
+    public static String  INVALFEE              = "Invalid FEE";
+
+    private static String  TXIDNOTNULL          = "No Txid Field";
+    private static String  INDEXNOTNULL         = "No Index Field";
+    private static String  PRPVATEKEYNOTNULL    = "No PrivateKey Field";;
+    private static String  ADDRESSNOTNULL       = "No Address Field";
+    private static String  CHANGEADDRESSNOTNULL = "No ChangeAddress Field";
+    private static String  AMOUNTNOTNULL        = "No Amount Field";
+    public static String  FEENOTNULL            = "No FEE Field";
+    public static String  HOSTNOTNULL           = "No Host Field";
+
 
 
     /**
@@ -38,10 +56,14 @@ public class ElaController {
         if (jsonArray.size() != 0){
             JSONObject param = (JSONObject)jsonArray.get(0);
             if (method.equals("genPublicKey")){
+                String state = checkPrivateKey("genPublicKey",param,"PrivateKey");
+                if (state != null) return state;
                 String privateKey = param.getString("PrivateKey");
                 return genPublicKey(privateKey);
             }
             if (method.equals("genAddress")){
+                String state = checkPrivateKey("genAddress",param,"PrivateKey");
+                if (state != null) return state;
                 String privateKey = param.getString("PrivateKey");
                 return genAddress(privateKey);
             }
@@ -104,6 +126,9 @@ public class ElaController {
         List<UTXOTxInput> inputList = new LinkedList<UTXOTxInput>();
         for (int i = 0 ; i < utxoInputs.size() ; i++){
             JSONObject utxoInput = (JSONObject)utxoInputs.get(i);
+            String state = checkInputs("genRawTransaction",utxoInput);
+            if (state != null) return state;
+
             String txid = utxoInput.getString("txid");
             String index = utxoInput.getString("index");
             String privateKey = utxoInput.getString("privateKey");
@@ -117,6 +142,9 @@ public class ElaController {
         List<TxOutput>  outputList = new LinkedList<TxOutput>();
         for (int j = 0 ; j < outputs.size() ; j ++){
             JSONObject output = (JSONObject)outputs.get(j);
+            String state = checkOutputs("genRawTransaction",output);
+            if (state != null) return state;
+
             String address = output.getString("address");
             long amount = output.getLong("amount");
             outputList.add(new TxOutput(address,amount));
@@ -280,43 +308,45 @@ public class ElaController {
         List<String> privateList = new LinkedList<String>();
         for (int i = 0; i < PrivateKeys.size(); i++) {
             JSONObject utxoInput = (JSONObject) PrivateKeys.get(i);
+            String state = checkPrivateKey("genRawTransactionByPrivateKey",utxoInput,"privateKey");
+            if (state != null) return state;
+
             privateList.add(utxoInput.getString("privateKey"));
         }
 
         //解析outputs
         final JSONArray outputs = json_transaction.getJSONArray("Outputs");
-        LinkedList<TxOutput> outputList = ParsingOutputs(outputs);
-
-
-        String zeroAddress = json_transaction.getString("ZeroAddress");
-
-        //创建rawTransaction
-        LinkedHashMap<String, Object> resultMap = new LinkedHashMap<String, Object>();
-        String rawTx = FinishUtxo.finishUtxo(privateList, outputList, zeroAddress);
-        if (rawTx.length() > 80){
-            resultMap.put("rawTx", rawTx);
-            resultMap.put("txHash", FinishUtxo.txHash);
-            return formatJson("genRawTransaction" ,resultMap);
-        }else {
-            resultMap.put("error",rawTx);
-            return formatJson_error("genRawTransaction" ,resultMap);
-        }
-    }
-
-
-
-    public static LinkedList<TxOutput> ParsingOutputs(JSONArray outputs){
         LinkedList<TxOutput> outputList = new LinkedList<TxOutput>();
         for (int t = 0; t < outputs.size(); t++) {
             JSONObject output = (JSONObject) outputs.get(t);
+            String state = checkOutputs("genRawTransactionByPrivateKey",output);
+            if (state != null) return state;
+
             long amount = output.getLong("amount");
             String address = output.getString("address");
             outputList.add(new TxOutput(address, amount));
         }
-        return outputList;
+
+        String state = checkChangeAddress("genRawTransactionByPrivateKey", json_transaction);
+        if (state != null) return state;
+
+        String changeAddress = json_transaction.getString("ChangeAddress");
+
+        //创建rawTransaction
+        LinkedHashMap<String, Object> resultMap = new LinkedHashMap<String, Object>();
+        String rawTx = FinishUtxo.finishUtxo(privateList, outputList, changeAddress);
+        if (FinishUtxo.STATE.equals(false)){
+            return rawTx;
+        }
+
+        if (rawTx.length() > 80){
+            resultMap.put("rawTx", rawTx);
+            resultMap.put("txHash", FinishUtxo.txHash);
+            return formatJson("genRawTransactionByPrivateKey" ,resultMap);
+        }else {
+            return error("genRawTransactionByPrivateKey" ,rawTx);
+        }
     }
-
-
 
     public static String  formatJson(String action , Object resultMap) {
         LinkedHashMap<String, Object> map = new LinkedHashMap<String, Object>();
@@ -329,14 +359,94 @@ public class ElaController {
         return jsonParam.toString();
     }
 
-    public static String  formatJson_error(String action , Object resultMap) {
+    public static String  error(String action , String result) {
         LinkedHashMap<String, Object> map = new LinkedHashMap<String, Object>();
         map.put("Action", action);
-        map.put("Desc", 40000);
-        map.put("Result", resultMap);
+        map.put("Desc", "ERROR");
+        map.put("Result", result);
 
         JSONObject jsonParam = new JSONObject();
         jsonParam.accumulateAll(map);
         return jsonParam.toString();
+    }
+
+    // =================================== check ===========================================
+
+    public static String checkInputs(String action,JSONObject utxoInput){
+        Object txid = utxoInput.get("txid");
+        if (txid != null) {
+            if (!Util.checkPrivateKey((String) txid)) {
+                return error(action, INVALIDTXID);
+            }
+        }else return error(action, TXIDNOTNULL);
+
+        Object index = utxoInput.get("index");
+        if (index != null) {
+            if (!Util.checkAmount(index)) {
+                return error(action, INVALIDINDEX);
+            }
+        }else return error(action, INDEXNOTNULL);
+
+        return checkPrivateKey(action, utxoInput,"privateKey");
+    }
+
+    /**
+     * 验证privateKey
+     * @param action
+     * @param utxoInput
+     * @param PrivateKey , 根据需求传递是首字母大写或者小写PrivateKey
+     * @return
+     */
+    public static String checkPrivateKey(String action,JSONObject utxoInput,String PrivateKey){
+        Object privateKey = utxoInput.get(PrivateKey);
+        if (privateKey != null) {
+            if (!Util.checkPrivateKey((String) privateKey)) {
+                return error(action, INVALIDPRPVATEKEY);
+            }
+        }else return error(action, PRPVATEKEYNOTNULL);
+
+        return null;
+    }
+
+    public static String checkOutputs(String action,JSONObject outputs){
+        Object address = outputs.get("address");
+        if (address != null) {
+            if (!Util.checkAddress((String) address)) {
+                return error(action, INVALIDADDRESS);
+            }
+        }else return error(action, ADDRESSNOTNULL);
+
+        Object amount = outputs.get("amount");
+        if (amount != null) {
+            if (!Util.checkAmount(amount)) {
+                return error(action, INVALIDAMOUNT);
+            }
+        }else return error(action, AMOUNTNOTNULL);
+
+        return null;
+    }
+
+    public static String checkChangeAddress(String action,JSONObject outputs){
+        Object address = outputs.get("ChangeAddress");
+        if (address != null) {
+            if (!Util.checkAddress((String) address)) {
+                return error(action, INVALIDCHANGEADDRESS);
+            }
+        }else return error(action, CHANGEADDRESSNOTNULL);
+        return null;
+    }
+
+    public static String checkFeeAndHost(String action,JSONObject jsonObject){
+        Object fee = jsonObject.get("Fee");
+        if (fee != null) {
+            if (!Util.checkAmount(fee)) {
+                return error(action, INVALFEE);
+            }
+        }else return error(action, FEENOTNULL);
+
+        Object Host = jsonObject.get("Host");
+        if (Host == null) return error(action,HOSTNOTNULL );
+
+        return null;
     }
 }

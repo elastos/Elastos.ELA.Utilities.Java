@@ -3,6 +3,7 @@ package org.elastos.ela;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.apache.commons.io.FileUtils;
+import org.elastos.elaweb.ElaController;
 import org.elastos.framework.rpc.Rpc;
 
 import java.io.File;
@@ -18,6 +19,7 @@ public class FinishUtxo {
     private static List<UTXOTxInput> inputList;
 
     public static String txHash;
+    public static Boolean STATE = true;
 
     /**
      * 整合utxo
@@ -39,7 +41,11 @@ public class FinishUtxo {
             addressList[i] = address;
         }
         params.put("addresses",addressList);
-        getConfig_url();
+        String state = getConfig_url();
+        if (state != null){
+            STATE = false;
+            return state;
+        }
 
 //        System.out.println("==================== 通过地址查询uxto  ====================");
         String utxo = Rpc.call_("listunspent",params,RPCURL);
@@ -205,17 +211,28 @@ public class FinishUtxo {
         return result.getString("blockhash");
     }
 
-    public static void getConfig_url()throws IOException{
-        File directory = new File ("");
-        String courseFile = directory.getCanonicalPath();
+    public static String getConfig_url()throws IOException{
+        try {
+            File directory = new File ("");
+            String courseFile = directory.getCanonicalPath();
 //        File file = new File(courseFile + "/src/main/resources/java-config.json");
-        File file = new File(courseFile + "/java-config.json");
-        String content = FileUtils.readFileToString(file,"UTF-8");
-        JSONObject jsonObject = JSONObject.fromObject(content);
+            File file = new File(courseFile + "/java-config.json");
+            String content = FileUtils.readFileToString(file,"UTF-8");
+            JSONObject jsonObject = JSONObject.fromObject(content);
 
-        String host = jsonObject.getString("Host");
-        FEE = jsonObject.getInt("Fee");
-        RPCURL = "http://" + host;
+            String state = ElaController.checkFeeAndHost("genRawTransactionByPrivateKey",jsonObject);
+            if (state != null){
+                STATE = false;
+                return state;
+            }
+
+            String host = jsonObject.getString("Host");
+            FEE = jsonObject.getInt("Fee");
+            RPCURL = "http://" + host;
+        }catch (IOException e){
+            return ElaController.error("genRawTransactionByPrivateKey",e.toString());
+        }
+        return null;
     }
 }
 

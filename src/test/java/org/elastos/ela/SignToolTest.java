@@ -39,9 +39,8 @@ public class SignToolTest {
     }
 
     @Test
-    public  void t() throws Exception{
-        File directory = new File("");// 参数为空
-        String courseFile = directory.getCanonicalPath();
-        System.out.println(courseFile);
+    public  void t(){
+        String privateKey = "5AABB11492D59E4B3CB52A2589A325406DCEBBCC74B4B9F75DDCB3A26EB09C1a";
+        System.out.println(privateKey.length());
     }
 }

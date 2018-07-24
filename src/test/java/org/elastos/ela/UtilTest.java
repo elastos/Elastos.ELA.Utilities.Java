@@ -92,8 +92,6 @@ public class UtilTest {
         address = "8Frmgg4KMudMEPc5Wow5tYXH8XBgctT8Qx";
         ret = Util.checkAddress(address);
         assertFalse(ret);
-
-
     }
 
     @Test
