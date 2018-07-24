@@ -73,9 +73,9 @@ public class UtilTest {
         boolean ret = Util.checkAddress(address);
         assertFalse(ret);
 
-        address = "123";
+        address = "EdiARnGaq5aoiXdvDbM58f4wXm3DWC4F6t";
         ret = Util.checkAddress(address);
-        assertFalse(ret);
+        assertTrue(ret);
 
         address = "EXgtxGg4ep6vM6uCqWuxkP9KG4AGFyufZz";
         ret = Util.checkAddress(address);

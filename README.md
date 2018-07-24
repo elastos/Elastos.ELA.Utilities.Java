@@ -91,7 +91,7 @@ public static String checkAddress(JSONObject addresses){
 
 ## Web Request
 
- - start command : java -cp ela_tool.jar  org.elastos.elaweb.HttpServer
+ - start command : java -cp Elastos.ELA.Utilities.Java.jar  org.elastos.elaweb.HttpServer
  - suggestion：java version "1.8.0_161"
  - local IP : http://127.0.0.1:8989/
 
@@ -117,14 +117,12 @@ Index is the 'n' of the block information Vout.
                         {
                             "txid":"61c22a83bb96d958f473148fa64f3b2be02653c66ede506e83b82e522200d446",
                             "index":0,  
-                            "privateKey":"5FA927E5664E563F019F50DCD4D7E2D9404F2D5D49E31F9482912E23D6D7B9EB",
-                            "address":"EQSpUzE4XYJhBSx5j7Tf2cteaKdFdixfVB"
+                            "privateKey":"5FA927E5664E563F019F50DCD4D7E2D9404F2D5D49E31F9482912E23D6D7B9EB"
                         },
                         {
                             "txid":"a91b63ba6ffdb13379451895c51abd25c54678bc89268db6e6c3dcbb7bb07062",
                             "index":0,
-                            "privateKey":"A65E9FB6735C5FD33F839036B15D2DA373E15AED38054B69386E322C6BE52994",
-                            "address":"EgSph8GNaNSMwpv6UseAihsAc5sqSrA7ga"
+                            "privateKey":"A65E9FB6735C5FD33F839036B15D2DA373E15AED38054B69386E322C6BE52994"
                         }
                     ],
                     "Outputs":[
@@ -339,7 +337,7 @@ java-config.json configuration to the Elastos.ELA.AutoTest.Java.jar same level d
                             "amount":60000000
                         }
                     ],
-                    "ZeroAddress":"Edi5WWMFBsEL2qgggrFhnJe1HTjDnw447H"
+                    "ChangeAddress":"Edi5WWMFBsEL2qgggrFhnJe1HTjDnw447H"
                 }
             ]
         }

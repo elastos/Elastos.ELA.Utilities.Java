@@ -107,7 +107,7 @@ public class ElaController {
             String txid = utxoInput.getString("txid");
             String index = utxoInput.getString("index");
             String privateKey = utxoInput.getString("privateKey");
-            String address = utxoInput.getString("address");
+            String address = Ela.getAddressFromPrivate(privateKey);
 
             inputList.add(new UTXOTxInput(txid,Integer.parseInt(index),privateKey,address));
         }

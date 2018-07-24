@@ -23,10 +23,10 @@ public class FinishUtxo {
      * 整合utxo
      * @param privates
      * @param outputs
-     * @param zeroAddress
+     * @param ChangeAddress
      * @return
      */
-    public static String finishUtxo(List<String> privates , LinkedList<TxOutput> outputs , String zeroAddress) throws IOException {
+    public static String finishUtxo(List<String> privates , LinkedList<TxOutput> outputs , String ChangeAddress) throws IOException {
 
         //去重
         ArrayList<String> privateList = new ArrayList<String>(new HashSet<String>(privates));
@@ -43,7 +43,7 @@ public class FinishUtxo {
 
 //        System.out.println("==================== 通过地址查询uxto  ====================");
         String utxo = Rpc.call_("listunspent",params,RPCURL);
-        String flag = getUtxo(utxo , outputs , zeroAddress);
+        String flag = getUtxo(utxo , outputs , ChangeAddress);
         if (flag.equals("ok")){
             RawTx rawTx = SignTxAbnormal.singleSignTx(inputList.toArray(new UTXOTxInput[inputList.size()]), outputs.toArray(new TxOutput[outputs.size()]), privates);
             txHash = rawTx.getTxHash();
@@ -53,7 +53,7 @@ public class FinishUtxo {
         }
     }
 
-    public static String getUtxo(String utxo , LinkedList<TxOutput> outputs , String zeroAddress){
+    public static String getUtxo(String utxo , LinkedList<TxOutput> outputs , String ChangeAddress){
 
         String flag = "ok";
 
@@ -110,8 +110,8 @@ public class FinishUtxo {
 
         if (inputValue >= outputValue + FEE){
 
-            long zeroValue = inputValue - outputValue - FEE;
-            outputs.add(new TxOutput(zeroAddress, zeroValue));
+            long ChangeValue = inputValue - outputValue - FEE;
+            outputs.add(new TxOutput(ChangeAddress, ChangeValue));
             return "ok";
         }else {
             System.out.println("utxo不足，value = " +inputValue);
