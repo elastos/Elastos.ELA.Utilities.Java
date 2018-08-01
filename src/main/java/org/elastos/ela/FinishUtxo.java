@@ -14,6 +14,7 @@ public class FinishUtxo {
 
     private static String RPCURL ;
     private static int FEE ;
+    private static int CONFIRMATION ;
 
     private static long utxoAmount;
     private static List<UTXOTxInput> inputList;
@@ -59,6 +60,13 @@ public class FinishUtxo {
         }
     }
 
+    /**
+     * 获取可用utxo
+     * @param utxo
+     * @param outputs
+     * @param ChangeAddress
+     * @return
+     */
     public static String getUtxo(String utxo , LinkedList<TxOutput> outputs , String ChangeAddress){
 
         String flag = "ok";
@@ -82,9 +90,11 @@ public class FinishUtxo {
 
             String blockHash = getBlockHash(txid);
 
-            boolean boo = availableUtxo(blockHash, txid , vout);
-            if (boo){
-                UTXOInputList.add(new UTXOInputSort(txid,address,vout,utxoAmount));
+            if (blockHash != null){
+                boolean boo = unlockeUtxo(blockHash, txid , vout);
+                if (boo){
+                    UTXOInputList.add(new UTXOInputSort(txid,address,vout,utxoAmount));
+                }
             }
         }
 
@@ -93,6 +103,7 @@ public class FinishUtxo {
         //outputs.amount > 可用utxo.amout
         inputList = new LinkedList<UTXOTxInput>();
 
+        //计算所有的output金额
         long outputValue = 0;
         for (int k = 0 ; k < outputs.size() ; k++){
             TxOutput output = outputs.get(k);
@@ -100,6 +111,7 @@ public class FinishUtxo {
             outputValue += value;
         }
 
+        //计算所有的input金额
         long inputValue = 0;
         for (int j = 0 ; j < UTXOInputList.size() ; j++){
             UTXOInputSort input = UTXOInputList.get(j);
@@ -109,13 +121,15 @@ public class FinishUtxo {
 
             inputValue += input.getAmount();
             inputList.add(new UTXOTxInput(inputTxid,inputVont,"",inputAddress));
+
+            //input金额够用
             if (inputValue >= outputValue + FEE){
                 break;
             }
         }
 
         if (inputValue >= outputValue + FEE){
-
+            //计算找零金额
             long ChangeValue = inputValue - outputValue - FEE;
             outputs.add(new TxOutput(ChangeAddress, ChangeValue));
             return "ok";
@@ -128,11 +142,16 @@ public class FinishUtxo {
 
     /**
      * 解析区块信息判断可用utxo
+     * UTXO锁验证步骤：
+     * 1.判断所有的input 是否引用包含 UTXO 锁 （OutputLock > 0）的 UTXO，如果没有引用，则返回 true;
+     * 2.判断引用了 UTXO 锁的 Input 的 Sequence 是否等于 0xfffffffe,如果不相等，返回 false；
+     * 3.判断交易的 TimeLock 是否大于所有 UTXO 的 OutputLock 的值，如果不大于，返回 false;
+     * 4.验证通过，返回 ture.
      * @param txid
      * @param vout
      * @return
      */
-    public static Boolean availableUtxo(String blockHash , String txid , int vout){
+    public static Boolean unlockeUtxo(String blockHash , String txid , int vout){
         LinkedHashMap<String, Object> paramsMap = new LinkedHashMap<String, Object>();
         paramsMap.put("blockhash",blockHash);
         paramsMap.put("verbosity",2);
@@ -158,7 +177,7 @@ public class FinishUtxo {
                 long locktime = tx.getLong("locktime");
 //                System.out.println("locktime = " + locktime);
 
-
+                // 步骤 1
                 JSONArray voutJson = tx.getJSONArray("vout");
                 JSONObject output = (JSONObject) voutJson.get(vout);
                 long outputlock = output.getLong("outputlock");
@@ -173,6 +192,7 @@ public class FinishUtxo {
                 System.out.println("锁仓 txid : " + txid );
 //                JSONArray vinJson = tx.getJSONArray("vin");
 //
+                  // 步骤 2
 //                for(int j = 0 ; j < vinJson.size() ; i++){
 //                    JSONObject vin =(JSONObject) vinJson.get(j);
 //                    long sequence = vin.getLong("sequence");
@@ -181,6 +201,7 @@ public class FinishUtxo {
 //                        return true;
 //                    }
 //                }
+                  // 步骤 3
 //                System.out.println("uxto locked , txid :" + txid);
 //                if (locktime > outputlock){
 //                    return true;
@@ -191,6 +212,11 @@ public class FinishUtxo {
     }
 
 
+    /**
+     * 通过交易ID获取区块Hash
+     * @param txid
+     * @return
+     */
     public static String getBlockHash(String txid){
         LinkedHashMap<String, Object> paramsMap = new LinkedHashMap<String, Object>();
         paramsMap.put("txid",txid);
@@ -208,10 +234,18 @@ public class FinishUtxo {
         }
 //        JSONArray jsonArray = jsonObject.getJSONArray("result");
         JSONObject result = jsonObject.getJSONObject("result");
-        return result.getString("blockhash");
+        int confirmations = result.getInt("confirmations");
+        if (confirmations >= CONFIRMATION){
+            return result.getString("blockhash");
+        }
+        return null;
     }
 
-    public static String getConfig_url()throws IOException{
+    /**
+     * 获取java-config.json配置文件信息
+     * @throws IOException
+     */
+    public static String getConfig_url(){
         try {
             File directory = new File ("");
             String courseFile = directory.getCanonicalPath();
@@ -229,6 +263,10 @@ public class FinishUtxo {
             String host = jsonObject.getString("Host");
             FEE = jsonObject.getInt("Fee");
             RPCURL = "http://" + host;
+            CONFIRMATION = jsonObject.getInt("Confirmation");
+            if (CONFIRMATION == 0){
+                CONFIRMATION = 16;
+            }
         }catch (IOException e){
             return ElaController.error("genRawTransactionByPrivateKey",e.toString());
         }
