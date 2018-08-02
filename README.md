@@ -305,7 +305,7 @@ java-config.json configuration to the Elastos.ELA.AutoTest.Java.jar same level d
 {
   "Host": "127.0.0.1:11336",
   "Fee":5000，
-  "confirmations":16
+  "Confirmation":16
 }
 ```
 
