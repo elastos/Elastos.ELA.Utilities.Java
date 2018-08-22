@@ -22,6 +22,7 @@ public class ElaController {
     private static String  INVALIDCHANGEADDRESS = "Invalid ChangeAddress";
     private static String  INVALIDAMOUNT        = "Invalid Amount";
     public static String  INVALFEE              = "Invalid FEE";
+    public static String  INVALCONFIRMATION    = "Invalid CONFIRMATION";
 
     private static String  TXIDNOTNULL          = "No Txid Field";
     private static String  INDEXNOTNULL         = "No Index Field";
@@ -31,6 +32,7 @@ public class ElaController {
     private static String  AMOUNTNOTNULL        = "No Amount Field";
     public static String  FEENOTNULL            = "No FEE Field";
     public static String  HOSTNOTNULL           = "No Host Field";
+    public static String  CONFIRMATIONNOTNULL  = "No CONFIRMATION Field";
 
 
 
@@ -443,6 +445,13 @@ public class ElaController {
                 return error(action, INVALFEE);
             }
         }else return error(action, FEENOTNULL);
+
+        Object confirmation = jsonObject.get("Confirmation");
+        if (confirmation != null) {
+            if (!Util.checkAmount(confirmation)) {
+                return error(action, INVALCONFIRMATION);
+            }
+        }else return error(action, CONFIRMATIONNOTNULL);
 
         Object Host = jsonObject.get("Host");
         if (Host == null) return error(action,HOSTNOTNULL );
