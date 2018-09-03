@@ -77,7 +77,12 @@ public class FinishUtxo {
             JSONObject jsonError = JSONObject.fromObject(error);
             String message = jsonError.getString("message");
             System.out.println("获取utxo失败 ：" + message);
-            return flag = "Getting utxo failure , " +message;
+            return "Getting utxo failure , " +message;
+        }
+
+        Object resultObject = jsonObject.get("result");
+        if (resultObject.equals(null)) {
+            return "The address is not utxo , Please check the address";
         }
 
         JSONArray jsonArray = jsonObject.getJSONArray("result");

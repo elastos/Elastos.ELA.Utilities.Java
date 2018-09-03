@@ -50,7 +50,6 @@ public class Rpc {
         JSONObject jsonObject = HttpRequestUtil.httpPost(url, jsonParam);
 //        System.out.println("jsonObject : "+ jsonObject);
 
-
         return jsonObject.toString();
     }
 
