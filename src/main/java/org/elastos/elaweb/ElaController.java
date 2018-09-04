@@ -3,12 +3,13 @@ package org.elastos.elaweb;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.elastos.ela.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.xml.bind.DatatypeConverter;
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
-import java.lang.Error;
 import java.util.*;
 
 /**
@@ -22,7 +23,7 @@ public class ElaController {
     private static String  INVALIDCHANGEADDRESS = "Invalid ChangeAddress";
     private static String  INVALIDAMOUNT        = "Invalid Amount";
     public static String  INVALFEE              = "Invalid FEE";
-    public static String  INVALCONFIRMATION    = "Invalid CONFIRMATION";
+    public static String  INVALCONFIRMATION     = "Invalid CONFIRMATION";
 
     private static String  TXIDNOTNULL          = "No Txid Field";
     private static String  INDEXNOTNULL         = "No Index Field";
@@ -32,10 +33,10 @@ public class ElaController {
     private static String  AMOUNTNOTNULL        = "No Amount Field";
     public static String  FEENOTNULL            = "No FEE Field";
     public static String  HOSTNOTNULL           = "No Host Field";
-    public static String  CONFIRMATIONNOTNULL  = "No CONFIRMATION Field";
+    public static String  CONFIRMATIONNOTNULL   = "No CONFIRMATION Field";
 
 
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(ElaController.class);
     /**
      * 处理请求
      * @param params
@@ -43,6 +44,8 @@ public class ElaController {
      * @throws Exception
      */
     public static String processMethod (String params) throws Exception {
+
+        LOGGER.info(params);
 
         JSONObject jsonObject = JSONObject.fromObject(params);
         JSONArray jsonArray = jsonObject.getJSONArray("params");
@@ -165,6 +168,8 @@ public class ElaController {
 
         JSONObject jsonParam = new JSONObject();
         jsonParam.accumulateAll(map);
+
+        LOGGER.info(jsonParam.toString());
         return jsonParam.toString();
     }
 
@@ -358,6 +363,8 @@ public class ElaController {
 
         JSONObject jsonParam = new JSONObject();
         jsonParam.accumulateAll(map);
+
+        LOGGER.info(jsonParam.toString());
         return jsonParam.toString();
     }
 
@@ -369,6 +376,8 @@ public class ElaController {
 
         JSONObject jsonParam = new JSONObject();
         jsonParam.accumulateAll(map);
+
+        LOGGER.error(jsonParam.toString());
         return jsonParam.toString();
     }
 
