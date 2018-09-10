@@ -15,7 +15,9 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 
 /**
- * 构造请求
+ * @author: DongLei.Tan
+ * @contact: tandonglei@elastos.org
+ * @time: 2018/5/20
  */
 public class ElaHandle extends AbstractHandler {
 

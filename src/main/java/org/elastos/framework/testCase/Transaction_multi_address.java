@@ -19,7 +19,10 @@ import java.util.Map;
  * 2、第一个节点挖矿，并转账 count 次，生成count 数的TXId（多个地址的一个uxto）
  * 3、创建 count 数量的input和 output,进行打包交易
  * 4、矿工地址给多个地址转账（一个地址多个uxto给多个地址转账）
- * Created by mdj17 on 2018/1/22.
+ *
+ * @author: DongLei.Tan
+ * @contact: tandonglei@elastos.org
+ * @time: 2018/1/22
  */
 public class Transaction_multi_address {
 

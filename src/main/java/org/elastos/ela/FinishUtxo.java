@@ -10,6 +10,12 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
+
+/**
+ * @author: DongLei.Tan
+ * @contact: tandonglei@elastos.org
+ * @time: 2018/6/20
+ */
 public class FinishUtxo {
 
     private static String RPCURL ;
@@ -21,6 +27,8 @@ public class FinishUtxo {
 
     public static String txHash;
     public static Boolean STATE = true;
+
+    public static List<String> addrList;
 
     /**
      * 整合utxo
@@ -52,6 +60,9 @@ public class FinishUtxo {
         String utxo = Rpc.call_("listunspent",params,RPCURL);
         String flag = getUtxo(utxo , outputs , ChangeAddress);
         if (flag.equals("ok")){
+            //地址去重，地址对应私钥进行签名
+            ArrayList<String> addrArray = new ArrayList<String>(new HashSet<String>(addrList));
+            privates = FinishUtxo.availablePrivate(privates,addrArray);
             RawTx rawTx = SignTxAbnormal.singleSignTx(inputList.toArray(new UTXOTxInput[inputList.size()]), outputs.toArray(new TxOutput[outputs.size()]), privates);
             txHash = rawTx.getTxHash();
             return rawTx.getRawTxString();
@@ -118,6 +129,7 @@ public class FinishUtxo {
 
         //计算所有的input金额
         long inputValue = 0;
+        addrList = new ArrayList<String>();
         for (int j = 0 ; j < UTXOInputList.size() ; j++){
             UTXOInputSort input = UTXOInputList.get(j);
             String inputTxid = input.getTxid();
@@ -126,7 +138,7 @@ public class FinishUtxo {
 
             inputValue += input.getAmount();
             inputList.add(new UTXOTxInput(inputTxid,inputVont,"",inputAddress));
-
+            addrList.add(inputAddress);
             //input金额够用
             if (inputValue >= outputValue + FEE){
                 break;
@@ -276,6 +288,34 @@ public class FinishUtxo {
             return ElaController.error("genRawTransactionByPrivateKey",e.toString());
         }
         return null;
+    }
+
+    /**
+     *
+     * @param privateList
+     * @param addressList
+     * @return
+     */
+    public static List<String> availablePrivate(List<String> privateList, List<String> addressList){
+
+        if (privateList.size() != addressList.size()){
+            List<String> availablePrivate = new ArrayList<String>();
+
+            HashMap privateMap = new HashMap<String,String>();
+            for (int i = 0; i < privateList.size();i++){
+                privateMap.put(Ela.getAddressFromPrivate(privateList.get(i)),privateList.get(i));
+            }
+            Iterator keys = privateMap.keySet().iterator();
+            while (keys.hasNext()){
+                String key =(String)keys.next();
+                for (int j = 0; j<addressList.size();j++){
+                    if (key.equals(addressList.get(j))){
+                        availablePrivate.add((String)privateMap.get(key));
+                    }
+                }
+            }
+            return availablePrivate;
+        }else return privateList;
     }
 }
 

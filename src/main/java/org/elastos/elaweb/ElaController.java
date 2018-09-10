@@ -3,6 +3,8 @@ package org.elastos.elaweb;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.elastos.ela.*;
+import org.elastos.wallet.Account;
+import org.elastos.wallet.KeystoreFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,7 +15,9 @@ import java.io.IOException;
 import java.util.*;
 
 /**
- * Created by mdj17 on 2018/1/28.
+ * @author: DongLei.Tan
+ * @contact: tandonglei@elastos.org
+ * @time: 2018/5/20
  */
 public class ElaController {
     private static String  INVALIDTXID          = "Invalid Txid";
@@ -57,6 +61,12 @@ public class ElaController {
             if (method.equals("gen_priv_pub_addr")) {
                 return gen_priv_pub_addr();
             }
+            if (method.equals("createAccount")) {
+                return createAccount();
+            }
+            if (method.equals("getAccount")) {
+                return getAccount();
+            }
         }
         if (jsonArray.size() != 0){
             JSONObject param = (JSONObject)jsonArray.get(0);
@@ -84,6 +94,19 @@ public class ElaController {
             }
             if (method.equals("checkAddress")) {
                 return checkAddress(param);
+            }
+            if (method.equals("genRawTransactionByAccount")) {
+                return genRawTransactionByAccount(param);
+            }
+            if (method.equals("addAccount")) {
+                String state = checkPrivateKey("addAccount",param,"PrivateKey");
+                if (state != null) return state;
+                String privateKey = param.getString("PrivateKey");
+                return addAccount(privateKey);
+            }
+            if (method.equals("deleteAccount")) {
+                String publicKey = param.getString("PublicKey");
+                return deleteAccount(publicKey);
             }
         }
         return null ;
@@ -355,6 +378,78 @@ public class ElaController {
         }
     }
 
+    /**
+     * 通过本地账户创建交易
+     * @param outpus
+     * @return
+     * @throws Exception
+     */
+    public static String genRawTransactionByAccount(JSONObject outpus) throws Exception {
+
+        final JSONArray transaction = outpus.getJSONArray("Transactions");
+        JSONObject json_transaction = (JSONObject) transaction.get(0);
+
+        List<String> privateList = new LinkedList<String>();
+
+        Object publicKeys = json_transaction.get("PublicKeys");
+        if (publicKeys != null){
+            JSONArray publicKeyArray = (JSONArray)publicKeys;
+            for (int i = 0; i < publicKeyArray.size(); i++) {
+                JSONObject JsonPublicKey = (JSONObject) publicKeyArray.get(i);
+                String publicKey = JsonPublicKey.getString("PublicKey");
+                if (!KeystoreFile.isExistAccount(publicKey)){
+                    return error("genRawTransactionByAccount","[" + publicKey + "] public not exist");
+                }
+            }
+
+            //解析inputs
+            for (int i = 0; i < publicKeyArray.size(); i++) {
+                JSONObject JsonPublicKey = (JSONObject) publicKeyArray.get(i);
+                String publicKey = JsonPublicKey.getString("PublicKey");
+                String privateKey = Account.getAccountPrivateKey(publicKey);
+
+                privateList.add(privateKey);
+            }
+        }else privateList = Account.getAccountAllPrivateKey();
+
+
+
+        //解析outputs
+        final JSONArray outputs = json_transaction.getJSONArray("Outputs");
+        LinkedList<TxOutput> outputList = new LinkedList<TxOutput>();
+        for (int t = 0; t < outputs.size(); t++) {
+            JSONObject output = (JSONObject) outputs.get(t);
+            String state = checkOutputs("genRawTransactionByAccount",output);
+            if (state != null) return state;
+
+            long amount = output.getLong("amount");
+            String address = output.getString("address");
+            outputList.add(new TxOutput(address, amount));
+        }
+
+        String state = checkChangeAddress("genRawTransactionByAccount", json_transaction);
+        if (state != null) return state;
+
+        String changeAddress = json_transaction.getString("ChangeAddress");
+
+        //创建rawTransaction
+        LinkedHashMap<String, Object> resultMap = new LinkedHashMap<String, Object>();
+        String rawTx = FinishUtxo.finishUtxo(privateList, outputList, changeAddress);
+        if (FinishUtxo.STATE.equals(false)){
+            return rawTx;
+        }
+
+        if (rawTx.length() > 80){
+            resultMap.put("rawTx", rawTx);
+            resultMap.put("txHash", FinishUtxo.txHash);
+            return formatJson("genRawTransactionByAccount" ,resultMap);
+        }else {
+            return error("genRawTransactionByAccount" ,rawTx);
+        }
+    }
+
+
+
     public static String  formatJson(String action , Object resultMap) {
         LinkedHashMap<String, Object> map = new LinkedHashMap<String, Object>();
         map.put("Action", action);
@@ -381,6 +476,27 @@ public class ElaController {
         return jsonParam.toString();
     }
 
+    // =================================== Account ===========================================
+
+    public static String createAccount(){
+        String account = Account.createAccountFile();
+        return formatJson("createAccount",account);
+    }
+
+    public static String addAccount(String privateKey){
+        String account = Account.addAccount(privateKey);
+        return formatJson("addAccount",account);
+    }
+
+    public static String deleteAccount(String publicKey){
+        String account = Account.deleteAccount(publicKey);
+        return formatJson("deleteAccount",account);
+    }
+
+    public static String getAccount(){
+        JSONArray account = KeystoreFile.readAccount();
+        return formatJson("getAccount",account);
+    }
     // =================================== check ===========================================
 
     public static String checkInputs(String action,JSONObject utxoInput){

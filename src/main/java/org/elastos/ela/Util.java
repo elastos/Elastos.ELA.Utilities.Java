@@ -8,8 +8,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.math.BigInteger;
-import java.util.Arrays;
-import java.util.Comparator;
+import java.util.*;
 
 /**
  * Created by nan on 18/1/11.
@@ -198,5 +197,15 @@ public class Util {
         }
     }
 
+    /**
+     * 取出两个集合相同元素
+     * @return
+     */
+    public static List<String> existList(List<String> firstList,List<String> secondList){
+        Collection first=new ArrayList(firstList);
+        Collection second=new ArrayList(secondList);
+        first.retainAll(second);
+        return new ArrayList<String>(first);
+    }
 }
 

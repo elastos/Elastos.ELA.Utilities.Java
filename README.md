@@ -417,6 +417,177 @@ or
 ```
 
 
+ - #### genRawTransactionByAccount
+
+##### Request
+```
+{
+    "method":"genRawTransactionByAccount",
+    "id":0,
+    "params":[
+        {
+            "Transactions":[
+                {
+                    "Outputs":[
+                        {
+                            "address":"EQSpUzE4XYJhBSx5j7Tf2cteaKdFdixfVB",
+                            "amount":31000000
+                        }
+                    ],
+                    "ChangeAddress":"Edi5WWMFBsEL2qgggrFhnJe1HTjDnw447H"
+                }
+            ]
+        }
+    ]
+}
+
+or 
+
+{
+    "method":"checkAddress",
+    "id":0,
+    "params":[
+        {
+            "Addresses":["EXgtxGg4ep6vM6uCqWuxkP9KG4AGFyufZz","1C1mCxRukix1KfegAY5zQQJV7samAciZpv","8Frmgg4KMudMEPc5Wow5tYXH8XBgctT8QT","XQd1DCi6H62NQdWZQhJCRnrPn7sF9CTjaU"]
+        }
+    ]
+}
+```
+
+##### Response
+```
+{
+    "Action": "genRawTransactionByAccount",
+    "Desc": "SUCCESS",
+    "Result": {
+        "rawTx": "0200010013363731323032A214F6036D8221E7F1C010000000000B67901062723993D9FBADC32C33807EE7B9FCB370D777C5A955A3056DF3B9CB40100000000002B20EB60E4191B374DFC69503E1ED6888E7456FDE2554E77E1D9A1AB3360562F1D6FF4BAC",
+        "txHash": "98FCA1FABB606AEDF84921E24CDF7A0931FF11DAFDDC1B8584206881A5229060"
+    }
+}
+
+```
+
+ - #### createAccount
+
+##### Request
+```
+{
+    "method":"createAccount",
+    "id":0,
+    "params":[
+
+    ]
+}
+```
+
+##### Response
+```
+{
+    "Action": "createAccount",
+    "Desc": "SUCCESS",
+    "Result": [
+        {
+            "privateKey": "BDDFC38703AD6C1649A1A3F73A75C905982DF816E23F81A209EA85E90308F575",
+            "publicKey": "02B3DC7EC3B9709A2BCA97A965EBE2245315357B5BEDC7F9863224F1325E560A10"
+        }
+    ]
+}
+```
+
+ - #### addAccount
+
+##### Request
+```
+{
+    "method":"addAccount",
+    "id":0,
+    "params":[
+        {
+            "PrivateKey":"4EA80EDBFC783A19FAC1072D15893AC7A20B4EDE1402FD57DE76D02EA61E28E4"
+        }
+    ]
+}
+```
+
+##### Response
+```
+{
+    "Action": "addAccount",
+    "Desc": "SUCCESS",
+    "Result": [
+        {
+            "privateKey": "BDDFC38703AD6C1649A1A3F73A75C905982DF816E23F81A209EA85E90308F575",
+            "publicKey": "02B3DC7EC3B9709A2BCA97A965EBE2245315357B5BEDC7F9863224F1325E560A10"
+        },
+        {
+            "privateKey": "4EA80EDBFC783A19FAC1072D15893AC7A20B4EDE1402FD57DE76D02EA61E28E4",
+            "publicKey": "03B462F4DB3F67A6A71E51BF3034A183022F092E8E6ED0C91F139E4871F5BA0B57"
+        }
+    ]
+}
+```
+
+
+ - #### addAccount
+
+##### Request
+```
+{
+    "method":"getAccount",
+    "id":0,
+    "params":[
+
+    ]
+}
+```
+
+##### Response
+```
+{
+    "Action": "getAccount",
+    "Desc": "SUCCESS",
+    "Result": [
+        {
+            "privateKey": "BDDFC38703AD6C1649A1A3F73A75C905982DF816E23F81A209EA85E90308F575",
+            "publicKey": "02B3DC7EC3B9709A2BCA97A965EBE2245315357B5BEDC7F9863224F1325E560A10"
+        },
+        {
+            "privateKey": "4EA80EDBFC783A19FAC1072D15893AC7A20B4EDE1402FD57DE76D02EA61E28E4",
+            "publicKey": "03B462F4DB3F67A6A71E51BF3034A183022F092E8E6ED0C91F139E4871F5BA0B57"
+        }
+    ]
+}
+```
+
+ - #### deleteAccount
+
+##### Request
+```
+{
+    "method":"deleteAccount",
+    "id":0,
+    "params":[
+        {
+            "PublicKey":"02B3DC7EC3B9709A2BCA97A965EBE2245315357B5BEDC7F9863224F1325E560A10"
+        }
+    ]
+}
+```
+
+##### Response
+```
+{
+    "Action": "deleteAccount",
+    "Desc": "SUCCESS",
+    "Result": [
+        {
+            "privateKey": "BDDFC38703AD6C1649A1A3F73A75C905982DF816E23F81A209EA85E90308F575",
+            "publicKey": "02B3DC7EC3B9709A2BCA97A965EBE2245315357B5BEDC7F9863224F1325E560A10"
+        }
+    ]
+}
+```
+
 ### JAR package
  ```
 File -> Project Structure -> Artifacts -> + -> JAR -> From modules with 

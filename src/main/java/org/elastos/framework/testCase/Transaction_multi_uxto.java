@@ -16,7 +16,10 @@ import java.util.List;
  * 1、启动1个节点
  * 2、第一个节点挖矿
  * 3、矿工地址给多个地址转账（一个地址多个uxto给多个地址转账）
- * Created by mdj17 on 2018/5/24.
+ *
+ * @author: DongLei.Tan
+ * @contact: tandonglei@elastos.org
+ * @time: 2018/1/22
  */
 public class Transaction_multi_uxto {
 
