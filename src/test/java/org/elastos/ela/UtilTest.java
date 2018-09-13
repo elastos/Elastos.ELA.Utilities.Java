@@ -67,32 +67,32 @@ public class UtilTest {
         assertEquals("ENWzVcjJWuHT5HzVMQ7aBUurHAg3iybynF",address);
 
     }
-    @Test
-    public void checkAddress() {
-        String address = "";
-        boolean ret = Util.checkAddress(address);
-        assertFalse(ret);
-
-        address = "EdiARnGaq5aoiXdvDbM58f4wXm3DWC4F6t";
-        ret = Util.checkAddress(address);
-        assertTrue(ret);
-
-        address = "EXgtxGg4ep6vM6uCqWuxkP9KG4AGFyufZz";
-        ret = Util.checkAddress(address);
-        assertTrue(ret);
-
-        address = "EXgtxGg4ep6vM6uCqWuxkP9KG4AGFyufZy";
-        ret = Util.checkAddress(address);
-        assertFalse(ret);
-
-        address = "8Frmgg4KMudMEPc5Wow5tYXH8XBgctT8QT";
-        ret = Util.checkAddress(address);
-        assertTrue(ret);
-
-        address = "8Frmgg4KMudMEPc5Wow5tYXH8XBgctT8Qx";
-        ret = Util.checkAddress(address);
-        assertFalse(ret);
-    }
+//    @Test
+//    public void checkAddress() {
+//        String address = "";
+//        boolean ret = Util.checkAddress(address);
+//        assertFalse(ret);
+//
+//        address = "EdiARnGaq5aoiXdvDbM58f4wXm3DWC4F6t";
+//        ret = Util.checkAddress(address);
+//        assertTrue(ret);
+//
+//        address = "EXgtxGg4ep6vM6uCqWuxkP9KG4AGFyufZz";
+//        ret = Util.checkAddress(address);
+//        assertTrue(ret);
+//
+//        address = "EXgtxGg4ep6vM6uCqWuxkP9KG4AGFyufZy";
+//        ret = Util.checkAddress(address);
+//        assertFalse(ret);
+//
+//        address = "8Frmgg4KMudMEPc5Wow5tYXH8XBgctT8QT";
+//        ret = Util.checkAddress(address);
+//        assertTrue(ret);
+//
+//        address = "8Frmgg4KMudMEPc5Wow5tYXH8XBgctT8Qx";
+//        ret = Util.checkAddress(address);
+//        assertFalse(ret);
+//    }
 
     @Test
     public void sortByteArrayArrayUseRevertBytesSequence(){

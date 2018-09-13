@@ -57,6 +57,17 @@ public class ECKey {
         return pub.getEncoded();
     }
 
+
+    public static byte[] generateKey(int len){
+        byte[] key = new byte[len];
+        SecureRandom secureRandom = new SecureRandom();
+        secureRandom.nextBytes(key);
+        return key;
+    }
+
+    public static byte[] generateKey(){
+        return generateKey(32);
+    }
     /**
      * Returns public key point from the given private key. To convert a byte array into a BigInteger, use <tt>
      * new BigInteger(1, bytes);</tt>

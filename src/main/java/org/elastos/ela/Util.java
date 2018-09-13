@@ -1,5 +1,7 @@
 package org.elastos.ela;
 
+import org.elastos.common.ErrorCode;
+import org.elastos.common.SDKException;
 import org.elastos.ela.bitcoinj.Base58;
 import org.elastos.ela.bitcoinj.Sha256Hash;
 import org.elastos.ela.bitcoinj.Utils;
@@ -82,12 +84,25 @@ public class Util {
      * @return
      */
     public static boolean checkAddress(String address){
-        try{
+        try {
             byte[] sh = ToScriptHash(address);
-            if(sh[0]!=33&&sh[0]!=18) return false;
-            else return true;
-        }catch (Exception ex){
+            if(sh[0]!=33&&sh[0]!=18){
+                return false;
+            }
+        }catch (Exception e) {
             return false;
+        }
+        return true;
+    }
+
+    public static void checkChangeAddress(String address) throws SDKException {
+        try {
+            byte[] sh = ToScriptHash(address);
+            if(sh[0]!=33&&sh[0]!=18){
+                throw new SDKException(ErrorCode.InvalidChangeAddress);
+            }
+        }catch (Exception e) {
+            throw new SDKException(ErrorCode.InvalidChangeAddress);
         }
     }
 
@@ -95,19 +110,22 @@ public class Util {
      * 检查金额是否为int或者long
      * @param amount
      */
-    public static boolean checkAmount(Object amount){
+    public static void checkAmount(Object amount) throws SDKException {
         if (amount instanceof Long || amount instanceof Integer){
-            return true;
-        }else {
-            return false;
+            throw new SDKException(ErrorCode.InvalidAmount);
         }
     }
 
-    public static boolean checkPrivateKey(String prvateKey){
-        if (prvateKey.length() != 64){
-            return false;
+    public static void checkFee(Object amount) throws SDKException {
+        if (amount instanceof Long || amount instanceof Integer){
+            throw new SDKException(ErrorCode.InvalFee);
         }
-        return true;
+    }
+
+    public static void checkPrivateKey(String prvateKey)throws Exception{
+        if (prvateKey.length() != 64){
+            throw new SDKException(ErrorCode.InvalidPrpvateKey);
+        }
     }
 
     /**

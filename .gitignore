@@ -8,7 +8,7 @@
 *.class  
 *.war  
 *.ear 
-logs/
+Logs/
 .DS_Store 
 /out
 /target

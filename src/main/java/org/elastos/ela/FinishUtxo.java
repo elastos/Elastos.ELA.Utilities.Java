@@ -3,6 +3,9 @@ package org.elastos.ela;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.apache.commons.io.FileUtils;
+import org.elastos.common.ErrorCode;
+import org.elastos.common.SDKException;
+import org.elastos.ela.api.Verify;
 import org.elastos.elaweb.ElaController;
 import org.elastos.framework.rpc.Rpc;
 
@@ -37,7 +40,7 @@ public class FinishUtxo {
      * @param ChangeAddress
      * @return
      */
-    public static String finishUtxo(List<String> privates , LinkedList<TxOutput> outputs , String ChangeAddress) throws IOException {
+    public static String finishUtxo(List<String> privates , LinkedList<TxOutput> outputs , String ChangeAddress) throws Exception {
 
         //去重
         ArrayList<String> privateList = new ArrayList<String>(new HashSet<String>(privates));
@@ -50,25 +53,22 @@ public class FinishUtxo {
             addressList[i] = address;
         }
         params.put("addresses",addressList);
-        String state = getConfig_url();
-        if (state != null){
-            STATE = false;
-            return state;
-        }
+        getConfig_url();
 
 //        System.out.println("==================== 通过地址查询uxto  ====================");
         String utxo = Rpc.call_("listunspent",params,RPCURL);
-        String flag = getUtxo(utxo , outputs , ChangeAddress);
-        if (flag.equals("ok")){
+//        String flag = getUtxo(utxo , outputs , ChangeAddress);
+        getUtxo(utxo , outputs , ChangeAddress);
+//        if (flag.equals("ok")){
             //地址去重，地址对应私钥进行签名
             ArrayList<String> addrArray = new ArrayList<String>(new HashSet<String>(addrList));
             privates = FinishUtxo.availablePrivate(privates,addrArray);
             RawTx rawTx = SignTxAbnormal.singleSignTx(inputList.toArray(new UTXOTxInput[inputList.size()]), outputs.toArray(new TxOutput[outputs.size()]), privates);
             txHash = rawTx.getTxHash();
             return rawTx.getRawTxString();
-        }else {
-            return flag;
-        }
+//        }else {
+//            return flag;
+//        }
     }
 
     /**
@@ -78,22 +78,24 @@ public class FinishUtxo {
      * @param ChangeAddress
      * @return
      */
-    public static String getUtxo(String utxo , LinkedList<TxOutput> outputs , String ChangeAddress){
+    public static void getUtxo(String utxo , LinkedList<TxOutput> outputs , String ChangeAddress) throws SDKException {
 
-        String flag = "ok";
+//        String flag = "ok";
 
         JSONObject jsonObject = JSONObject.fromObject(utxo);
         String error = jsonObject.getString("error");
         if (error != "null"){
             JSONObject jsonError = JSONObject.fromObject(error);
             String message = jsonError.getString("message");
-            System.out.println("获取utxo失败 ：" + message);
-            return "Getting utxo failure , " +message;
+//            System.out.println("获取utxo失败 ：" + message);
+            throw new SDKException(ErrorCode.ParamErr("Getting utxo failure , " +message));
+//            return "Getting utxo failure , " +message;
         }
 
         Object resultObject = jsonObject.get("result");
         if (resultObject.equals(null)) {
-            return "The address is not utxo , Please check the address";
+//            return "The address is not utxo , Please check the address";
+            throw new SDKException(ErrorCode.ParamErr("The address is not utxo , Please check the address"));
         }
 
         JSONArray jsonArray = jsonObject.getJSONArray("result");
@@ -149,12 +151,13 @@ public class FinishUtxo {
             //计算找零金额
             long ChangeValue = inputValue - outputValue - FEE;
             outputs.add(new TxOutput(ChangeAddress, ChangeValue));
-            return "ok";
+//            return "ok";
         }else {
-            System.out.println("utxo不足，value = " +inputValue);
-            flag = "Utxo deficiency , inputValue : " + inputValue + " , outputValue :" + outputValue;
+            throw new SDKException(ErrorCode.ParamErr("Utxo deficiency , inputValue : " + inputValue + " , outputValue :" + outputValue));
+//            System.out.println("utxo不足，value = " +inputValue);
+//            flag = "Utxo deficiency , inputValue : " + inputValue + " , outputValue :" + outputValue;
         }
-        return flag;
+//        return flag;
     }
 
     /**
@@ -262,32 +265,32 @@ public class FinishUtxo {
      * 获取java-config.json配置文件信息
      * @throws IOException
      */
-    public static String getConfig_url(){
+    public static void getConfig_url() throws Exception {
+        String content = "";
         try {
             File directory = new File ("");
             String courseFile = directory.getCanonicalPath();
 //        File file = new File(courseFile + "/src/main/resources/java-config.json");
             File file = new File(courseFile + "/java-config.json");
-            String content = FileUtils.readFileToString(file,"UTF-8");
-            JSONObject jsonObject = JSONObject.fromObject(content);
+            content = FileUtils.readFileToString(file,"UTF-8");
 
-            String state = ElaController.checkFeeAndHost("genRawTransactionByPrivateKey",jsonObject);
-            if (state != null){
-                STATE = false;
-                return state;
-            }
-
-            String host = jsonObject.getString("Host");
-            FEE = jsonObject.getInt("Fee");
-            RPCURL = "http://" + host;
-            CONFIRMATION = jsonObject.getInt("Confirmation");
-            if (CONFIRMATION == 0){
-                CONFIRMATION = 16;
-            }
-        }catch (IOException e){
-            return ElaController.error("genRawTransactionByPrivateKey",e.toString());
+        }catch (Exception e){
+            throw new SDKException(ErrorCode.ParamErr(e.toString()));
         }
-        return null;
+
+        JSONObject jsonObject = JSONObject.fromObject(content);
+
+        Verify.verifyParameter(Verify.Type.Host,jsonObject);
+        Verify.verifyParameter(Verify.Type.Confirmation,jsonObject);
+        Verify.verifyParameter(Verify.Type.Fee,jsonObject);
+
+        String host = jsonObject.getString("Host");
+        FEE = jsonObject.getInt("Fee");
+        RPCURL = "http://" + host;
+        CONFIRMATION = jsonObject.getInt("Confirmation");
+        if (CONFIRMATION == 0){
+            CONFIRMATION = 16;
+        }
     }
 
     /**

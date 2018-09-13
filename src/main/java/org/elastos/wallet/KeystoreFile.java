@@ -7,38 +7,17 @@ import org.apache.commons.io.FileUtils;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
+import java.io.IOException;
 
 public class KeystoreFile {
 
     private static String DefaultKeystoreFile = "keystore.dat";
 
-
-
-    public String publicKey;
-    public String privateKey;
-
-
-    public void setPublicKey(String publicKey) {
-        this.publicKey = publicKey;
-    }
-
-    public void setPrivateKey(String privateKey) {
-        this.privateKey = privateKey;
-    }
-
-    public String getPublicKey() {
-        return publicKey;
-    }
-
-    public String getPrivateKey() {
-        return privateKey;
-    }
-
     /**
      * 创建账户
      * @param account
      */
-    public static void createAccount(String account){
+    public static void createAccount(String account) throws IOException {
         try {
             File file = getKeystorePath();
             FileWriter FW = new FileWriter(file);
@@ -46,7 +25,7 @@ public class KeystoreFile {
             writer.write(account);
             writer.close();
         }catch (Exception e){
-            System.out.println(e);
+            throw e;
         }
     }
 
@@ -87,10 +66,10 @@ public class KeystoreFile {
 
     /**
      * 删除账户
-     * @param publicKey
+     * @param address
      * @return
      */
-    public static String deleteAccount(String publicKey){
+    public static String deleteAccount(String address){
         try {
             File file = getKeystorePath();
             String content = FileUtils.readFileToString(file,"UTF-8");
@@ -98,11 +77,10 @@ public class KeystoreFile {
 
             for (int i = 0 ; i < jsonArray.size() ; i++){
                 JSONObject jsonObject = (JSONObject)jsonArray.get(i);
-                if (jsonObject.getString("publicKey").equals(publicKey)){
+                if (jsonObject.getString("address").equals(address)){
                     jsonArray.remove(i);
                 }
             }
-
             createAccount(jsonArray.toString());
         }catch (Exception e){
             System.out.println(e);
@@ -127,17 +105,17 @@ public class KeystoreFile {
     }
     /**
      * 账户是否存在
-     * @param publicKey
+     * @param address
      * @return
      */
-    public static boolean isExistAccount(String publicKey){
+    public static boolean isExistAccount(String address){
         try {
             File file = getKeystorePath();
             String content = FileUtils.readFileToString(file,"UTF-8");
             JSONArray jsonArray = JSONArray.fromObject(content);
             for (int i = 0 ; i < jsonArray.size() ; i++){
                 JSONObject jsonObject = (JSONObject)jsonArray.get(i);
-                if (jsonObject.getString("publicKey").equals(publicKey)){
+                if (jsonObject.getString("address").equals(address)){
                     return true;
                 }
             }

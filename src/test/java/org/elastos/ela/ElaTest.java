@@ -44,12 +44,10 @@ public class ElaTest {
         if (jsonArray.size() != 0){
             JSONObject param = (JSONObject)jsonArray.get(0);
             if (method.equals("getPublicKey")){
-                String privateKey = param.getString("PrivateKey");
-                System.out.println(ElaController.genPublicKey(privateKey));
+                System.out.println(ElaController.genPublicKey(param));
             }
             if (method.equals("getAddress")){
-                String privateKey = param.getString("PrivateKey");
-                System.out.println(ElaController.genAddress(privateKey));
+                System.out.println(ElaController.genAddress(param));
             }
             if (method.equals("getRawTransaction")){
                 System.out.println(ElaController.genRawTransaction(param));
@@ -58,7 +56,6 @@ public class ElaTest {
         inputStream.close();
         bufferedReader.close();
     }
-
 
     /**
      * 签名

@@ -102,7 +102,7 @@ public class Base58 {
 
     /**
      * Decodes the given base58 string into the original data bytes, using the checksum in the
-     * last 4 bytes of the decoded data to verify that the rest are correct. The checksum is
+     * last 4 bytes of the decoded data to Verify that the rest are correct. The checksum is
      * removed from the returned data.
      *
      * @param input the base58-encoded string to decode (which should include the checksum)
