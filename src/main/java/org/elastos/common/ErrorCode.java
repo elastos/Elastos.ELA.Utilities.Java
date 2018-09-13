@@ -35,9 +35,9 @@ public class ErrorCode {
     public static String  InvalidAmount        = getError(51016, "invalid amount");
     public static String  AmountNotNull        = getError(51017, "amount can not be empty");
     public static String  KeystoreExist        = getError(51018, "keystore file exist");
-    public static String  KeystoreNotExist        = getError(51018, "keystore file not exist");
-    public static String  AccountExist         = getError(51018, "account exist");
-    public static String  AccountNotExist         = getError(51018, "account not exist");
+    public static String  KeystoreNotExist     = getError(51019, "keystore file not exist");
+    public static String  AccountExist         = getError(51020, "account exist");
+    public static String  AccountNotExist      = getError(51021, "account not exist");
 
     // java-config.json
     public static String  HostNotNull          = getError(52001, "host can not be empty");
