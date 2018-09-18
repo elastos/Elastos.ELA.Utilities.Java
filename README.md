@@ -661,12 +661,12 @@ Create account to generate keystore.dat file under Java program directory
 ```
 
 
- - #### getAllAccount
+ - #### getAccounts
 
 ##### Request
 ```
 {
-    "method":"getAllAccount",
+    "method":"getAccounts",
     "id":0,
     "params":[
     
@@ -677,7 +677,7 @@ Create account to generate keystore.dat file under Java program directory
 ##### Response
 ```
 {
-    "Action": "getAllAccount",
+    "Action": "getAccounts",
     "Desc": "SUCCESS",
     "Result": [
         {
@@ -708,12 +708,12 @@ Create account to generate keystore.dat file under Java program directory
 }
 ```
 
- - #### getAccountAllAddress
+ - #### getAccountAddresses
 
 ##### Request
 ```
 {
-    "method":"getAccountAllAddress",
+    "method":"getAccountAddresses",
     "id":0,
     "params":[
     ]
@@ -723,7 +723,7 @@ Create account to generate keystore.dat file under Java program directory
 ##### Response
 ```
 {
-    "Action": "getAccountAllAddress",
+    "Action": "getAccountAddresses",
     "Desc": "SUCCESS",
     "Result": "[EKNh1wS42ur6Pfai6DthfH61vDUmg8M93v, EQSpUzE4XYJhBSx5j7Tf2cteaKdFdixfVB]"
 }

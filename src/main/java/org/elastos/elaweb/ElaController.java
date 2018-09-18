@@ -47,11 +47,11 @@ public class ElaController {
             if (method.equals("gen_priv_pub_addr")) {
                 return gen_priv_pub_addr();
             }
-            if (method.equals("getAllAccount")) {
-                return getAllAccount();
+            if (method.equals("getAccounts")) {
+                return getAccounts();
             }
-            if (method.equals("getAccountAllAddress")) {
-                return getAccountAllAddress();
+            if (method.equals("getAccountAddresses")) {
+                return getAccountAddresses();
             }
         }
         if (jsonArray.size() != 0){
@@ -551,7 +551,7 @@ public class ElaController {
         return formatJson("removeAccount",account);
     }
 
-    public static String getAccountAllAddress(){
+    public static String getAccountAddresses(){
         String account = null;
         try {
             account = WalletMgr.getAccountAllAddress();
@@ -560,8 +560,8 @@ public class ElaController {
             return e.toString();
         }
 
-        LOGGER.info(formatJson("getAccountAllAddress" ,account));
-        return formatJson("getAccountAllAddress",account);
+        LOGGER.info(formatJson("getAccountAddresses" ,account));
+        return formatJson("getAccountAddresses",account);
     }
 
     public static String exportPrivateKey(JSONObject param){
@@ -589,10 +589,10 @@ public class ElaController {
         return formatJson("exportPrivateKey",privateKeyList);
     }
 
-    public static String getAllAccount(){
+    public static String getAccounts(){
         JSONArray account = KeystoreFile.readAccount();
 
-        LOGGER.info(formatJson("getAllAccount" ,account));
-        return formatJson("getAllAccount",account);
+        LOGGER.info(formatJson("getAccounts" ,account));
+        return formatJson("getAccounts",account);
     }
 }
