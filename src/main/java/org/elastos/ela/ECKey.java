@@ -144,19 +144,23 @@ public class ECKey {
         BigInteger y = point.getAffineYCoord().toBigInteger();
         return CURVE.getCurve().createPoint(x, y, compressed);
     }
-    public byte[] getProgram(){
-        return Util.CreateSingleSignatureRedeemScript(this.getPubBytes());
+    public byte[] getProgram(int singType){
+        return Util.CreateSingleSignatureRedeemScript(this.getPubBytes(),singType);
     }
-    public byte[] getSingleSignProgramHash(){
-        return Util.ToCodeHash(this.getProgram(),1);
+    public byte[] getSingleSignProgramHash(int signType){
+        return Util.ToCodeHash(this.getProgram(signType),signType);
     }
 
+    // 1 单签
     public String toAddress(){
-        return Util.ToAddress(this.getSingleSignProgramHash());
+        return Util.ToAddress(this.getSingleSignProgramHash(1));
 
     }
 
+    // 3 身份id
+    public String toIdentityID(){
+        return Util.ToAddress(this.getSingleSignProgramHash(3));
 
-
+    }
 
 }

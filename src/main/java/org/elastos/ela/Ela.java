@@ -31,7 +31,7 @@ public class Ela {
             String privateKey = tx.hashMapPriv.get(DatatypeConverter.printHexBinary(phashes[i]));
             ECKey ec = ECKey.fromPrivate(DatatypeConverter.parseHexBinary(privateKey));
 
-            byte[] code = Util.CreateSingleSignatureRedeemScript(ec.getPubBytes());
+            byte[] code = Util.CreateSingleSignatureRedeemScript(ec.getPubBytes(),1);
             tx.sign(i,privateKey,code);
         }
 
@@ -75,5 +75,15 @@ public class Ela {
     public static String getAddressFromPrivate(String privateKey){
         ECKey ec = ECKey.fromPrivate(DatatypeConverter.parseHexBinary(privateKey));
         return ec.toAddress();
+    }
+
+    /**
+     * 根据私钥获得身份id
+     * @param privateKey
+     * @return
+     */
+    public static String getIdentityIDFromPrivate(String privateKey){
+        ECKey ec = ECKey.fromPrivate(DatatypeConverter.parseHexBinary(privateKey));
+        return ec.toIdentityID();
     }
 }

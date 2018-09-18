@@ -118,7 +118,7 @@ public class ElaTest {
 
     @Test
     public void revers(){
-        byte[] hex = DatatypeConverter.parseHexBinary("23830ee492956816e4fcaf2bfb726fa7b2fe1e644861bca9b9c66e632d5b237e");
+        byte[] hex = DatatypeConverter.parseHexBinary("575d139ffcaa304b8fc50f673bc0adb96770a2a76497b7ef226dd2a61220720f");
         System.out.println(DatatypeConverter.printHexBinary(Utils.reverseBytes(hex)).toLowerCase());
     }
     /**

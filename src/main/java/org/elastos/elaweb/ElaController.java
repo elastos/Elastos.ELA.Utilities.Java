@@ -1,5 +1,6 @@
 package org.elastos.elaweb;
 
+import com.alibaba.fastjson.JSON;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.elastos.common.ErrorCode;
@@ -59,7 +60,6 @@ public class ElaController {
                 return genPublicKey(param);
             }
             if (method.equals("genAddress")){
-
                 return genAddress(param);
             }
             if (method.equals("genRawTransaction")){
@@ -89,6 +89,9 @@ public class ElaController {
             }
             if (method.equals("getAccountPrivateKey")) {
                 return getAccountPrivateKey(param);
+            }
+            if (method.equals("genIdentityID")){
+                return genIdentityID(param);
             }
         }
         return null;
@@ -177,16 +180,8 @@ public class ElaController {
         resultMap.put("rawTx",rawTx.getRawTxString());
         resultMap.put("txHash",rawTx.getTxHash());
 
-        LinkedHashMap<String, Object> map = new LinkedHashMap<String, Object>();
-        map.put("Action","genRawTransaction");
-        map.put("Desc","SUCCESS");
-        map.put("Result",resultMap);
-
-        JSONObject jsonParam = new JSONObject();
-        jsonParam.accumulateAll(map);
-
-        LOGGER.info(jsonParam.toString());
-        return jsonParam.toString();
+        LOGGER.info(formatJson("genRawTransaction",resultMap));
+        return formatJson("genRawTransaction",resultMap);
     }
 
     /**
@@ -195,15 +190,7 @@ public class ElaController {
      */
     public static String genPrivateKey(){
         String privateKey = Ela.getPrivateKey();
-        LinkedHashMap<String, Object> map = new LinkedHashMap<String, Object>();
-        map.put("Action","genPrivateKey");
-        map.put("Desc","SUCCESS");
-        map.put("Result",privateKey);
-
-        JSONObject jsonParam = new JSONObject();
-        jsonParam.accumulateAll(map);
-
-        return jsonParam.toString();
+        return formatJson("genPrivateKey",privateKey);
     }
 
     /**
@@ -220,15 +207,7 @@ public class ElaController {
 
         String privateKey = jsonObject.getString("PrivateKey");
         String publicKey = Ela.getPublicFromPrivate(privateKey);
-        LinkedHashMap<String, Object> map = new LinkedHashMap<String, Object>();
-        map.put("Action","genPublicKey");
-        map.put("Desc","SUCCESS");
-        map.put("Result",publicKey);
-
-        JSONObject jsonParam = new JSONObject();
-        jsonParam.accumulateAll(map);
-
-        return jsonParam.toString();
+        return formatJson("genPublicKey",publicKey);
     }
 
     /**
@@ -245,15 +224,24 @@ public class ElaController {
         }
         String privateKey = jsonObject.getString("PrivateKey");
         String address    = Ela.getAddressFromPrivate(privateKey);
-        LinkedHashMap<String, Object> map = new LinkedHashMap<String, Object>();
-        map.put("Action","genAddress");
-        map.put("Desc","SUCCESS");
-        map.put("Result",address);
+        return formatJson("genAddress",address);
+    }
 
-        JSONObject jsonParam = new JSONObject();
-        jsonParam.accumulateAll(map);
+    /**
+     * 生成身份id
+     * @param jsonObject  私钥
+     * @return  返回Json字符串
+     */
+    public static String genIdentityID(JSONObject jsonObject){
 
-        return jsonParam.toString();
+        try {
+            Verify.verifyParameter(Verify.Type.PrivateKeyUpper,jsonObject);
+        }catch (Exception e){
+            return e.toString();
+        }
+        String privateKey = jsonObject.getString("PrivateKey");
+        String address    = Ela.getIdentityIDFromPrivate(privateKey);
+        return formatJson("genIdentityID",address);
     }
 
     /**
@@ -268,18 +256,7 @@ public class ElaController {
         resultMap.put("PrivateKey",privateKey);
         resultMap.put("PublicKey",publicKey);
         resultMap.put("Address",address);
-
-        LinkedHashMap<String, Object> map = new LinkedHashMap<String, Object>();
-        map.put("Action","genAddress");
-        map.put("Desc","SUCCESS");
-        map.put("Result",resultMap);
-
-
-
-        JSONObject jsonParam = new JSONObject();
-        jsonParam.accumulateAll(map);
-
-        return jsonParam.toString();
+        return formatJson("gen_priv_pub_addr",resultMap);
     }
 
     /**
@@ -317,15 +294,7 @@ public class ElaController {
         DataInputStream dos = new DataInputStream(byteArrayInputStream);
         Map resultMap = Tx.DeSerialize(dos);
 
-        LinkedHashMap<String, Object> map = new LinkedHashMap<String, Object>();
-        map.put("Action","decodeRawTransaction");
-        map.put("Desc","SUCCESS");
-        map.put("Result",resultMap);
-
-        JSONObject jsonParam = new JSONObject();
-        jsonParam.accumulateAll(map);
-
-        return jsonParam.toString();
+        return formatJson("decodeRawTransaction",resultMap);
     }
 
     /**
@@ -472,38 +441,18 @@ public class ElaController {
             String rawTx = FinishUtxo.finishUtxo(privateList, outputList, changeAddress);
             resultMap.put("rawTx", rawTx);
             resultMap.put("txHash", FinishUtxo.txHash);
-            return formatJson("genRawTransactionByPrivateKey" ,resultMap);
+            return formatJson("genRawTransactionByAccount" ,resultMap);
         }catch (Exception e){
             return e.toString();
         }
     }
 
-
-
-    public static String  formatJson(String action , Object resultMap) {
-        LinkedHashMap<String, Object> map = new LinkedHashMap<String, Object>();
-        map.put("Action", action);
-        map.put("Desc", "SUCCESS");
-        map.put("Result", resultMap);
-
-        JSONObject jsonParam = new JSONObject();
-        jsonParam.accumulateAll(map);
-
-        LOGGER.info(jsonParam.toString());
-        return jsonParam.toString();
-    }
-
-    public static String  error(String action , String result) {
-        LinkedHashMap<String, Object> map = new LinkedHashMap<String, Object>();
-        map.put("Action", action);
-        map.put("Desc", "ERROR");
-        map.put("Result", result);
-
-        JSONObject jsonParam = new JSONObject();
-        jsonParam.accumulateAll(map);
-
-        LOGGER.error(jsonParam.toString());
-        return jsonParam.toString();
+    public static String formatJson(String action, Object resultMap){
+        HashMap map = new HashMap();
+        map.put("Action",action);
+        map.put("Desc","SUCCESS");
+        map.put("Result",resultMap);
+        return JSON.toJSONString(map);
     }
 
     // =================================== Account ===========================================

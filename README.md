@@ -268,6 +268,32 @@ Index is the 'n' of the block information Vout.
 
 ```
 
+ - #### genIdentityID
+
+##### Request
+```
+{
+    "method":"genIdentityID",
+    "id":0,
+    "params":[
+        {
+            "PrivateKey":"4EA80EDBFC783A19FAC1072D15893AC7A20B4EDE1402FD57DE76D02EA61E28E4"
+        }
+    ]
+}
+
+```
+
+##### Response
+```
+{
+    "Desc": "SUCCESS",
+    "Action": "genIdentityID",
+    "Result": "iUEuVMUGV89NEcZtC2UVu2grUaMaEb2jcT"
+}
+
+```
+
 
  - #### gen_priv_pub_addr
 

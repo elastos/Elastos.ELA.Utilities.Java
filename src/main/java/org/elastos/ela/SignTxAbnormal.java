@@ -23,7 +23,7 @@ public class SignTxAbnormal {
 
         for(int i = 0 ; i < privateKeySign.size() ; i ++){
             ECKey ec = ECKey.fromPrivate(DatatypeConverter.parseHexBinary(privateKeySign.get(i)));
-            byte[] code = Util.CreateSingleSignatureRedeemScript(ec.getPubBytes());
+            byte[] code = Util.CreateSingleSignatureRedeemScript(ec.getPubBytes(),1);
             tx.sign(0, privateKeySign.get(i), code);
         }
 

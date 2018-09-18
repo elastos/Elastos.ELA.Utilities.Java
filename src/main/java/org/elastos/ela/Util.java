@@ -138,15 +138,17 @@ public class Util {
 
         byte[] f = Utils.sha256hash160(code);
         byte[] g = new byte[f.length+1];
-
+        // 1 是单签
         if (signType == 1) {
             g[0] = 33;
             System.arraycopy(f,0,g,1,f.length);
+        // 2 是多签
         } else if (signType == 2) {
             g[0] = 18;
-        } else{
-            return null;
-        }
+        // 3 身份id
+        } else if (signType == 3){
+            g[0] = 103;
+        }else return null;
         System.arraycopy(f,0,g,1,f.length);
         return g;
 
@@ -168,12 +170,17 @@ public class Util {
         return Base58.encode(g);
     }
 
-    public static byte[] CreateSingleSignatureRedeemScript(byte[] pubkey) {
+    public static byte[] CreateSingleSignatureRedeemScript(byte[] pubkey, int signType) {
         byte[] script = new byte[35];
         script[0] = 33;
         System.arraycopy(pubkey,0,script,1,33);
-        script[34] = (byte)0xAC;
-
+        // 1 单签
+        if (signType == 1){
+            script[34] = (byte)0xAC;
+        // 3 身份id
+        }else if (signType == 3){
+            script[34] = (byte)0xAD;
+        }
         return script;
     }
     public static void sortByteArrayArrayUseRevertBytesSequence(byte[][] hashes) {
