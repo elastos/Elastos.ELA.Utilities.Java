@@ -528,12 +528,12 @@ Create account to generate keystore.dat file under Java program directory
 }
 ```
 
- - #### addAccount
+ - #### importAccount
 
 ##### Request
 ```
 {
-    "method":"addAccount",
+    "method":"importAccount",
     "id":0,
     "params":[
     	{
@@ -551,7 +551,7 @@ Create account to generate keystore.dat file under Java program directory
 ##### Response
 ```
 {
-    "Action": "addAccount",
+    "Action": "importAccount",
     "Desc": "SUCCESS",
     "Result": [
         {
@@ -624,12 +624,12 @@ Create account to generate keystore.dat file under Java program directory
 }
 ```
 
- - #### getAccountPrivateKey
+ - #### exportPrivateKey
 
 ##### Request
 ```
 {
-    "method":"getAccountPrivateKey",
+    "method":"exportPrivateKey",
     "id":0,
     "params":[
     	{
@@ -651,7 +651,7 @@ Create account to generate keystore.dat file under Java program directory
 ##### Response
 ```
 {
-    "Action": "getAccountPrivateKey",
+    "Action": "exportPrivateKey",
     "Desc": "SUCCESS",
     "Result": [
         "5fa927e5664e563f019f50dcd4d7e2d9404f2d5d49e31f9482912e23d6d7b9eb",
@@ -666,7 +666,7 @@ Create account to generate keystore.dat file under Java program directory
 ##### Request
 ```
 {
-    "method":"getAccountPrivateKey",
+    "method":"getAllAccount",
     "id":0,
     "params":[
     

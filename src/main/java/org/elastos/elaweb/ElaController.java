@@ -78,8 +78,8 @@ public class ElaController {
             if (method.equals("genRawTransactionByAccount")) {
                 return genRawTransactionByAccount(param);
             }
-            if (method.equals("addAccount")) {
-                return addAccount(param);
+            if (method.equals("importAccount")) {
+                return importAccount(param);
             }
             if (method.equals("removeAccount")) {
                 return removeAccount(param);
@@ -87,8 +87,8 @@ public class ElaController {
             if (method.equals("createAccount")) {
                 return createAccount(param);
             }
-            if (method.equals("getAccountPrivateKey")) {
-                return getAccountPrivateKey(param);
+            if (method.equals("exportPrivateKey")) {
+                return exportPrivateKey(param);
             }
             if (method.equals("genIdentityID")){
                 return genIdentityID(param);
@@ -510,7 +510,7 @@ public class ElaController {
         return formatJson("createAccount",account);
     }
 
-    public static String addAccount(JSONObject param){
+    public static String importAccount(JSONObject param){
 
         final JSONArray accountArray = param.getJSONArray("Account");
         JSONArray account = new JSONArray();
@@ -528,8 +528,8 @@ public class ElaController {
             }
         }
 
-        LOGGER.info(formatJson("addAccount" ,account));
-        return formatJson("addAccount",account);
+        LOGGER.info(formatJson("importAccount" ,account));
+        return formatJson("importAccount",account);
     }
 
     public static String removeAccount(JSONObject param){
@@ -564,7 +564,7 @@ public class ElaController {
         return formatJson("getAccountAllAddress",account);
     }
 
-    public static String getAccountPrivateKey(JSONObject param){
+    public static String exportPrivateKey(JSONObject param){
 
         final JSONArray accountArray = param.getJSONArray("Account");
 
@@ -585,8 +585,8 @@ public class ElaController {
             privateKeyList.add(privateKey);
         }
 
-        LOGGER.info(formatJson("getAccountPrivateKey" ,privateKeyList));
-        return formatJson("getAccountPrivateKey",privateKeyList);
+        LOGGER.info(formatJson("exportPrivateKey" ,privateKeyList));
+        return formatJson("exportPrivateKey",privateKeyList);
     }
 
     public static String getAllAccount(){
