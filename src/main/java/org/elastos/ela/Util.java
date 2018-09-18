@@ -95,39 +95,6 @@ public class Util {
         return true;
     }
 
-    public static void checkChangeAddress(String address) throws SDKException {
-        try {
-            byte[] sh = ToScriptHash(address);
-            if(sh[0]!=33&&sh[0]!=18){
-                throw new SDKException(ErrorCode.InvalidChangeAddress);
-            }
-        }catch (Exception e) {
-            throw new SDKException(ErrorCode.InvalidChangeAddress);
-        }
-    }
-
-    /**
-     * 检查金额是否为int或者long
-     * @param amount
-     */
-    public static void checkAmount(Object amount) throws SDKException {
-        if (amount instanceof Long || amount instanceof Integer){
-            throw new SDKException(ErrorCode.InvalidAmount);
-        }
-    }
-
-    public static void checkFee(Object amount) throws SDKException {
-        if (amount instanceof Long || amount instanceof Integer){
-            throw new SDKException(ErrorCode.InvalFee);
-        }
-    }
-
-    public static void checkPrivateKey(String prvateKey)throws Exception{
-        if (prvateKey.length() != 64){
-            throw new SDKException(ErrorCode.InvalidPrpvateKey);
-        }
-    }
-
     /**
      * 公钥/脚本合约 到 公钥/脚本合约 哈希 转换 单向
      * @param code
@@ -222,15 +189,5 @@ public class Util {
         }
     }
 
-    /**
-     * 取出两个集合相同元素
-     * @return
-     */
-    public static List<String> existList(List<String> firstList,List<String> secondList){
-        Collection first=new ArrayList(firstList);
-        Collection second=new ArrayList(secondList);
-        first.retainAll(second);
-        return new ArrayList<String>(first);
-    }
 }
 

@@ -120,6 +120,7 @@ public class ElaController {
             }
         }
 
+        LOGGER.info(formatJson("checkAddress",resultMap));
         return formatJson("checkAddress",resultMap) ;
     }
 
@@ -145,6 +146,7 @@ public class ElaController {
                 Verify.verifyParameter(Verify.Type.IndexLower,utxoInput);
                 Verify.verifyParameter(Verify.Type.PrivateKeyLower,utxoInput);
             }catch (Exception e){
+                LOGGER.error(e.toString());
                 return e.toString();
             }
 
@@ -166,6 +168,7 @@ public class ElaController {
                 Verify.verifyParameter(Verify.Type.AddressLower,output);
                 Verify.verifyParameter(Verify.Type.AmountLower,output);
             }catch (Exception e){
+                LOGGER.error(e.toString());
                 return e.toString();
             }
 
@@ -190,6 +193,8 @@ public class ElaController {
      */
     public static String genPrivateKey(){
         String privateKey = Ela.getPrivateKey();
+
+        LOGGER.info(formatJson("genPrivateKey",privateKey));
         return formatJson("genPrivateKey",privateKey);
     }
 
@@ -202,11 +207,14 @@ public class ElaController {
         try {
             Verify.verifyParameter(Verify.Type.PrivateKeyUpper,jsonObject);
         }catch (Exception e){
+            LOGGER.error(e.toString());
             return e.toString();
         }
 
         String privateKey = jsonObject.getString("PrivateKey");
         String publicKey = Ela.getPublicFromPrivate(privateKey);
+
+        LOGGER.info(formatJson("genPublicKey",publicKey));
         return formatJson("genPublicKey",publicKey);
     }
 
@@ -220,10 +228,13 @@ public class ElaController {
         try {
             Verify.verifyParameter(Verify.Type.PrivateKeyUpper,jsonObject);
         }catch (Exception e){
+            LOGGER.error(e.toString());
             return e.toString();
         }
         String privateKey = jsonObject.getString("PrivateKey");
         String address    = Ela.getAddressFromPrivate(privateKey);
+
+        LOGGER.info(formatJson("genAddress",address));
         return formatJson("genAddress",address);
     }
 
@@ -237,10 +248,13 @@ public class ElaController {
         try {
             Verify.verifyParameter(Verify.Type.PrivateKeyUpper,jsonObject);
         }catch (Exception e){
+            LOGGER.error(e.toString());
             return e.toString();
         }
         String privateKey = jsonObject.getString("PrivateKey");
         String address    = Ela.getIdentityIDFromPrivate(privateKey);
+
+        LOGGER.info(formatJson("genIdentityID",address));
         return formatJson("genIdentityID",address);
     }
 
@@ -256,6 +270,8 @@ public class ElaController {
         resultMap.put("PrivateKey",privateKey);
         resultMap.put("PublicKey",publicKey);
         resultMap.put("Address",address);
+
+        LOGGER.info(formatJson("gen_priv_pub_addr",resultMap));
         return formatJson("gen_priv_pub_addr",resultMap);
     }
 
@@ -278,6 +294,8 @@ public class ElaController {
         System.out.println("url = " + txUrl);
         System.out.println("json = " + jsonParam);
         JSONObject responseJSONObject = HttpRequestUtil.httpPost(txUrl, jsonParam);
+
+        LOGGER.info(responseJSONObject.toString());
         return responseJSONObject.toString();
     }
 
@@ -294,6 +312,7 @@ public class ElaController {
         DataInputStream dos = new DataInputStream(byteArrayInputStream);
         Map resultMap = Tx.DeSerialize(dos);
 
+        LOGGER.info(formatJson("decodeRawTransaction",resultMap));
         return formatJson("decodeRawTransaction",resultMap);
     }
 
@@ -317,6 +336,7 @@ public class ElaController {
             try {
                 Verify.verifyParameter(Verify.Type.PrivateKeyLower,utxoInput);
             }catch (Exception e){
+                LOGGER.error(e.toString());
                 return e.toString();
             }
 
@@ -332,6 +352,7 @@ public class ElaController {
                 Verify.verifyParameter(Verify.Type.AddressLower,output);
                 Verify.verifyParameter(Verify.Type.AmountLower,output);
             }catch (Exception e){
+                LOGGER.error(e.toString());
                 return e.toString();
             }
 
@@ -343,6 +364,7 @@ public class ElaController {
         try {
             Verify.verifyParameter(Verify.Type.ChangeAddress,json_transaction);
         }catch (Exception e){
+            LOGGER.error(e.toString());
             return e.toString();
         }
 
@@ -354,8 +376,11 @@ public class ElaController {
             String rawTx = FinishUtxo.finishUtxo(privateList, outputList, changeAddress);
             resultMap.put("rawTx", rawTx);
             resultMap.put("txHash", FinishUtxo.txHash);
+
+            LOGGER.info(formatJson("genRawTransactionByPrivateKey" ,resultMap));
             return formatJson("genRawTransactionByPrivateKey" ,resultMap);
         }catch (Exception e){
+            LOGGER.error(e.toString());
             return e.toString();
         }
     }
@@ -383,11 +408,13 @@ public class ElaController {
                     Verify.verifyParameter(Verify.Type.AddressLower,JsonAccount);
                     Verify.verifyParameter(Verify.Type.PasswordLower,JsonAccount);
                 }catch (Exception e){
+                    LOGGER.error(e.toString());
                     return e.toString();
                 }
 
                 String address = JsonAccount.getString("address");
                 if (!KeystoreFile.isExistAccount(address)){
+                    LOGGER.error((new SDKException(ErrorCode.ParamErr("[" + address + "] Account not exist"))).toString());
                     return (new SDKException(ErrorCode.ParamErr("[" + address + "] Account not exist"))).toString();
                 }
             }
@@ -401,6 +428,7 @@ public class ElaController {
                 try {
                     privateKey = WalletMgr.getAccountPrivateKey(password,address);
                 }catch (Exception e){
+                    LOGGER.error(e.toString());
                     return e.toString();
 
                 }
@@ -419,6 +447,7 @@ public class ElaController {
                 Verify.verifyParameter(Verify.Type.AddressLower,output);
                 Verify.verifyParameter(Verify.Type.AmountLower,output);
             }catch (Exception e){
+                LOGGER.error(e.toString());
                 return e.toString();
             }
 
@@ -430,6 +459,7 @@ public class ElaController {
         try {
             Verify.verifyParameter(Verify.Type.ChangeAddress,json_transaction);
         }catch (Exception e){
+            LOGGER.error(e.toString());
             return e.toString();
         }
 
@@ -441,8 +471,11 @@ public class ElaController {
             String rawTx = FinishUtxo.finishUtxo(privateList, outputList, changeAddress);
             resultMap.put("rawTx", rawTx);
             resultMap.put("txHash", FinishUtxo.txHash);
+
+            LOGGER.info(formatJson("genRawTransactionByAccount" ,resultMap));
             return formatJson("genRawTransactionByAccount" ,resultMap);
         }catch (Exception e){
+            LOGGER.error(e.toString());
             return e.toString();
         }
     }
@@ -452,6 +485,7 @@ public class ElaController {
         map.put("Action",action);
         map.put("Desc","SUCCESS");
         map.put("Result",resultMap);
+
         return JSON.toJSONString(map);
     }
 
@@ -459,74 +493,61 @@ public class ElaController {
 
     public static String createAccount(JSONObject param){
         final JSONArray accountArray = param.getJSONArray("Account");
-
-        String account = "";
+        JSONArray account = new JSONArray();
         for (int i = 0; i < accountArray.size(); i++) {
             JSONObject JsonAccount = (JSONObject) accountArray.get(i);
             try {
                 Verify.verifyParameter(Verify.Type.PasswordLower,JsonAccount);
-            }catch (Exception e){
-                return e.toString();
-            }
-            String password = JsonAccount.getString("password");
-            try {
+                String password = JsonAccount.getString("password");
                 account = WalletMgr.createAccount(password);
             } catch (Exception e) {
+                LOGGER.error(e.toString());
                 return e.toString();
             }
         }
 
+        LOGGER.info(formatJson("createAccount" ,account));
         return formatJson("createAccount",account);
     }
 
     public static String addAccount(JSONObject param){
 
         final JSONArray accountArray = param.getJSONArray("Account");
-
-        String account = "";
+        JSONArray account = new JSONArray();
         for (int i = 0; i < accountArray.size(); i++) {
             JSONObject JsonAccount = (JSONObject) accountArray.get(i);
             try {
                 Verify.verifyParameter(Verify.Type.PasswordLower,JsonAccount);
                 Verify.verifyParameter(Verify.Type.PrivateKeyLower,JsonAccount);
-            }catch (Exception e){
-                return e.toString();
-            }
-
-            String privateKey = JsonAccount.getString("privateKey");
-            String password = JsonAccount.getString("password");
-
-            try {
+                String privateKey = JsonAccount.getString("privateKey");
+                String password = JsonAccount.getString("password");
                 account = WalletMgr.addAccount(password,privateKey);
             } catch (Exception e) {
+                LOGGER.error(e.toString());
                 return e.toString();
             }
         }
 
+        LOGGER.info(formatJson("addAccount" ,account));
         return formatJson("addAccount",account);
     }
 
     public static String removeAccount(JSONObject param){
         final JSONArray accountArray = param.getJSONArray("Account");
         JSONObject JsonAccount = (JSONObject) accountArray.get(0);
-
+        JSONArray account;
         try {
             Verify.verifyParameter(Verify.Type.PasswordLower,JsonAccount);
             Verify.verifyParameter(Verify.Type.AddressLower,JsonAccount);
-        }catch (Exception e){
-            return e.toString();
-        }
-
-        String address = JsonAccount.getString("address");
-        String password = JsonAccount.getString("password");
-
-        String account = null;
-        try {
+            String address = JsonAccount.getString("address");
+            String password = JsonAccount.getString("password");
             account = WalletMgr.removeAccount(password,address);
         } catch (Exception e) {
+            LOGGER.error(e.toString());
             return e.toString();
         }
 
+        LOGGER.info(formatJson("removeAccount" ,account));
         return formatJson("removeAccount",account);
     }
 
@@ -535,8 +556,11 @@ public class ElaController {
         try {
             account = WalletMgr.getAccountAllAddress();
         } catch (SDKException e) {
+            LOGGER.error(e.toString());
             return e.toString();
         }
+
+        LOGGER.info(formatJson("getAccountAllAddress" ,account));
         return formatJson("getAccountAllAddress",account);
     }
 
@@ -545,31 +569,30 @@ public class ElaController {
         final JSONArray accountArray = param.getJSONArray("Account");
 
         LinkedList<String> privateKeyList = new LinkedList<String>();
-        String account = "";
         for (int i = 0; i < accountArray.size(); i++) {
             JSONObject JsonAccount = (JSONObject) accountArray.get(i);
+            String privateKey = "";
             try {
                 Verify.verifyParameter(Verify.Type.PasswordLower,JsonAccount);
                 Verify.verifyParameter(Verify.Type.AddressLower,JsonAccount);
-            }catch (Exception e){
-                return e.toString();
-            }
-
-            String address = JsonAccount.getString("address");
-            String password = JsonAccount.getString("password");
-            String privateKey = "";
-            try {
+                String address = JsonAccount.getString("address");
+                String password = JsonAccount.getString("password");
                 privateKey = WalletMgr.getAccountPrivateKey(password,address);
             }catch (Exception e){
+                LOGGER.error(e.toString());
                 return e.toString();
             }
             privateKeyList.add(privateKey);
         }
+
+        LOGGER.info(formatJson("getAccountPrivateKey" ,privateKeyList));
         return formatJson("getAccountPrivateKey",privateKeyList);
     }
 
     public static String getAllAccount(){
         JSONArray account = KeystoreFile.readAccount();
+
+        LOGGER.info(formatJson("getAllAccount" ,account));
         return formatJson("getAllAccount",account);
     }
 }

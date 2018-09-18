@@ -13,19 +13,8 @@ import java.util.Base64;
 import java.util.List;
 
 public class WalletMgr {
-//    public static void createAccount(String password) throws Exception{
-//        byte[] salt = ECKey.generateKey(16);
-//        System.out.println("salt : " + DatatypeConverter.printHexBinary(salt));
-//
-//        byte[] prikey = ECKey.generateKey();
-//        Scrypt scrypt = new Scrypt();
-//
-//        Account account_ = new Account();
-//        String encryptedPrikey = account_.exportGcmEncryptedPrivateKey(password, salt, scrypt.getN());
-//        System.out.println("encryptedPrikey ：" + encryptedPrikey);
-//    }
 
-    public static String createAccount(String password)throws Exception{
+    public static JSONArray createAccount(String password)throws Exception{
 
         if (!KeystoreFile.isExistKeystoreFile()){
             // keystore 文件不存在，创建账户
@@ -33,10 +22,10 @@ public class WalletMgr {
             KeystoreFile.createAccount(account.toString());
         }else throw new SDKException(ErrorCode.KeystoreExist);
 
-        return KeystoreFile.readAccount().toString();
+        return KeystoreFile.readAccount();
     }
 
-    public static String addAccount(String password, String privateKey) throws Exception {
+    public static JSONArray addAccount(String password, String privateKey) throws Exception {
 
         String address = Ela.getAddressFromPrivate(privateKey);
 
@@ -50,9 +39,9 @@ public class WalletMgr {
         }else {
             //keystore 文件不存在，创建账户
             List account = createAccount(password, privateKey);
-            KeystoreFile.createAccount((String) account.get(0));
+            KeystoreFile.createAccount(account.toString());
         }
-        return KeystoreFile.readAccount().toString();
+        return KeystoreFile.readAccount();
     }
 
     public static String getAccountPrivateKey(String password,String address) throws Exception {
@@ -104,7 +93,7 @@ public class WalletMgr {
         return null;
     }
 
-    public static String removeAccount(String password , String address) throws Exception {
+    public static JSONArray removeAccount(String password , String address) throws Exception {
         if (KeystoreFile.isExistKeystoreFile()){
             if (KeystoreFile.isExistAccount(address)){
                 try {
@@ -132,7 +121,7 @@ public class WalletMgr {
                 }
             }else throw new SDKException(ErrorCode.AccountNotExist);
         }else throw new SDKException(ErrorCode.KeystoreNotExist);
-        return KeystoreFile.readAccount().toString();
+        return KeystoreFile.readAccount();
     }
 
     public static List createAccount(String password ,String privateKey) throws Exception {

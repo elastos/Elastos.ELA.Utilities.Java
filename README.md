@@ -499,7 +499,9 @@ Create account to generate keystore.dat file under Java program directory
     "method":"createAccount",
     "id":0,
     "params":[
-
+        {
+            "password":"12345"
+        }
     ]
 }
 ```
@@ -575,37 +577,6 @@ Create account to generate keystore.dat file under Java program directory
                 "r": 8
             },
             "version": "1.0"
-        }
-    ]
-}
-```
-
- - #### addAccount
-
-##### Request
-```
-{
-    "method":"getAccount",
-    "id":0,
-    "params":[
-
-    ]
-}
-```
-
-##### Response
-```
-{
-    "Action": "getAccount",
-    "Desc": "SUCCESS",
-    "Result": [
-        {
-            "privateKey": "BDDFC38703AD6C1649A1A3F73A75C905982DF816E23F81A209EA85E90308F575",
-            "publicKey": "02B3DC7EC3B9709A2BCA97A965EBE2245315357B5BEDC7F9863224F1325E560A10"
-        },
-        {
-            "privateKey": "4EA80EDBFC783A19FAC1072D15893AC7A20B4EDE1402FD57DE76D02EA61E28E4",
-            "publicKey": "03B462F4DB3F67A6A71E51BF3034A183022F092E8E6ED0C91F139E4871F5BA0B57"
         }
     ]
 }
@@ -698,18 +669,7 @@ Create account to generate keystore.dat file under Java program directory
     "method":"getAccountPrivateKey",
     "id":0,
     "params":[
-    	{
-	       "Account":[
-	            {
-	                "password":"12345",
-	                "address":"EQSpUzE4XYJhBSx5j7Tf2cteaKdFdixfVB"
-	            },
-	            {
-	                "password":"12345",
-	                "address":"EKNh1wS42ur6Pfai6DthfH61vDUmg8M93v"
-	            }
-	        ]
-    	}
+    
     ]
 }
 ```
