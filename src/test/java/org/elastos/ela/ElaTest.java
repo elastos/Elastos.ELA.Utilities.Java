@@ -2,6 +2,8 @@ package org.elastos.ela;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
+import org.elastos.api.Basic;
+import org.elastos.api.SignTransaction;
 import org.elastos.ela.bitcoinj.Utils;
 import org.elastos.elaweb.ElaController;
 import org.junit.Test;
@@ -36,22 +38,22 @@ public class ElaTest {
         System.out.println("method :" + method);
         if (jsonArray.size() == 0) {
             if (method.equals("getPrivateKey") ) {
-                System.out.println(ElaController.genPrivateKey());
+                System.out.println(Basic.genPrivateKey());
             }
             if (method.equals("get_priv_put_addr")) {
-                System.out.println(ElaController.gen_priv_pub_addr());
+                System.out.println((Basic.gen_priv_pub_addr()));
             }
         }
         if (jsonArray.size() != 0){
             JSONObject param = (JSONObject)jsonArray.get(0);
             if (method.equals("getPublicKey")){
-                System.out.println(ElaController.genPublicKey(param));
+                System.out.println((Basic.genPublicKey(param)));
             }
             if (method.equals("getAddress")){
-                System.out.println(ElaController.genAddress(param));
+                System.out.println((Basic.genAddress(param)));
             }
             if (method.equals("getRawTransaction")){
-                System.out.println(ElaController.genRawTransaction(param));
+                System.out.println(SignTransaction.genRawTransaction(param));
             }
         }
         inputStream.close();

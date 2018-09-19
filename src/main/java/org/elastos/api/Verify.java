@@ -1,4 +1,4 @@
-package org.elastos.ela.api;
+package org.elastos.api;
 
 import net.sf.json.JSONObject;
 import org.elastos.common.ErrorCode;

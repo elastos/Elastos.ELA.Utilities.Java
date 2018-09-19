@@ -1,6 +1,7 @@
 package org.elastos.framework.testCase;
 
 import net.sf.json.JSONObject;
+import org.elastos.api.SignTransaction;
 import org.elastos.ela.*;
 import org.elastos.elaweb.ElaController;
 import org.elastos.framework.node.Runner;
@@ -72,7 +73,7 @@ public class Transaction_multi_address {
             RawTx rawTx = Ela.makeAndSignTx(inputList_miner.toArray(new UTXOTxInput[inputList_miner.size()]),outputList_target.toArray(new TxOutput[outputList_target.size()]));
 
             //发送RawTransaction
-            String TxHash = ElaController.sendRawTransaction(rawTx.getRawTxString(),rpcUrl);
+            String TxHash = SignTransaction.sendRawTransaction(rawTx.getRawTxString(),rpcUrl);
             JSONObject jsonTxHash = JSONObject.fromObject(TxHash);
             String txhash = (String)jsonTxHash.get("result");
             System.out.println("txhash = " + txhash);
@@ -107,7 +108,7 @@ public class Transaction_multi_address {
         RawTx rawTx = Ela.makeAndSignTx(inputList.toArray(new UTXOTxInput[inputList.size()]),outputList.toArray(new TxOutput[outputList.size()]));
 
         //发送RawTransaction
-        String TxHash = ElaController.sendRawTransaction(rawTx.getRawTxString(),rpcUrl);
+        String TxHash = SignTransaction.sendRawTransaction(rawTx.getRawTxString(),rpcUrl);
         LOGGER.info("SendRawTx_newrpc 2 : {} " , TxHash);
 
         Rpc.generateBlock(1, rpcUrl);

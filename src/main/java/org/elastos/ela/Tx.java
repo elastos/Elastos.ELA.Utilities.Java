@@ -16,7 +16,7 @@ import java.util.*;
 public class Tx {
     byte TxType;
     byte PayloadVersion;
-    //Payload        Payload
+    Payload[]   Payload;
     TxAttribute[] Attributes;
     UTXOTxInput[] UTXOInputs;
     //BalanceInputs  []*BalanceTxInput
@@ -63,12 +63,33 @@ public class Tx {
         return tx;
     }
 
+    public static Tx  NewTransferAssetTransaction(UTXOTxInput[] inputs, TxOutput[] outputs,Payload[] payload) {
 
-    //Serialize the Transaction
+        Tx tx = new Tx();
+        tx.UTXOInputs = inputs;
+        tx.Outputs = outputs;
+        tx.TxType = 0x03;
+        tx.Attributes = new TxAttribute[1];
+        tx.Payload = payload;
+        tx.Programs = new ArrayList<Program>();
+
+        TxAttribute ta = TxAttribute.NewTxNonceAttribute();
+        tx.Attributes[0] = ta;
+
+        for(UTXOTxInput txin : tx.UTXOInputs){
+
+            tx.hashMapPriv.put(txin.getProgramHash(),txin.getPrivateKey());
+        }
+        //使用私钥构造出公钥,通过公钥构造出contract,通过contract构造出programhash,写入到 UTXOInputs
+
+        return tx;
+    }
+
+    //Serialize the SignTransaction
     public void Serialize(DataOutputStream o) throws IOException {
         SerializeUnsigned(o);
 
-        //Serialize  Transaction's programs
+        //Serialize  SignTransaction's programs
         Util.WriteVarUint(o,Programs.size());
 
 
@@ -111,7 +132,7 @@ public class Tx {
         return this.Programs;
     }
 
-    //Serialize the Transaction data without contracts
+    //Serialize the SignTransaction data without contracts
     public void SerializeUnsigned(DataOutputStream o) throws IOException {
         //txType
         //w.Write([]byte{byte(tx.TxType)})

@@ -5,8 +5,7 @@ import net.sf.json.JSONObject;
 import org.apache.commons.io.FileUtils;
 import org.elastos.common.ErrorCode;
 import org.elastos.common.SDKException;
-import org.elastos.ela.api.Verify;
-import org.elastos.elaweb.ElaController;
+import org.elastos.api.Verify;
 import org.elastos.framework.rpc.Rpc;
 
 import java.io.File;
