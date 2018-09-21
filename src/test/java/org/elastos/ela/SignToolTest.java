@@ -10,6 +10,7 @@ import java.io.DataInputStream;
 import java.util.LinkedList;
 import java.util.List;
 import java.io.File;
+import java.util.regex.Pattern;
 
 /**
  * Created by nan on 18/1/15.
@@ -37,11 +38,5 @@ public class SignToolTest {
     public void printhex(){
         String s = "测试";
         System.out.println(DatatypeConverter.printHexBinary(s.getBytes()));
-    }
-
-    @Test
-    public  void t(){
-        String privateKey = "5AABB11492D59E4B3CB52A2589A325406DCEBBCC74B4B9F75DDCB3A26EB09C1a";
-        System.out.println(privateKey.length());
     }
 }

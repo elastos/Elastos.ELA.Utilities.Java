@@ -9,6 +9,7 @@ import org.elastos.ela.bitcoinj.Utils;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.*;
 
@@ -189,5 +190,53 @@ public class Util {
         }
     }
 
+    public static BigDecimal multiplyAmountELA(BigDecimal price, Integer decimal) {
+        BigDecimal coefficient = new BigDecimal(Math.pow(10, decimal));
+        return price.multiply(coefficient).setScale(8, BigDecimal.ROUND_DOWN);
+    }
+
+    public static BigDecimal divideAmountELA(BigDecimal price,Integer decimal) {
+        BigDecimal coefficient = new BigDecimal(Math.pow(10, decimal));
+        return price.divide(coefficient).setScale(8, BigDecimal.ROUND_DOWN);
+    }
+
+    public static BigDecimal multiplyAmountETH(BigDecimal price, Integer decimal) {
+        BigDecimal coefficient = new BigDecimal(Math.pow(10, decimal));
+        return price.multiply(coefficient).setScale(18, BigDecimal.ROUND_DOWN);
+    }
+
+    public static BigDecimal divideAmountETH(BigDecimal price,Integer decimal) {
+        BigDecimal coefficient = new BigDecimal(Math.pow(10, decimal));
+        return price.divide(coefficient).setScale(18, BigDecimal.ROUND_DOWN);
+    }
+
+
+    // 完整的判断中文汉字和符号
+    public static boolean isChinese(String strName) {
+        char[] ch = strName.toCharArray();
+        for (int i = 0; i < ch.length; i++) {
+            char c = ch[i];
+            if (isChinese(c)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+
+    // 根据Unicode编码完美的判断中文汉字和符号
+    private static boolean isChinese(char c) {
+        Character.UnicodeBlock ub = Character.UnicodeBlock.of(c);
+        if (ub == Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS
+                || ub == Character.UnicodeBlock.CJK_COMPATIBILITY_IDEOGRAPHS
+                || ub == Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS_EXTENSION_A
+                || ub == Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS_EXTENSION_B
+                || ub == Character.UnicodeBlock.CJK_SYMBOLS_AND_PUNCTUATION
+                || ub == Character.UnicodeBlock.HALFWIDTH_AND_FULLWIDTH_FORMS
+                || ub == Character.UnicodeBlock.GENERAL_PUNCTUATION) {
+            return true;
+        }
+        return false;
+    }
 }
 

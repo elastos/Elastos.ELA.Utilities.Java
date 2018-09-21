@@ -1,7 +1,6 @@
 package org.elastos.ela;
 
 import org.elastos.ela.bitcoinj.Sha256Hash;
-import org.elastos.ela.bitcoinj.Utils;
 
 import javax.xml.bind.DatatypeConverter;
 import java.io.ByteArrayOutputStream;
@@ -16,7 +15,7 @@ import java.util.*;
 public class Tx {
     byte TxType;
     byte PayloadVersion;
-    Payload[]   Payload;
+    PayloadRecord parloadRecord;
     TxAttribute[] Attributes;
     UTXOTxInput[] UTXOInputs;
     //BalanceInputs  []*BalanceTxInput
@@ -29,7 +28,7 @@ public class Tx {
     byte[] hash;    //256byte
     Map<String,String> hashMapPriv = new HashMap<String,String>();
 
-    public void sign(int index,String privateKey,byte[] code) throws IOException {
+    public void sign(String privateKey,byte[] code) throws IOException {
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         DataOutputStream dos = new DataOutputStream(baos);
@@ -63,14 +62,14 @@ public class Tx {
         return tx;
     }
 
-    public static Tx  NewTransferAssetTransaction(UTXOTxInput[] inputs, TxOutput[] outputs,Payload[] payload) {
+    public static Tx  NewTransferAssetTransaction(UTXOTxInput[] inputs, TxOutput[] outputs,PayloadRecord parloadRecord) {
 
         Tx tx = new Tx();
         tx.UTXOInputs = inputs;
         tx.Outputs = outputs;
         tx.TxType = 0x03;
         tx.Attributes = new TxAttribute[1];
-        tx.Payload = payload;
+        tx.parloadRecord = parloadRecord;
         tx.Programs = new ArrayList<Program>();
 
         TxAttribute ta = TxAttribute.NewTxNonceAttribute();
@@ -142,8 +141,10 @@ public class Tx {
         //w.Write([]byte{tx.PayloadVersion})
         o.writeByte(this.PayloadVersion);
 
-        //Payload
-
+        //PayloadRecord
+        if (this.parloadRecord != null){
+            this.parloadRecord.Serialize(o);
+        }
         //[]*txAttribute
         Util.WriteVarUint(o, this.Attributes.length);
 

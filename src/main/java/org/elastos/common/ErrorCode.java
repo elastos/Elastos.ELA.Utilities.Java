@@ -38,6 +38,10 @@ public class ErrorCode {
     public static String  KeystoreNotExist     = getError(51019, "keystore file not exist");
     public static String  AccountExist         = getError(51020, "account exist");
     public static String  AccountNotExist      = getError(51021, "account not exist");
+    public static String  InvalidRecordType    = getError(51022, "recordType cannot be Chinese");
+    public static String  RecordTypeNotNull    = getError(51023, "recordType can not be empty");
+    public static String  InvalidRecordData    = getError(51024, "recordData cannot be Chinese");
+    public static String  RecordDataNotNull    = getError(51025, "recordData can not be empty");
 
     // java-config.json
     public static String  HostNotNull          = getError(52001, "host can not be empty");

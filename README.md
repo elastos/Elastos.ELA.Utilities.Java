@@ -141,6 +141,47 @@ Index is the 'n' of the block information Vout.
     ]
 }
 
+or
+Transaction type is 3,use the payload.
+
+{
+    "method":"genRawTransaction",recordType cannot be Chinese
+    "id":0,
+    "params":[
+        {
+            "Transactions":[
+                {
+                    "UTXOInputs":[
+                        {
+                            "txid":"61c22a83bb96d958f473148fa64f3b2be02653c66ede506e83b82e522200d446",
+                            "index":0,  
+                            "privateKey":"5FA927E5664E563F019F50DCD4D7E2D9404F2D5D49E31F9482912E23D6D7B9EB"
+                        },
+                        {
+                            "txid":"a91b63ba6ffdb13379451895c51abd25c54678bc89268db6e6c3dcbb7bb07062",
+                            "index":0,
+                            "privateKey":"A65E9FB6735C5FD33F839036B15D2DA373E15AED38054B69386E322C6BE52994"
+                        }
+                    ],
+                    "Outputs":[
+                        {
+                            "address":"ERz34iKa4nGaGYVtVpRWQZnbavJEe6PRDt",
+                            "amount":200
+                        },
+                        {
+                            "address":"EKjeZEmLSXyyJ42xxjJP4QsKJYWwEXabuC",
+                            "amount":240
+                        }
+                    ],
+                    "PayloadRecord":{
+                            "recordType":"en",
+                            "recordData":"enen"
+                    },
+                }
+            ]
+        }
+    ]
+}
 ```
 
 ##### Response
@@ -371,6 +412,44 @@ java-config.json configuration to the Elastos.ELA.AutoTest.Java.jar same level d
     ]
 }
 
+or
+Transaction type is 3,use the payload.recordType cannot be Chinese
+{
+    "method":"genRawTransactionByPrivateKey",
+    "id":0,
+    "params":[
+        {
+            "Transactions":[
+                {
+                    "PrivateKeys":[
+                        {
+                            "privateKey":"5FA927E5664E563F019F50DCD4D7E2D9404F2D5D49E31F9482912E23D6D7B9EB"
+                        },
+                        {
+                            "privateKey":"4C573939323F11BCDB57B61CCE095D4B1E55E986F9944F88072141F3DFA883A3"
+                        }
+                    ],
+                    "Outputs":[
+                        {
+                            "address":"Eazj14ifau5eH1SP5F8MJRuiSsPMiGbJV1",
+                            "amount":28900000
+                        },
+                        {
+                            "address":"EQSpUzE4XYJhBSx5j7Tf2cteaKdFdixfVB",
+                            "amount":60000000
+                        }
+                    ],
+                    "PayloadRecord":{
+                            "recordType":"en",
+                            "recordData":"enen"
+                    },
+                    "ChangeAddress":"Edi5WWMFBsEL2qgggrFhnJe1HTjDnw447H"
+                }
+            ]
+        }
+    ]
+}
+
 ```
 
 ##### Response
@@ -470,12 +549,45 @@ Create account to generate keystore.dat file under Java program directory
                             "amount":3
                         }
                     ],
+                    "PayloadRecord":{
+                            "recordType":"en",
+                            "recordData":"enen"
+                    },
                     "ChangeAddress":"Edi5WWMFBsEL2qgggrFhnJe1HTjDnw447H"
                 }
             ]
         }
     ]
 }
+
+or
+Transaction type is 3,use the payload.recordType cannot be Chinese
+{
+    "method":"genRawTransactionByAccount",
+    "id":0,
+    "params":[
+        {
+            "Transactions":[
+                {
+                    "Account":[
+                        {
+                            "password":"12345",
+                            "address":"ENKj2J5dGjSRgHHxBZ3yLjB6RyXvHikW5K"
+                        }
+                    ],
+                    "Outputs":[
+                        {
+                            "address":"EQSpUzE4XYJhBSx5j7Tf2cteaKdFdixfVB",
+                            "amount":3
+                        }
+                    ],
+                    "ChangeAddress":"Edi5WWMFBsEL2qgggrFhnJe1HTjDnw447H"
+                }
+            ]
+        }
+    ]
+}
+
 ```
 
 ##### Response

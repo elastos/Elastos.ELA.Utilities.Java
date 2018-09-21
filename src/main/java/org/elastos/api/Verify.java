@@ -3,6 +3,8 @@ package org.elastos.api;
 import net.sf.json.JSONObject;
 import org.elastos.common.ErrorCode;
 import org.elastos.common.SDKException;
+import org.elastos.ela.Util;
+
 import static org.elastos.ela.Util.ToScriptHash;
 
 public class Verify {
@@ -17,8 +19,9 @@ public class Verify {
         Confirmation("Confirmation"),
         TxidLower("txid"),
         IndexLower("index"),
-        PasswordLower("password");
-
+        PasswordLower("password"),
+        RecordTypeLower("recordType"),
+        RecordDataLower("recordData");
         private String type;
         private Type(String t) {
             this.type = t;
@@ -116,6 +119,17 @@ public class Verify {
                 if (IndexLower != null) {
                     if (IndexLower instanceof Long || IndexLower instanceof Integer && (int)IndexLower  >= 0){}else throw new SDKException(ErrorCode.InvalidIndex);
                 }else throw new SDKException(ErrorCode.IndexNotNull);
+                break;
+            case RecordTypeLower:
+                Object RecordTypeLower = jsonObject.get(type.getValue());
+                if (RecordTypeLower != null) {
+                    if (Util.isChinese((String)RecordTypeLower))throw new SDKException(ErrorCode.InvalidRecordType);
+                }else throw new SDKException(ErrorCode.RecordTypeNotNull);
+                break;
+            case RecordDataLower:
+                Object RecordDataLower = jsonObject.get(type.getValue());
+                if (RecordDataLower != null) {
+                }else throw new SDKException(ErrorCode.RecordDataNotNull);
                 break;
         }
     }

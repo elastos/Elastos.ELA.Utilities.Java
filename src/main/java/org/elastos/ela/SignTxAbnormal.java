@@ -18,13 +18,23 @@ public class SignTxAbnormal {
      * @return  原始交易数据 可以使用rest接口api/v1/transaction发送给节点
      * @throws IOException
      */
-    public static RawTx singleSignTx(UTXOTxInput[] inputs, TxOutput[] outputs , List<String> privateKeySign) throws IOException {
+    public static RawTx makeSingleSignTx(UTXOTxInput[] inputs, TxOutput[] outputs , List<String> privateKeySign) throws IOException {
         Tx tx = Tx.NewTransferAssetTransaction(inputs, outputs);
+        return SingleSignTx(tx,privateKeySign);
 
+    }
+
+    public static RawTx makeSingleSignTx(UTXOTxInput[] inputs, TxOutput[] outputs , List<String> privateKeySign,PayloadRecord payloadRecord) throws IOException {
+        Tx tx = Tx.NewTransferAssetTransaction(inputs, outputs,payloadRecord);
+        return SingleSignTx(tx,privateKeySign);
+
+    }
+
+    public static RawTx SingleSignTx(Tx tx,List<String> privateKeySign) throws IOException {
         for(int i = 0 ; i < privateKeySign.size() ; i ++){
             ECKey ec = ECKey.fromPrivate(DatatypeConverter.parseHexBinary(privateKeySign.get(i)));
             byte[] code = Util.CreateSingleSignatureRedeemScript(ec.getPubBytes(),1);
-            tx.sign(0, privateKeySign.get(i), code);
+            tx.sign(privateKeySign.get(i), code);
         }
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();

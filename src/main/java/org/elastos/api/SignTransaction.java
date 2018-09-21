@@ -21,7 +21,7 @@ public class SignTransaction {
      * @return  返回RawTransaction的json字符串
      * @throws Exception
      */
-    public static String genRawTransaction(JSONObject inputsAddOutpus) throws Exception{
+    public static String genRawTransaction(JSONObject inputsAddOutpus) throws IOException {
 
         final JSONArray transaction = inputsAddOutpus.getJSONArray("Transactions");
         JSONObject json_transaction = (JSONObject) transaction.get(0);
@@ -68,9 +68,31 @@ public class SignTransaction {
             outputList.add(new TxOutput(address,amount));
         }
 
+        Object payload = json_transaction.get("PayloadRecord");
+        String recordType = "";
+        String recordData = "";
+        if (payload != null){
+            final JSONObject PayloadObject = json_transaction.getJSONObject("PayloadRecord");
+            try {
+                Verify.verifyParameter(Verify.Type.RecordTypeLower,PayloadObject);
+                Verify.verifyParameter(Verify.Type.RecordDataLower,PayloadObject);
+            }catch (Exception e){
+                LOGGER.error(e.toString());
+                return e.toString();
+            }
+            recordType = PayloadObject.getString("recordType");
+            recordData = PayloadObject.getString("recordData");
+        }
+
+
         //创建rawTransaction
         LinkedHashMap<String, Object> resultMap = new LinkedHashMap<String, Object>();
-        RawTx rawTx = Ela.makeAndSignTx(inputList.toArray(new UTXOTxInput[utxoInputs.size()]),outputList.toArray(new TxOutput[outputs.size()]));
+        RawTx rawTx = new RawTx("","");
+        if (payload == null){
+            rawTx = Ela.makeAndSignTx(inputList.toArray(new UTXOTxInput[utxoInputs.size()]),outputList.toArray(new TxOutput[outputs.size()]));
+        }else {
+            rawTx = Ela.makeAndSignTx(inputList.toArray(new UTXOTxInput[utxoInputs.size()]),outputList.toArray(new TxOutput[outputs.size()]),new PayloadRecord(recordType,recordData));
+        }
         resultMap.put("rawTx",rawTx.getRawTxString());
         resultMap.put("txHash",rawTx.getTxHash());
 
@@ -131,12 +153,34 @@ public class SignTransaction {
             return e.toString();
         }
 
+        //解析payload,tx=2 没有，tx=3 有payload
+        Object payload = json_transaction.get("PayloadRecord");
+        String recordType = "";
+        String recordData = "";
+        if (payload != null){
+            final JSONObject PayloadObject = json_transaction.getJSONObject("PayloadRecord");
+            try {
+                Verify.verifyParameter(Verify.Type.RecordTypeLower,PayloadObject);
+                Verify.verifyParameter(Verify.Type.RecordDataLower,PayloadObject);
+            }catch (Exception e){
+                LOGGER.error(e.toString());
+                return e.toString();
+            }
+            recordType = PayloadObject.getString("recordType");
+            recordData = PayloadObject.getString("recordData");
+        }
+
         String changeAddress = json_transaction.getString("ChangeAddress");
 
         //创建rawTransaction
         LinkedHashMap<String, Object> resultMap = new LinkedHashMap<String, Object>();
         try {
-            String rawTx = FinishUtxo.finishUtxo(privateList, outputList, changeAddress);
+            String rawTx = "";
+            if (payload == null){
+                rawTx = FinishUtxo.makeAndSignTx(privateList, outputList, changeAddress);
+            }else {
+                rawTx = FinishUtxo.makeAndSignTx(privateList, outputList, changeAddress,new PayloadRecord(recordType,recordData));
+            }
             resultMap.put("rawTx", rawTx);
             resultMap.put("txHash", FinishUtxo.txHash);
 

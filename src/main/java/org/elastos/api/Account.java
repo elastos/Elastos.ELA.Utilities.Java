@@ -5,6 +5,7 @@ import net.sf.json.JSONObject;
 import org.elastos.common.ErrorCode;
 import org.elastos.common.SDKException;
 import org.elastos.ela.FinishUtxo;
+import org.elastos.ela.PayloadRecord;
 import org.elastos.ela.TxOutput;
 import org.elastos.wallet.KeystoreFile;
 import org.elastos.wallet.WalletMgr;
@@ -89,6 +90,24 @@ public class Account {
             outputList.add(new TxOutput(address, amount));
         }
 
+        //解析payload,tx=2 没有，tx=3 有payload
+        Object payload = json_transaction.get("PayloadRecord");
+        String recordType = "";
+        String recordData = "";
+        if (payload != null){
+            final JSONObject PayloadObject = json_transaction.getJSONObject("PayloadRecord");
+            try {
+                Verify.verifyParameter(Verify.Type.RecordTypeLower,PayloadObject);
+                Verify.verifyParameter(Verify.Type.RecordDataLower,PayloadObject);
+            }catch (Exception e){
+                LOGGER.error(e.toString());
+                return e.toString();
+            }
+            recordType = PayloadObject.getString("recordType");
+            recordData = PayloadObject.getString("recordData");
+        }
+
+
         try {
             Verify.verifyParameter(Verify.Type.ChangeAddress,json_transaction);
         }catch (Exception e){
@@ -101,7 +120,12 @@ public class Account {
         //创建rawTransaction
         LinkedHashMap<String, Object> resultMap = new LinkedHashMap<String, Object>();
         try {
-            String rawTx = FinishUtxo.finishUtxo(privateList, outputList, changeAddress);
+            String rawTx = "";
+            if (payload == null){
+                rawTx = FinishUtxo.makeAndSignTx(privateList, outputList, changeAddress);
+            }else {
+                rawTx = FinishUtxo.makeAndSignTx(privateList, outputList, changeAddress,new PayloadRecord(recordType,recordData));
+            }
             resultMap.put("rawTx", rawTx);
             resultMap.put("txHash", FinishUtxo.txHash);
 

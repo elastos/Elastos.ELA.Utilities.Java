@@ -26,13 +26,23 @@ public class Ela {
      */
     public static RawTx makeAndSignTx(UTXOTxInput[] inputs, TxOutput[] outputs) throws IOException {
         Tx tx = Tx.NewTransferAssetTransaction( inputs, outputs);
+        return SingleSignTx(tx);
+    }
+
+
+    public static RawTx makeAndSignTx(UTXOTxInput[] inputs, TxOutput[] outputs,PayloadRecord payloadRecord) throws IOException {
+        Tx tx = Tx.NewTransferAssetTransaction( inputs, outputs, payloadRecord);
+        return SingleSignTx(tx);
+    }
+
+    public static RawTx SingleSignTx (Tx tx) throws  IOException{
         byte[][] phashes = tx.getUniqAndOrdedProgramHashes();
         for(int i=0;i<phashes.length;i++){
             String privateKey = tx.hashMapPriv.get(DatatypeConverter.printHexBinary(phashes[i]));
             ECKey ec = ECKey.fromPrivate(DatatypeConverter.parseHexBinary(privateKey));
 
             byte[] code = Util.CreateSingleSignatureRedeemScript(ec.getPubBytes(),1);
-            tx.sign(i,privateKey,code);
+            tx.sign(privateKey,code);
         }
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -44,7 +54,6 @@ public class Ela {
         String txHash = DatatypeConverter.printHexBinary(tx.getHash());
 
         return new RawTx(txHash,rawTxString);
-
     }
 
 

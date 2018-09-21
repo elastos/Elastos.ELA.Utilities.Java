@@ -32,6 +32,23 @@ public class FinishUtxo {
 
     public static List<String> addrList;
 
+
+
+    public static String makeAndSignTx(List<String> privates , LinkedList<TxOutput> outputs , String ChangeAddress) throws Exception {
+        List<String> availablePrivates = finishUtxo(privates, outputs, ChangeAddress);
+        RawTx rawTx = SignTxAbnormal.makeSingleSignTx(inputList.toArray(new UTXOTxInput[inputList.size()]), outputs.toArray(new TxOutput[outputs.size()]), availablePrivates);
+        txHash = rawTx.getTxHash();
+        return rawTx.getRawTxString();
+    }
+
+    public static String makeAndSignTx(List<String> privates , LinkedList<TxOutput> outputs , String ChangeAddress,PayloadRecord payloadRecord) throws Exception {
+        List<String> availablePrivates = finishUtxo(privates,outputs,ChangeAddress);
+        RawTx rawTx = SignTxAbnormal.makeSingleSignTx(inputList.toArray(new UTXOTxInput[inputList.size()]), outputs.toArray(new TxOutput[outputs.size()]), availablePrivates,payloadRecord);
+        txHash = rawTx.getTxHash();
+        return rawTx.getRawTxString();
+    }
+
+
     /**
      * 整合utxo
      * @param privates
@@ -39,7 +56,7 @@ public class FinishUtxo {
      * @param ChangeAddress
      * @return
      */
-    public static String finishUtxo(List<String> privates , LinkedList<TxOutput> outputs , String ChangeAddress) throws Exception {
+    public static List<String> finishUtxo(List<String> privates , LinkedList<TxOutput> outputs , String ChangeAddress) throws Exception {
 
         //去重
         ArrayList<String> privateList = new ArrayList<String>(new HashSet<String>(privates));
@@ -56,19 +73,12 @@ public class FinishUtxo {
 
 //        System.out.println("==================== 通过地址查询uxto  ====================");
         String utxo = Rpc.call_("listunspent",params,RPCURL);
-//        String flag = getUtxo(utxo , outputs , ChangeAddress);
         getUtxo(utxo , outputs , ChangeAddress);
-//        if (flag.equals("ok")){
-            //地址去重，地址对应私钥进行签名
-            ArrayList<String> addrArray = new ArrayList<String>(new HashSet<String>(addrList));
-            privates = FinishUtxo.availablePrivate(privates,addrArray);
-            RawTx rawTx = SignTxAbnormal.singleSignTx(inputList.toArray(new UTXOTxInput[inputList.size()]), outputs.toArray(new TxOutput[outputs.size()]), privates);
-            txHash = rawTx.getTxHash();
-            return rawTx.getRawTxString();
-//        }else {
-//            return flag;
-//        }
+        //地址去重，地址对应私钥进行签名
+        ArrayList<String> addrArray = new ArrayList<String>(new HashSet<String>(addrList));
+        return availablePrivate(privates, addrArray);
     }
+
 
     /**
      * 获取可用utxo
@@ -150,13 +160,9 @@ public class FinishUtxo {
             //计算找零金额
             long ChangeValue = inputValue - outputValue - FEE;
             outputs.add(new TxOutput(ChangeAddress, ChangeValue));
-//            return "ok";
         }else {
             throw new SDKException(ErrorCode.ParamErr("Utxo deficiency , inputValue : " + inputValue + " , outputValue :" + outputValue));
-//            System.out.println("utxo不足，value = " +inputValue);
-//            flag = "Utxo deficiency , inputValue : " + inputValue + " , outputValue :" + outputValue;
         }
-//        return flag;
     }
 
     /**
