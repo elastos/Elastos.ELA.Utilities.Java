@@ -42,6 +42,8 @@ public class ErrorCode {
     public static String  RecordTypeNotNull    = getError(51023, "recordType can not be empty");
     public static String  InvalidRecordData    = getError(51024, "recordData cannot be Chinese");
     public static String  RecordDataNotNull    = getError(51025, "recordData can not be empty");
+    public static String  InvalidBlockHash     = getError(51026, "invalid blockHash");
+    public static String  BlockHashNotNull     = getError(51027, "blockHash key can not be empty.");
 
     // java-config.json
     public static String  HostNotNull          = getError(52001, "host can not be empty");

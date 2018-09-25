@@ -3,11 +3,15 @@ package org.elastos.api;
 import com.alibaba.fastjson.JSON;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
+import org.elastos.common.SDKException;
+import org.elastos.ela.ECKey;
 import org.elastos.ela.Ela;
 import org.elastos.ela.Util;
+import org.elastos.ela.bitcoinj.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.xml.bind.DatatypeConverter;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 
@@ -136,5 +140,26 @@ public class Basic {
         map.put("Result",resultMap);
 
         return JSON.toJSONString(map);
+    }
+
+    /**
+     * 根据blockHash 生成地址
+     *
+     * @param jsonObject
+     * @return 返回Json字符串
+     */
+    public static String genGenesisAddress(JSONObject jsonObject) {
+
+        String address = null;
+        try {
+            Verify.verifyParameter(Verify.Type.BlockHashUpper,jsonObject);
+            String blockHash = jsonObject.getString("BlockHash");
+            address = ECKey.toGenesisSignAddress(blockHash);
+        } catch (SDKException e) {
+            LOGGER.error(e.toString());
+            return e.toString();
+        }
+        LOGGER.info(getSuccess("genGenesisAddress",address));
+        return getSuccess("genGenesisAddress",address);
     }
 }

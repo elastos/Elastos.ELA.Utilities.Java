@@ -16,7 +16,7 @@ import java.io.PrintWriter;
 
 /**
  * @author: DongLei.Tan
- * @contact: tandonglei@elastos.org
+ * @contact: tandonglei28@gmail.com
  * @time: 2018/5/20
  */
 public class ElaHandle extends AbstractHandler {

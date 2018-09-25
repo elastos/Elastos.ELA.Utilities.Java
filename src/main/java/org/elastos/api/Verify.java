@@ -5,6 +5,8 @@ import org.elastos.common.ErrorCode;
 import org.elastos.common.SDKException;
 import org.elastos.ela.Util;
 
+import javax.xml.bind.DatatypeConverter;
+
 import static org.elastos.ela.Util.ToScriptHash;
 
 public class Verify {
@@ -21,7 +23,8 @@ public class Verify {
         IndexLower("index"),
         PasswordLower("password"),
         RecordTypeLower("recordType"),
-        RecordDataLower("recordData");
+        RecordDataLower("recordData"),
+        BlockHashUpper("BlockHash");
         private String type;
         private Type(String t) {
             this.type = t;
@@ -32,7 +35,7 @@ public class Verify {
     }
 
 
-    public static void verifyParameter(Type type , JSONObject jsonObject) throws Exception {
+    public static void verifyParameter(Type type , JSONObject jsonObject) throws SDKException {
         switch (type){
             case PrivateKeyUpper:
                 Object PrivateKeyUpper = jsonObject.get(type.getValue());
@@ -40,7 +43,25 @@ public class Verify {
                     if (((String)PrivateKeyUpper).length() != 64){
                         throw new SDKException(ErrorCode.InvalidPrpvateKey);
                     }
-                }else throw new Exception(ErrorCode.PrivateKeyNotNull);
+                    try {
+                        DatatypeConverter.parseHexBinary((String)PrivateKeyUpper);
+                    }catch (Exception e){
+                        throw new SDKException(ErrorCode.InvalidPrpvateKey);
+                    }
+                }else throw new SDKException(ErrorCode.PrivateKeyNotNull);
+                break;
+            case BlockHashUpper:
+                Object BlockHashUpper = jsonObject.get(type.getValue());
+                if (BlockHashUpper != null) {
+                    if (((String)BlockHashUpper).length() != 64){
+                        throw new SDKException(ErrorCode.InvalidBlockHash);
+                    }
+                    try {
+                        DatatypeConverter.parseHexBinary((String)BlockHashUpper);
+                    }catch (Exception e){
+                        throw new SDKException(ErrorCode.InvalidBlockHash);
+                    }
+                }else throw new SDKException(ErrorCode.BlockHashNotNull);
                 break;
             case PrivateKeyLower:
                 Object PrivateKeyLower = jsonObject.get(type.getValue());
@@ -48,7 +69,7 @@ public class Verify {
                     if (((String)PrivateKeyLower).length() != 64){
                         throw new SDKException(ErrorCode.InvalidPrpvateKey);
                     }
-                }else throw new Exception(ErrorCode.PrivateKeyNotNull);
+                }else throw new SDKException(ErrorCode.PrivateKeyNotNull);
                 break;
             case TxidLower:
                 Object TxidLower = jsonObject.get(type.getValue());
@@ -56,7 +77,7 @@ public class Verify {
                     if (((String)TxidLower).length() != 64){
                         throw new SDKException(ErrorCode.InvalidTxid);
                     }
-                }else throw new Exception(ErrorCode.TxidnotNull);
+                }else throw new SDKException(ErrorCode.TxidnotNull);
                 break;
             case PasswordLower:
                 Object PasswordLower = jsonObject.get(type.getValue());
@@ -64,7 +85,7 @@ public class Verify {
                     if (!(PasswordLower instanceof String)){
                         throw new SDKException(ErrorCode.InvalidPassword);
                     }
-                }else throw new Exception(ErrorCode.PasswordNotNull);
+                }else throw new SDKException(ErrorCode.PasswordNotNull);
                 break;
             case AddressLower:
                 Object AddressLower = jsonObject.get(type.getValue());

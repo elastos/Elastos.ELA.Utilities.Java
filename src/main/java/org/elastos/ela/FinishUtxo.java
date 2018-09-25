@@ -15,7 +15,7 @@ import java.util.*;
 
 /**
  * @author: DongLei.Tan
- * @contact: tandonglei@elastos.org
+ * @contact: tandonglei28@gmail.com
  * @time: 2018/6/20
  */
 public class FinishUtxo {

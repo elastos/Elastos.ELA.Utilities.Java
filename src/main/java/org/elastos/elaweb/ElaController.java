@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * @author: DongLei.Tan
- * @contact: tandonglei@elastos.org
+ * @contact: tandonglei28@gmail.com
  * @time: 2018/5/20
  */
 public class ElaController {
@@ -82,6 +82,9 @@ public class ElaController {
             }
             if (method.equals("genIdentityID")){
                 return Basic.genIdentityID(param);
+            }
+            if (method.equals("genGenesisAddress")) {
+                return Basic.genGenesisAddress(param);
             }
         }
         return null;

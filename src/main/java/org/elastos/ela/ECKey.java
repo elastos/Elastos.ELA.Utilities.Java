@@ -1,5 +1,6 @@
 package org.elastos.ela;
 
+import org.elastos.common.SDKException;
 import org.elastos.ela.bitcoinj.LazyECPoint;
 import org.elastos.ela.bitcoinj.Utils;
 import org.spongycastle.asn1.x9.X9ECParameters;
@@ -15,6 +16,7 @@ import org.spongycastle.math.ec.FixedPointCombMultiplier;
 import org.spongycastle.math.ec.FixedPointUtil;
 
 import javax.annotation.Nullable;
+import javax.xml.bind.DatatypeConverter;
 import java.math.BigInteger;
 import java.security.SecureRandom;
 import java.util.Arrays;
@@ -154,13 +156,22 @@ public class ECKey {
     // 1 单签
     public String toAddress(){
         return Util.ToAddress(this.getSingleSignProgramHash(1));
-
     }
 
     // 3 身份id
     public String toIdentityID(){
         return Util.ToAddress(this.getSingleSignProgramHash(3));
+    }
 
+    //生成X地址
+    public static byte[] getGenesisSignatureProgram(String GenesisBlockHash) throws SDKException {
+        return Util.GenGenesisAddressRedeemScript(GenesisBlockHash);
+    }
+    public static byte[] getGenesisSignProgramHash(String GenesisBlockHash) throws SDKException {
+        return Util.ToCodeHash(getGenesisSignatureProgram(GenesisBlockHash),4);
+    }
+    public static String toGenesisSignAddress(String GenesisBlockHash) throws SDKException {
+        return Util.ToAddress(getGenesisSignProgramHash(GenesisBlockHash));
     }
 
 }

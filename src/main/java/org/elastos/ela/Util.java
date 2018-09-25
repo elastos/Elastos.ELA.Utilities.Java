@@ -6,6 +6,8 @@ import org.elastos.ela.bitcoinj.Base58;
 import org.elastos.ela.bitcoinj.Sha256Hash;
 import org.elastos.ela.bitcoinj.Utils;
 
+import javax.xml.bind.DatatypeConverter;
+import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -116,6 +118,9 @@ public class Util {
         // 3 身份id
         } else if (signType == 3){
             g[0] = 103;
+        // 4 是生成X开头
+        }else if (signType == 4){
+            g[0] = (byte)0x4B;
         }else return null;
         System.arraycopy(f,0,g,1,f.length);
         return g;
@@ -237,6 +242,27 @@ public class Util {
             return true;
         }
         return false;
+    }
+
+
+    /**
+     * 生成x地址
+     * @param genesisBlockHash
+     * @return
+     */
+    public static byte[] GenGenesisAddressRedeemScript(String genesisBlockHash) throws SDKException {
+        byte[] reversedGenesisBlockBytes = Utils.reverseBytes(DatatypeConverter.parseHexBinary(genesisBlockHash));
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        DataOutputStream dos = new DataOutputStream(baos);
+        try {
+            dos.write((byte)reversedGenesisBlockBytes.length);
+            dos.write(reversedGenesisBlockBytes);
+            dos.write((byte)0xAF);
+            return baos.toByteArray();
+        }catch (Exception e){
+            throw new SDKException(ErrorCode.ParamErr("create GenGenesisAddress redeem Script failure" + e));
+        }
     }
 }
 
