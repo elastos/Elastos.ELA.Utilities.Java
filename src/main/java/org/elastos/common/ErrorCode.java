@@ -21,7 +21,7 @@ public class ErrorCode {
     public static String  PasswordNotNull      = getError(51004, "password can not be empty");
     public static String  InvalidPassword      = getError(51005, "invalid Password");
     public static String  InvalidPrpvateKey    = getError(51006, "invalid privateKey");
-    public static String  PrivateKeyNotNull    = getError(51007, "private key can not be empty.");
+    public static String  PrivateKeyNotNull    = getError(51007, "private key can not be empty");
     public static String  InvalidAddress       = getError(51008, "invalid address");
     public static String  AddressNotNull       = getError(51009, "address can not be empty");
 
@@ -43,7 +43,9 @@ public class ErrorCode {
     public static String  InvalidRecordData    = getError(51024, "recordData cannot be Chinese");
     public static String  RecordDataNotNull    = getError(51025, "recordData can not be empty");
     public static String  InvalidBlockHash     = getError(51026, "invalid blockHash");
-    public static String  BlockHashNotNull     = getError(51027, "blockHash key can not be empty.");
+    public static String  BlockHashNotNull     = getError(51027, "blockHash key can not be empty");
+    public static String  InvalidM             = getError(51016, "invalid M");
+    public static String  MNotNull             = getError(51017, "M can not be empty");
 
     // java-config.json
     public static String  HostNotNull          = getError(52001, "host can not be empty");

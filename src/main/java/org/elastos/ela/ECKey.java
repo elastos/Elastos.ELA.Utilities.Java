@@ -11,6 +11,7 @@ import org.spongycastle.crypto.params.ECDomainParameters;
 import org.spongycastle.crypto.params.ECKeyGenerationParameters;
 import org.spongycastle.crypto.params.ECPrivateKeyParameters;
 import org.spongycastle.crypto.params.ECPublicKeyParameters;
+import org.spongycastle.math.ec.ECFieldElement;
 import org.spongycastle.math.ec.ECPoint;
 import org.spongycastle.math.ec.FixedPointCombMultiplier;
 import org.spongycastle.math.ec.FixedPointUtil;
@@ -20,6 +21,7 @@ import javax.xml.bind.DatatypeConverter;
 import java.math.BigInteger;
 import java.security.SecureRandom;
 import java.util.Arrays;
+import java.util.List;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -59,6 +61,9 @@ public class ECKey {
         return pub.getEncoded();
     }
 
+    public ECFieldElement getPublickeyX(){
+        return pub.getX();
+    }
 
     public static byte[] generateKey(int len){
         byte[] key = new byte[len];
@@ -172,6 +177,18 @@ public class ECKey {
     }
     public static String toGenesisSignAddress(String GenesisBlockHash) throws SDKException {
         return Util.ToAddress(getGenesisSignProgramHash(GenesisBlockHash));
+    }
+
+    //生成多签地址
+    public static byte[] getMultiSignatureProgram(List<PublicX> privateKeyList, int M) throws SDKException {
+        return Util.CreatemultiSignatureRedeemScript(privateKeyList,M);
+    }
+    public byte[] getMultiSignProgramHash(List<PublicX> privateKeyList , int M) throws SDKException {
+        return Util.ToCodeHash(getMultiSignatureProgram(privateKeyList , M),2);
+    }
+
+    public String toMultiSignAddress(List<PublicX> privateKeyList , int M) throws SDKException {
+        return Util.ToAddress(getMultiSignProgramHash(privateKeyList , M));
     }
 
 }

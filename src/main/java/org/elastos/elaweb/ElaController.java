@@ -4,7 +4,8 @@ import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.elastos.api.Account;
 import org.elastos.api.Basic;
-import org.elastos.api.SignTransaction;
+import org.elastos.api.MultSignitransaction;
+import org.elastos.api.SingleSignTransaction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,14 +54,14 @@ public class ElaController {
                 return Basic.genAddress(param);
             }
             if (method.equals("genRawTransaction")){
-                return SignTransaction.genRawTransaction(param);
+                return SingleSignTransaction.genRawTransaction(param);
             }
             if (method.equals("decodeRawTransaction")){
                 String rawTransaction = param.getString("RawTransaction");
-                return SignTransaction.decodeRawTransaction(rawTransaction);
+                return SingleSignTransaction.decodeRawTransaction(rawTransaction);
             }
             if (method.equals("genRawTransactionByPrivateKey")) {
-                return SignTransaction.genRawTransactionByPrivateKey(param);
+                return SingleSignTransaction.genRawTransactionByPrivateKey(param);
             }
             if (method.equals("checkAddress")) {
                 return Basic.checkAddress(param);
@@ -85,6 +86,21 @@ public class ElaController {
             }
             if (method.equals("genGenesisAddress")) {
                 return Basic.genGenesisAddress(param);
+            }
+            if (method.equals("genMultiSignAddress")) {
+                return Basic.genMultiSignAddress(param);
+            }
+            if (method.equals("genMultiSignRawTransaction")) {
+                return MultSignitransaction.genMultiSignRawTransaction(param);
+            }
+            if (method.equals("genGenesisAddress")) {
+                return Basic.genGenesisAddress(param);
+            }
+            if (method.equals("genCrossChainRawTransaction")) {
+                return SingleSignTransaction.genCrossChainRawTransaction(param);
+            }
+            if (method.equals("genCrossChainMultiSignRawTransaction")) {
+                return MultSignitransaction.genCrossChainMultiSignRawTransaction(param);
             }
         }
         return null;

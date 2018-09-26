@@ -1,5 +1,6 @@
 package org.elastos.ela;
 
+import javax.xml.bind.DatatypeConverter;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -39,6 +40,14 @@ public class TxAttribute {
         ta.Size = 0;
         return ta;
     }
-
+    public static TxAttribute NewTxNonceAttribute(String memo)
+    {
+        Random r = new Random();
+        TxAttribute ta = new TxAttribute();
+        ta.Usage = (byte) 0x81;
+        ta.Data = memo.getBytes();
+        ta.Size = 0;
+        return ta;
+    }
 
 }

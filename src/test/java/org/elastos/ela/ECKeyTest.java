@@ -38,10 +38,6 @@ public class ECKeyTest {
         System.out.println("publicKey:"+ DatatypeConverter.printHexBinary(
                 ECKey.publicBytesFromPrivate(ec2.getPrivateKeyBytes())));
         System.out.println("address:"+ ec2.toAddress());
-
-
-
-
     }
 
     @Test

@@ -15,7 +15,11 @@ import org.slf4j.LoggerFactory;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
-
+/**
+ * @author: DongLei.Tan
+ * @contact: tandonglei28@gmail.com
+ * @time: 2018/9/21
+ */
 public class Account {
     private static final Logger LOGGER = LoggerFactory.getLogger(Account.class);
 
@@ -26,112 +30,64 @@ public class Account {
      * @throws Exception
      */
     public static String genRawTransactionByAccount(JSONObject outpus){
-
-        final JSONArray transaction = outpus.getJSONArray("Transactions");
-        JSONObject json_transaction = (JSONObject) transaction.get(0);
-
-        List<String> privateList = new LinkedList<String>();
-
-        Object account = json_transaction.get("Account");
-        if (account != null){
-            JSONArray accountArray = (JSONArray)account;
-            for (int i = 0; i < accountArray.size(); i++) {
-                JSONObject JsonAccount = (JSONObject) accountArray.get(i);
-
-                try {
-                    Verify.verifyParameter(Verify.Type.AddressLower,JsonAccount);
-                    Verify.verifyParameter(Verify.Type.PasswordLower,JsonAccount);
-                }catch (Exception e){
-                    LOGGER.error(e.toString());
-                    return e.toString();
-                }
-
-                String address = JsonAccount.getString("address");
-                if (!KeystoreFile.isExistAccount(address)){
-                    LOGGER.error((new SDKException(ErrorCode.ParamErr("[" + address + "] Account not exist"))).toString());
-                    return (new SDKException(ErrorCode.ParamErr("[" + address + "] Account not exist"))).toString();
-                }
-            }
-
-            //解析inputs
-            for (int i = 0; i < accountArray.size(); i++) {
-                JSONObject JsonAccount = (JSONObject) accountArray.get(i);
-                String password = JsonAccount.getString("password");
-                String address = JsonAccount.getString("address");
-                String privateKey = "";
-                try {
-                    privateKey = WalletMgr.getAccountPrivateKey(password,address);
-                }catch (Exception e){
-                    LOGGER.error(e.toString());
-                    return e.toString();
-
-                }
-
-                System.out.println(privateKey);
-                privateList.add(privateKey);
-            }
-        }
-
-        //解析outputs
-        final JSONArray outputs = json_transaction.getJSONArray("Outputs");
-        LinkedList<TxOutput> outputList = new LinkedList<TxOutput>();
-        for (int t = 0; t < outputs.size(); t++) {
-            JSONObject output = (JSONObject) outputs.get(t);
-            try {
-                Verify.verifyParameter(Verify.Type.AddressLower,output);
-                Verify.verifyParameter(Verify.Type.AmountLower,output);
-            }catch (Exception e){
-                LOGGER.error(e.toString());
-                return e.toString();
-            }
-
-            long amount = output.getLong("amount");
-            String address = output.getString("address");
-            outputList.add(new TxOutput(address, amount));
-        }
-
-        //解析payload,tx=2 没有，tx=3 有payload
-        Object payload = json_transaction.get("PayloadRecord");
-        String recordType = "";
-        String recordData = "";
-        if (payload != null){
-            final JSONObject PayloadObject = json_transaction.getJSONObject("PayloadRecord");
-            try {
-                Verify.verifyParameter(Verify.Type.RecordTypeLower,PayloadObject);
-                Verify.verifyParameter(Verify.Type.RecordDataLower,PayloadObject);
-            }catch (Exception e){
-                LOGGER.error(e.toString());
-                return e.toString();
-            }
-            recordType = PayloadObject.getString("recordType");
-            recordData = PayloadObject.getString("recordData");
-        }
-
-
         try {
+            final JSONArray transaction = outpus.getJSONArray("Transactions");
+            JSONObject json_transaction = (JSONObject) transaction.get(0);
+
+            final JSONArray outputs = json_transaction.getJSONArray("Outputs");
+
+            List<String> privateList = new LinkedList<String>();
+
+            Object account = json_transaction.get("Account");
+            if (account != null) {
+                JSONArray accountArray = (JSONArray) account;
+                for (int i = 0; i < accountArray.size(); i++) {
+                    JSONObject JsonAccount = (JSONObject) accountArray.get(i);
+
+                    try {
+                        Verify.verifyParameter(Verify.Type.AddressLower, JsonAccount);
+                        Verify.verifyParameter(Verify.Type.PasswordLower, JsonAccount);
+                    } catch (Exception e) {
+                        LOGGER.error(e.toString());
+                        return e.toString();
+                    }
+
+                    String address = JsonAccount.getString("address");
+                    if (!KeystoreFile.isExistAccount(address)) {
+                        LOGGER.error((new SDKException(ErrorCode.ParamErr("[" + address + "] Account not exist"))).toString());
+                        return (new SDKException(ErrorCode.ParamErr("[" + address + "] Account not exist"))).toString();
+                    }
+                }
+                //解析inputs
+                for (int i = 0; i < accountArray.size(); i++) {
+                    JSONObject JsonAccount = (JSONObject) accountArray.get(i);
+                    String password = JsonAccount.getString("password");
+                    String address = JsonAccount.getString("address");
+                    privateList.add(WalletMgr.getAccountPrivateKey(password, address));
+                }
+            }
+            //解析outputs
+            LinkedList<TxOutput> txOutputs = Basic.parseOutputs(outputs);
+            //解析payloadRecord
+            PayloadRecord payload   = Basic.parsePayloadRecord(json_transaction);
+
             Verify.verifyParameter(Verify.Type.ChangeAddress,json_transaction);
-        }catch (Exception e){
-            LOGGER.error(e.toString());
-            return e.toString();
-        }
+            String changeAddress = json_transaction.getString("ChangeAddress");
 
-        String changeAddress = json_transaction.getString("ChangeAddress");
-
-        //创建rawTransaction
-        LinkedHashMap<String, Object> resultMap = new LinkedHashMap<String, Object>();
-        try {
+            //创建rawTransaction
+            LinkedHashMap<String, Object> resultMap = new LinkedHashMap<String, Object>();
             String rawTx = "";
             if (payload == null){
-                rawTx = FinishUtxo.makeAndSignTx(privateList, outputList, changeAddress);
+                rawTx = FinishUtxo.makeAndSignTx(privateList, txOutputs, changeAddress);
             }else {
-                rawTx = FinishUtxo.makeAndSignTx(privateList, outputList, changeAddress,new PayloadRecord(recordType,recordData));
+                rawTx = FinishUtxo.makeAndSignTx(privateList, txOutputs, changeAddress,payload);
             }
             resultMap.put("rawTx", rawTx);
             resultMap.put("txHash", FinishUtxo.txHash);
 
             LOGGER.info(Basic.getSuccess("genRawTransactionByAccount" ,resultMap));
             return Basic.getSuccess("genRawTransactionByAccount" ,resultMap);
-        }catch (Exception e){
+        } catch (Exception e) {
             LOGGER.error(e.toString());
             return e.toString();
         }
@@ -180,35 +136,34 @@ public class Account {
     }
 
     public static String removeAccount(JSONObject param){
-        final JSONArray accountArray = param.getJSONArray("Account");
-        JSONObject JsonAccount = (JSONObject) accountArray.get(0);
-        JSONArray account;
         try {
+            final JSONArray accountArray = param.getJSONArray("Account");
+            JSONObject JsonAccount = (JSONObject) accountArray.get(0);
+
             Verify.verifyParameter(Verify.Type.PasswordLower,JsonAccount);
             Verify.verifyParameter(Verify.Type.AddressLower,JsonAccount);
             String address = JsonAccount.getString("address");
             String password = JsonAccount.getString("password");
-            account = WalletMgr.removeAccount(password,address);
+            JSONArray account = WalletMgr.removeAccount(password,address);
+            LOGGER.info(Basic.getSuccess("removeAccount" ,account));
+            return Basic.getSuccess("removeAccount",account);
         } catch (Exception e) {
             LOGGER.error(e.toString());
             return e.toString();
         }
-
-        LOGGER.info(Basic.getSuccess("removeAccount" ,account));
-        return Basic.getSuccess("removeAccount",account);
     }
 
     public static String getAccountAddresses(){
-        String account = null;
         try {
-            account = WalletMgr.getAccountAllAddress();
+            String account = WalletMgr.getAccountAllAddress();
+            LOGGER.info(Basic.getSuccess("getAccountAddresses" ,account));
+            return Basic.getSuccess("getAccountAddresses",account);
         } catch (SDKException e) {
             LOGGER.error(e.toString());
             return e.toString();
         }
 
-        LOGGER.info(Basic.getSuccess("getAccountAddresses" ,account));
-        return Basic.getSuccess("getAccountAddresses",account);
+
     }
 
     public static String exportPrivateKey(JSONObject param){

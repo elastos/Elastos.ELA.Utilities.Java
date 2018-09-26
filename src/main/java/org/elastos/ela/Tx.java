@@ -16,6 +16,7 @@ public class Tx {
     byte TxType;
     byte PayloadVersion;
     PayloadRecord parloadRecord;
+    PayloadTransferCrossChainAsset[] CrossChainAsset;
     TxAttribute[] Attributes;
     UTXOTxInput[] UTXOInputs;
     //BalanceInputs  []*BalanceTxInput
@@ -40,6 +41,25 @@ public class Tx {
         return;
     }
 
+    public void multiSign(String privateKey,byte[] code) throws IOException {
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        DataOutputStream dos = new DataOutputStream(baos);
+        this.SerializeUnsigned(dos);
+
+        byte[] signature = SignTool.doSign(baos.toByteArray(), DatatypeConverter.parseHexBinary(privateKey));
+        Program  program =  new Program(code,signature);
+        if (this.Programs.size() == 0){
+            this.Programs.add(program);
+        }else {
+            //合并signature
+            byte[] byte_buf = new byte[this.Programs.get(0).Parameter.length + program.Parameter.length];
+            System.arraycopy(this.Programs.get(0).Parameter,0,byte_buf,0,this.Programs.get(0).Parameter.length);
+            System.arraycopy(program.Parameter,0,byte_buf,this.Programs.get(0).Parameter.length,program.Parameter.length);
+
+            this.Programs.get(0).Parameter = byte_buf;
+        }
+    }
 
     public static Tx  NewTransferAssetTransaction(UTXOTxInput[] inputs, TxOutput[] outputs) {
 
@@ -51,6 +71,27 @@ public class Tx {
         tx.Programs = new ArrayList<Program>();
 
         TxAttribute ta = TxAttribute.NewTxNonceAttribute();
+        tx.Attributes[0] = ta;
+
+        for(UTXOTxInput txin : tx.UTXOInputs){
+
+            tx.hashMapPriv.put(txin.getProgramHash(),txin.getPrivateKey());
+        }
+        //使用私钥构造出公钥,通过公钥构造出contract,通过contract构造出programhash,写入到 UTXOInputs
+
+        return tx;
+    }
+
+    public static Tx  NewTransferAssetTransaction(UTXOTxInput[] inputs, TxOutput[] outputs , String memo) {
+
+        Tx tx = new Tx();
+        tx.UTXOInputs = inputs;
+        tx.Outputs = outputs;
+        tx.TxType = 0x02;
+        tx.Attributes = new TxAttribute[1];
+        tx.Programs = new ArrayList<Program>();
+
+        TxAttribute ta = TxAttribute.NewTxNonceAttribute(memo);
         tx.Attributes[0] = ta;
 
         for(UTXOTxInput txin : tx.UTXOInputs){
@@ -84,11 +125,35 @@ public class Tx {
         return tx;
     }
 
-    //Serialize the SignTransaction
+
+    public static Tx  NewCrossChainTransaction(UTXOTxInput[] inputs, TxOutput[] outputs , PayloadTransferCrossChainAsset[] CrossChainAsset) {
+
+        Tx tx = new Tx();
+        tx.CrossChainAsset = CrossChainAsset;
+        tx.UTXOInputs = inputs;
+        tx.Outputs = outputs;
+        tx.TxType = 0x08;
+        tx.Attributes = new TxAttribute[1];
+        tx.Programs = new ArrayList<Program>();
+
+        TxAttribute ta = TxAttribute.NewTxNonceAttribute();
+        tx.Attributes[0] = ta;
+
+        for(UTXOTxInput txin : tx.UTXOInputs){
+
+            tx.hashMapPriv.put(txin.getProgramHash(),txin.getPrivateKey());
+        }
+        //使用私钥构造出公钥,通过公钥构造出contract,通过contract构造出programhash,写入到 UTXOInputs
+
+        return tx;
+    }
+
+
+    //Serialize the SingleSignTransaction
     public void Serialize(DataOutputStream o) throws IOException {
         SerializeUnsigned(o);
 
-        //Serialize  SignTransaction's programs
+        //Serialize  SingleSignTransaction's programs
         Util.WriteVarUint(o,Programs.size());
 
 
@@ -131,7 +196,7 @@ public class Tx {
         return this.Programs;
     }
 
-    //Serialize the SignTransaction data without contracts
+    //Serialize the SingleSignTransaction data without contracts
     public void SerializeUnsigned(DataOutputStream o) throws IOException {
         //txType
         //w.Write([]byte{byte(tx.TxType)})
@@ -145,6 +210,12 @@ public class Tx {
         if (this.parloadRecord != null){
             this.parloadRecord.Serialize(o);
         }
+        if ( this.CrossChainAsset != null){
+            Util.WriteVarUint(o, this.CrossChainAsset.length);
+            for (PayloadTransferCrossChainAsset ca : this.CrossChainAsset)
+                ca.Serialize(o);
+        }
+
         //[]*txAttribute
         Util.WriteVarUint(o, this.Attributes.length);
 

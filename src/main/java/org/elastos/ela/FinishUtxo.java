@@ -48,14 +48,13 @@ public class FinishUtxo {
         return rawTx.getRawTxString();
     }
 
-
-    /**
-     * 整合utxo
-     * @param privates
-     * @param outputs
-     * @param ChangeAddress
-     * @return
-     */
+        /**
+         * 整合utxo
+         * @param privates
+         * @param outputs
+         * @param ChangeAddress
+         * @return
+         */
     public static List<String> finishUtxo(List<String> privates , LinkedList<TxOutput> outputs , String ChangeAddress) throws Exception {
 
         //去重

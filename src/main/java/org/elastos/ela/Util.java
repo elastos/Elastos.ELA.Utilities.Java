@@ -261,7 +261,39 @@ public class Util {
             dos.write((byte)0xAF);
             return baos.toByteArray();
         }catch (Exception e){
-            throw new SDKException(ErrorCode.ParamErr("create GenGenesisAddress redeem Script failure" + e));
+            throw new SDKException(ErrorCode.ParamErr("create GenGenesisAddress redeem Script failure , " + e));
+        }
+    }
+
+    /**
+     * 创建多签赎回脚本
+     * @param privateKeyList
+     * @param M
+     * @return
+     */
+    public static byte[] CreatemultiSignatureRedeemScript(List<PublicX> privateKeyList ,int M) throws SDKException {
+        try {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            DataOutputStream dos = new DataOutputStream(baos);
+
+            if (M == 0){
+                M = privateKeyList.size()/2 + 1;
+            }
+            dos.write((byte)(0x51 + M - 1 ));
+
+            Collections.sort(privateKeyList);
+
+            for (int i= 0 ; i < privateKeyList.size() ; i++ ){
+                dos.writeByte((byte)33);
+                dos.write(DatatypeConverter.parseHexBinary(Ela.getPublicFromPrivate(privateKeyList.get(i).toString())));
+            }
+
+            dos.write((byte)(0x51 + privateKeyList.size() - 1));
+            dos.write((byte)0xAE);
+
+            return baos.toByteArray();
+        }catch (Exception e){
+            throw new SDKException(ErrorCode.ParamErr("create multiSignature redeem Script failure , " + e));
         }
     }
 }

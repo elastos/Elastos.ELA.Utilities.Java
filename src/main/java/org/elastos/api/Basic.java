@@ -3,18 +3,20 @@ package org.elastos.api;
 import com.alibaba.fastjson.JSON;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
+import org.elastos.common.ErrorCode;
 import org.elastos.common.SDKException;
-import org.elastos.ela.ECKey;
-import org.elastos.ela.Ela;
-import org.elastos.ela.Util;
-import org.elastos.ela.bitcoinj.Utils;
+import org.elastos.ela.*;
+import org.elastos.ela.Error;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.xml.bind.DatatypeConverter;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
+import java.util.*;
 
+/**
+ * @author: DongLei.Tan
+ * @contact: tandonglei28@gmail.com
+ * @time: 2018/9/21
+ */
 public class Basic {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Basic.class);
@@ -161,5 +163,154 @@ public class Basic {
         }
         LOGGER.info(getSuccess("genGenesisAddress",address));
         return getSuccess("genGenesisAddress",address);
+    }
+
+
+    /**
+     * 生成多签地址
+     *
+     * @return 返回json字符串
+     */
+    public static String genMultiSignAddress(JSONObject jsonObject) {
+
+        String address = null;
+        try {
+            final JSONArray PrivateKeys = jsonObject.getJSONArray("PrivateKeys");
+            List<String> privateKeyList = new ArrayList<String>();
+            for (int a = 0; a < PrivateKeys.size(); a++) {
+                Verify.verifyParameter(Verify.Type.PrivateKeyLower,(JSONObject) PrivateKeys.get(a));
+
+                JSONObject privateKeyJson = (JSONObject) PrivateKeys.get(a);
+                String privatekey = privateKeyJson.getString("privateKey");
+                privateKeyList.add(privatekey);
+            }
+
+            final int M = jsonObject.getInt("M");
+            address = Ela.getMultiSignAddress(privateKeyList, M);
+        } catch (SDKException e) {
+            LOGGER.error(e.toString());
+            return e.toString();
+        }
+
+        return getSuccess("genMultiSignAddress" , address);
+    }
+
+
+    public static PayloadRecord parsePayloadRecord(JSONObject json_transaction) throws SDKException {
+        Object payload = json_transaction.get("PayloadRecord");
+        if (payload != null){
+            final JSONObject PayloadObject = json_transaction.getJSONObject("PayloadRecord");
+
+            Verify.verifyParameter(Verify.Type.RecordTypeLower,PayloadObject);
+            Verify.verifyParameter(Verify.Type.RecordDataLower,PayloadObject);
+
+            return new PayloadRecord(PayloadObject.getString("recordType"),PayloadObject.getString("recordData"));
+        }
+        return null;
+    }
+
+
+    public static LinkedList<TxOutput> parseOutputs(JSONArray outputs) throws SDKException {
+        LinkedList<TxOutput> outputList = new LinkedList<TxOutput>();
+        for (int t = 0; t < outputs.size(); t++) {
+            JSONObject output = (JSONObject) outputs.get(t);
+
+            Verify.verifyParameter(Verify.Type.AddressLower,output);
+            Verify.verifyParameter(Verify.Type.AmountLower,output);
+
+            long amount = output.getLong("amount");
+            String address = output.getString("address");
+            outputList.add(new TxOutput(address, amount));
+        }
+        return outputList;
+    }
+
+    public static LinkedList<TxOutput> parseCrossChainOutputs(JSONArray outputs) throws SDKException {
+        LinkedList<TxOutput> outputList = new LinkedList<TxOutput>();
+        for (int t = 0; t < outputs.size(); t++) {
+            JSONObject output = (JSONObject) outputs.get(t);
+
+            Verify.verifyParameter(Verify.Type.AmountLower,output);
+
+            long amount = output.getLong("amount");
+            String address = output.getString("address");
+            outputList.add(new TxOutput(address, amount));
+        }
+        return outputList;
+    }
+
+    public static List<UTXOTxInput> parseInputs(JSONArray utxoInputs) throws SDKException {
+
+        List<UTXOTxInput> inputList = new LinkedList<UTXOTxInput>();
+        for (int i = 0 ; i < utxoInputs.size() ; i++){
+            JSONObject utxoInput = (JSONObject)utxoInputs.get(i);
+
+            Verify.verifyParameter(Verify.Type.TxidLower,utxoInput);
+            Verify.verifyParameter(Verify.Type.IndexLower,utxoInput);
+            Verify.verifyParameter(Verify.Type.PrivateKeyLower,utxoInput);
+
+
+            String txid = utxoInput.getString("txid");
+            int index = utxoInput.getInt("index");
+            String privateKey = utxoInput.getString("privateKey");
+            String address = Ela.getAddressFromPrivate(privateKey);
+
+            inputList.add(new UTXOTxInput(txid,index,privateKey,address));
+        }
+        return inputList;
+    }
+
+    public static List<UTXOTxInput> parseInputsAddress(JSONArray utxoInputs) throws SDKException {
+
+        List<UTXOTxInput> inputList = new LinkedList<UTXOTxInput>();
+        for (int i = 0 ; i < utxoInputs.size() ; i++){
+            JSONObject utxoInput = (JSONObject)utxoInputs.get(i);
+
+            Verify.verifyParameter(Verify.Type.TxidLower,utxoInput);
+            Verify.verifyParameter(Verify.Type.IndexLower,utxoInput);
+            Verify.verifyParameter(Verify.Type.AddressLower,utxoInput);
+
+
+            String txid = utxoInput.getString("txid");
+            int index = utxoInput.getInt("index");
+            String address = utxoInput.getString("address");
+            inputList.add(new UTXOTxInput(txid,index,"",address));
+        }
+        return inputList;
+    }
+
+    public static List<String> parsePrivates(JSONArray PrivateKeys) throws SDKException {
+        List<String> privateList = new LinkedList<String>();
+        for (int i = 0; i < PrivateKeys.size(); i++) {
+            JSONObject utxoInput = (JSONObject) PrivateKeys.get(i);
+            Verify.verifyParameter(Verify.Type.PrivateKeyLower,utxoInput);
+            privateList.add(utxoInput.getString("privateKey"));
+        }
+        return privateList;
+    }
+
+    public static ArrayList<String> genPrivateKeySignByM(int M , JSONArray privateKeyScripte) throws SDKException {
+        if (M > privateKeyScripte.size()) throw new SDKException(ErrorCode.ParamErr("M cannot be greater than the number of privateKeys"));
+
+        ArrayList<String> privateKeySignList = new ArrayList<String>();
+        for (int n = 0; n < M; n++) {
+            JSONObject privateKeys = (JSONObject) privateKeyScripte.get(n);
+            String privatekey = privateKeys.getString("privateKey");
+            privateKeySignList.add(privatekey);
+        }
+        return privateKeySignList;
+    }
+
+    public static ArrayList<PayloadTransferCrossChainAsset> parseCrossChainAsset(JSONArray CrossChainAsset) throws SDKException {
+        ArrayList<PayloadTransferCrossChainAsset> CrossChainAssetList = new ArrayList<PayloadTransferCrossChainAsset>();
+        for (int n = 0; n < CrossChainAsset.size(); n++) {
+            JSONObject output = (JSONObject) CrossChainAsset.get(n);
+            Verify.verifyParameter(Verify.Type.AmountLower,output);
+            String address = output.getString("address");
+            Long amount = output.getLong("amount");
+            int index_ = n;
+            CrossChainAssetList.add(new PayloadTransferCrossChainAsset(address, amount, index_));
+        }
+        return CrossChainAssetList;
     }
 }

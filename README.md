@@ -841,6 +841,233 @@ Transaction type is 3,use the payload.recordType cannot be Chinese
 }
 ```
 
+ - #### genMultiSignAddress
+
+##### Request
+```
+{
+    "method":"genMultiSignAddress",
+    "id":0,
+    "params":[
+        {
+			"PrivateKeys":[
+                {
+                    "privateKey":"A9FE7748161227F5232B4A37336BD4EA2DBB633304F95F62F20F68C94A2A4E5B"
+                },
+                {
+                    "privateKey":"FA667242EEB4AAB69433CF406001520BE1CEE3F2E5266E8BAE17614E7B241FE5"
+                },
+                {
+                    "privateKey":"3315EA8114B7758E98AADA635C5A99E1523576EA72B42F156ECBE5B73447E9D6"
+                },
+                {
+                    "privateKey":"4849048B13242F83107CAD9F8C0DF4A3698A0DFB37055F11B91A2E5F044557C2"
+                }
+            ],
+            "M":3       
+        }
+   ]
+}
+```
+
+##### Response
+```
+{
+    "Desc": "SUCCESS",
+    "Action": "genMultiSignAddress",
+    "Result": "8XEsZFhuwEwmy4uT8SL5USCzWAHY6vdVk7"
+}
+```
+
+
+
+ - #### genMultiSignRawTransaction
+
+##### Request
+```
+      
+{
+    "method":"genMultiSignRawTransaction",
+    "id":0,
+    "params":[
+        {
+            "Transactions":[
+                {
+                    "UTXOInputs":[
+                        {
+                            "txid":"0b46ee22fd9a074e6c1a2a8af4a6e06d91061c64250633ccf2ef2b7da74db3b0",
+                            "index":0,
+                            "address":"8XEsZFhuwEwmy4uT8SL5USCzWAHY6vdVk7"
+                        }
+                    ],
+                    "Outputs":[
+                        {
+                            "address":"8XEsZFhuwEwmy4uT8SL5USCzWAHY6vdVk7",
+                            "amount":200000
+                        }
+                    ],
+                    "PrivateKeyScripte":[
+                        {
+                            "privateKey":"A9FE7748161227F5232B4A37336BD4EA2DBB633304F95F62F20F68C94A2A4E5B"
+                        },
+                        {
+                            "privateKey":"FA667242EEB4AAB69433CF406001520BE1CEE3F2E5266E8BAE17614E7B241FE5"
+                        },
+                        {
+                            "privateKey":"3315EA8114B7758E98AADA635C5A99E1523576EA72B42F156ECBE5B73447E9D6"
+                        },
+                        {
+                            "privateKey":"4849048B13242F83107CAD9F8C0DF4A3698A0DFB37055F11B91A2E5F044557C2"
+                        }
+                    ],
+                	"M":3
+                }
+            ]
+        }
+    ]
+}
+```
+
+##### Response
+```
+{
+    "Desc": "SUCCESS",
+    "Action": "genMultiSignRawTransaction",
+    "Result": {
+        "rawTx": "02000100132D39353032333632323639300001B037DB964A033990D77CBFD9E9BE08651456BB7C2A0854AE",
+        "txHash": "0605EE84FA7C28B353806E00CC40477487586A9A03AAAD7154DBE0AD4197E15F"
+    }
+}
+```
+
+
+
+ - #### genCrossChainRawTransaction
+
+##### Request
+```
+  {
+      "method":"genCrossChainRawTransaction",
+      "id":0,
+      "params":[
+          {
+              "Transactions":[
+                  {
+                      "UTXOInputs":[
+                          {
+                              "txid":"3a6b2653dc2dcc0f065e7d955bbe0e3bc71a2d7f44900fc1cb75402af89fd978",
+                              "index":1,
+                              "address":"EQSpUzE4XYJhBSx5j7Tf2cteaKdFdixfVB"
+                          }
+                      ],
+                      "Outputs":[
+                          {
+                              "address":"XKUh4GLhFJiqAMTF6HyWQrV9pK9HcGUdfJ",
+                              "amount":70000
+                          },
+                          {
+                              "address":"EQSpUzE4XYJhBSx5j7Tf2cteaKdFdixfVB",
+                              "amount":999800000
+                          }
+                      ],
+                      "PrivateKeySign":[
+                          {
+                              "privateKey":"4849048B13242F83107CAD9F8C0DF4A3698A0DFB37055F11B91A2E5F044557C2"
+                          }
+                      ],
+                      "CrossChainAsset":[
+                          {
+                              "address":"EQSpUzE4XYJhBSx5j7Tf2cteaKdFdixfVB",
+                              "amount":60000
+                          }
+                      ]
+                  }
+              ]
+          }
+      ]
+  }
+
+```
+
+##### Response
+```
+{
+    "Desc": "SUCCESS",
+    "Action": "genCrossChainRawTransaction",
+    "Result": {
+        "rawTx": "02000100132D39353032333632323639300001B037DB964A033990D77CBFD9E9BE08651456BB7C2A0854AE",
+        "txHash": "0605EE84FA7C28B353806E00CC40477487586A9A03AAAD7154DBE0AD4197E15F"
+    }
+}
+```
+
+
+ - #### genCrossChainRawTransaction
+
+##### Request
+```
+      
+{
+    "method":"genCrossChainMultiSignRawTransaction",
+    "id":0,
+    "params":[
+        {
+            "Transactions":[
+                {
+                    "UTXOInputs":[
+                        {
+                            "txid":"723523b9f92394b9428c7abf4d13d7049efeba3c3a154e1b88e96ff6b95bd608",
+                            "index":0,
+                            "address":"8NRxtbMKScEWzW8gmPDGUZ8LSzm688nkZZ"
+                        }
+                    ],
+                    "Outputs":[
+                        {
+                            "address":"XKUh4GLhFJiqAMTF6HyWQrV9pK9HcGUdfJ",
+                            "amount":30000
+                        }
+                    ],
+                    "PrivateKeyScripte":[
+                        {
+                            "privateKey":"927f1ff719047e0243150447b9c009fc2f17d67fd413beb965b9a9449d42b9b1"
+                        },
+                        {
+                            "privateKey":"22e388e026234863ba077fe18783bbf7935c49ed08898995e7f5f64db8d51cef"
+                        },
+                        {
+                            "privateKey":"8d57d983f5960f6b3b2ed1d4f7350cfa7fb985580eaf4b9a2d8501384ce27369"
+                        },
+                        {
+                            "privateKey":"22e388e026234863ba077fe18783bbf7935c49ed08898995e7f5f64db8d51cef"
+                        }
+                    ],
+                    "CrossChainAsset":[
+                        {
+                            "address":"EQSpUzE4XYJhBSx5j7Tf2cteaKdFdixfVB",
+                            "amount":20000
+                        }
+                    ],
+                	"M":3
+                }
+            ]
+        }
+    ]
+}
+
+```
+
+##### Response
+```
+{
+    "Desc": "SUCCESS",
+    "Action": "genCrossChainMultiSignRawTransaction",
+    "Result": {
+        "rawTx": "02000100132D39353032333632323639300001B037DB964A033990D77CBFD9E9BE08651456BB7C2A0854AE",
+        "txHash": "0605EE84FA7C28B353806E00CC40477487586A9A03AAAD7154DBE0AD4197E15F"
+    }
+}
+```
+
 ### JAR package
  ```
 File -> Project Structure -> Artifacts -> + -> JAR -> From modules with 

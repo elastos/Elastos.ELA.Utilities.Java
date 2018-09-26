@@ -8,7 +8,11 @@ import org.elastos.ela.Util;
 import javax.xml.bind.DatatypeConverter;
 
 import static org.elastos.ela.Util.ToScriptHash;
-
+/**
+ * @author: DongLei.Tan
+ * @contact: tandonglei28@gmail.com
+ * @time: 2018/9/21
+ */
 public class Verify {
     public enum Type{
         PrivateKeyLower("privateKey"),
@@ -16,6 +20,7 @@ public class Verify {
         AddressLower("address"),
         ChangeAddress("ChangeAddress"),
         AmountLower("amount"),
+        MUpper("M"),
         Host("Host"),
         Fee("Fee"),
         Confirmation("Confirmation"),
@@ -67,6 +72,11 @@ public class Verify {
                 Object PrivateKeyLower = jsonObject.get(type.getValue());
                 if (PrivateKeyLower != null) {
                     if (((String)PrivateKeyLower).length() != 64){
+                        throw new SDKException(ErrorCode.InvalidPrpvateKey);
+                    }
+                    try {
+                        DatatypeConverter.parseHexBinary((String)PrivateKeyLower);
+                    }catch (Exception e){
                         throw new SDKException(ErrorCode.InvalidPrpvateKey);
                     }
                 }else throw new SDKException(ErrorCode.PrivateKeyNotNull);
@@ -123,6 +133,12 @@ public class Verify {
                     if (AmountLower instanceof Long || AmountLower instanceof Integer && (int)AmountLower >= 0){}else throw new SDKException(ErrorCode.InvalidAmount);
                 }else throw new SDKException(ErrorCode.AmountNotNull);
                 break;
+            case MUpper:
+                Object MUpper = jsonObject.get(type.getValue());
+                if (MUpper != null) {
+                    if (MUpper instanceof Long || MUpper instanceof Integer && (int)MUpper >= 0){}else throw new SDKException(ErrorCode.InvalidM);
+                }else throw new SDKException(ErrorCode.MNotNull);
+                break;
             case Fee:
                 Object fee = jsonObject.get(type.getValue());
                 if (fee != null) {
@@ -154,4 +170,5 @@ public class Verify {
                 break;
         }
     }
+
 }

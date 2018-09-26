@@ -3,15 +3,13 @@ package org.elastos.ela;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.elastos.api.Basic;
-import org.elastos.api.SignTransaction;
+import org.elastos.api.SingleSignTransaction;
 import org.elastos.ela.bitcoinj.Utils;
-import org.elastos.elaweb.ElaController;
 import org.junit.Test;
 
 import javax.xml.bind.DatatypeConverter;
 
 import java.io.*;
-import java.math.BigDecimal;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -53,7 +51,7 @@ public class ElaTest {
                 System.out.println((Basic.genAddress(param)));
             }
             if (method.equals("getRawTransaction")){
-                System.out.println(SignTransaction.genRawTransaction(param));
+                System.out.println(SingleSignTransaction.genRawTransaction(param));
             }
         }
         inputStream.close();

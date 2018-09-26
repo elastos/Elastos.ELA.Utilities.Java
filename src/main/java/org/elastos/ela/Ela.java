@@ -3,12 +3,15 @@ package org.elastos.ela;
 
 
 import net.sf.json.JSONObject;
+import org.elastos.common.SDKException;
 
 import javax.xml.bind.DatatypeConverter;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -56,6 +59,82 @@ public class Ela {
         return new RawTx(txHash,rawTxString);
     }
 
+    public static RawTx  MultiSignTransaction(UTXOTxInput[] inputs, TxOutput[] outputs , List<String> privateKeyScript , List<String> privateKeySign , int M) throws Exception {
+        //创建交易
+        Tx tx = Tx.NewTransferAssetTransaction(inputs, outputs);
+
+        return MultiSignTx(tx, privateKeyScript, privateKeySign , M);
+    }
+
+    public static RawTx MultiSignTransaction(UTXOTxInput[] inputs, TxOutput[] outputs , List<String> privateKeyScript , List<String> privateKeySign , int M , String memo) throws Exception {
+        //创建交易
+        Tx tx = Tx.NewTransferAssetTransaction(inputs, outputs,memo);
+        return MultiSignTx(tx, privateKeyScript, privateKeySign , M);
+    }
+
+    public static RawTx MultiSignTx(Tx tx , List<String> privateKeyScript , List<String> privateKeySign , int M ) throws Exception {
+        //创建赎回脚本
+        List<PublicX> privateKeyList = new ArrayList<PublicX>();
+        for (int j = 0 ; j < privateKeyScript.size() ; j++) {
+            privateKeyList.add(new PublicX(privateKeyScript.get(j)));
+        }
+        byte[] code = ECKey.getMultiSignatureProgram(privateKeyList , M);
+
+        //签名
+        for (int i = 0 ; i < privateKeySign.size()  ; i++) {
+            tx.multiSign(privateKeySign.get(i), code);
+        }
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        DataOutputStream dos = new DataOutputStream(baos);
+
+        tx.Serialize(dos);
+        String rawTxString = DatatypeConverter.printHexBinary(baos.toByteArray());
+        String txHash =  DatatypeConverter.printHexBinary(tx.getHash());
+        return  new RawTx(txHash,rawTxString);
+    }
+
+    /**
+     * 生成单签签名交易_跨链
+     * @param inputs    交易输入
+     * @param outputs   交易输出
+     * @param CrossChainAsset  垮链资产的信息
+     * @param privateKeySign   用来签名的私钥
+     * @return  原始交易数据 可以使用rest接口api/v1/transaction发送给节点
+     * @throws IOException
+     */
+    public static RawTx CrossChainSignTx(UTXOTxInput[] inputs, TxOutput[] outputs , PayloadTransferCrossChainAsset[] CrossChainAsset ,  List<String> privateKeySign) throws IOException {
+        Tx tx = Tx.NewCrossChainTransaction( inputs, outputs ,CrossChainAsset);
+
+        for(int i = 0 ; i < privateKeySign.size() ; i ++){
+            ECKey ec = ECKey.fromPrivate(DatatypeConverter.parseHexBinary(privateKeySign.get(i)));
+            byte[] code = Util.CreateSingleSignatureRedeemScript(ec.getPubBytes(),1);
+            tx.sign(privateKeySign.get(i), code);
+        }
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        DataOutputStream dos = new DataOutputStream(baos);
+
+        tx.Serialize(dos);
+
+        String rawTxString = DatatypeConverter.printHexBinary(baos.toByteArray());
+        String txHash = DatatypeConverter.printHexBinary(tx.getHash());
+
+        return new RawTx(txHash,rawTxString);
+    }
+
+    /**
+     * 生成单签签名交易_跨链
+     * @param inputs    交易输入
+     * @param outputs   交易输出
+     * @param CrossChainAsset  垮链资产的信息
+     * @param privateKeySign   用来签名的私钥
+     * @return  原始交易数据 可以使用rest接口api/v1/transaction发送给节点
+     * @throws IOException
+     */
+    public static RawTx CrossChainMultiSignTx(UTXOTxInput[] inputs, TxOutput[] outputs , PayloadTransferCrossChainAsset[] CrossChainAsset , List<String> privateKeyScript , List<String> privateKeySign , int M) throws Exception {
+        Tx tx = Tx.NewCrossChainTransaction( inputs, outputs ,CrossChainAsset);
+
+        return MultiSignTx(tx, privateKeyScript, privateKeySign , M);
+    }
 
     /**
      * 生成私钥
@@ -94,5 +173,20 @@ public class Ela {
     public static String getIdentityIDFromPrivate(String privateKey){
         ECKey ec = ECKey.fromPrivate(DatatypeConverter.parseHexBinary(privateKey));
         return ec.toIdentityID();
+    }
+
+    /**
+     *  生成多签地址
+     * @throws Exception
+     * @return
+     */
+    public static String getMultiSignAddress(List<String> privateKey , int M) throws SDKException {
+
+        List<PublicX> privateKeyList = new ArrayList<PublicX>();
+        for (int i = 0 ; i < privateKey.size() ; i++) {
+            privateKeyList.add(new PublicX(privateKey.get(i)));
+        }
+        ECKey ec = new ECKey();
+        return  ec.toMultiSignAddress(privateKeyList , M);
     }
 }
