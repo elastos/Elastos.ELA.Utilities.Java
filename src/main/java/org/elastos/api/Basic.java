@@ -6,7 +6,6 @@ import net.sf.json.JSONObject;
 import org.elastos.common.ErrorCode;
 import org.elastos.common.SDKException;
 import org.elastos.ela.*;
-import org.elastos.ela.Error;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

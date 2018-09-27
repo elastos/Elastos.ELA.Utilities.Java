@@ -61,7 +61,7 @@ public class MultSignitransaction {
                 RawTx rawTx;
                 if (payload != null && bool){
                     return ErrorCode.ParamErr("PayloadRecord And Memo can't be used at the same time");
-                }else if (payload == null){
+                }else if (payload == null && !bool){
                     rawTx = Ela.MultiSignTransaction(utxoTxInputs, txOutputs, privateKeyScripteList, privateKeySignList, M);
                 }else if (bool){
                     String memo = json_transaction.getString("Memo");

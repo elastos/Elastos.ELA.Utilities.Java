@@ -3,9 +3,7 @@ package org.elastos.api;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.elastos.common.ErrorCode;
-import org.elastos.common.SDKException;
 import org.elastos.ela.*;
-import org.elastos.ela.Error;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,7 +49,7 @@ public class SingleSignTransaction {
 
             if (payload != null && bool){
                 return ErrorCode.ParamErr("PayloadRecord And Memo can't be used at the same time");
-            }else if (payload == null){
+            }else if (payload == null && !bool){
                 rawTx = Ela.makeAndSignTx(utxoTxInputs,txOutputs);
             }else if (bool){
                 String memo = json_transaction.getString("Memo");
@@ -103,7 +101,7 @@ public class SingleSignTransaction {
             boolean bool = json_transaction.has("Memo");
             if (payload != null && bool){
                 return ErrorCode.ParamErr("PayloadRecord And Memo can't be used at the same time");
-            }else if (payload == null){
+            }else if (payload == null && !bool){
                 rawTx = FinishUtxo.makeAndSignTx(privateList, outputList, changeAddress);
             }else if (bool){
                 String memo = json_transaction.getString("Memo");
