@@ -12,7 +12,7 @@ import java.util.List;
 public class SignTxAbnormal {
 
     /**
-     * 生成并签名交易_异常测试
+     * 生成并签名交易
      * @param inputs    交易输入
      * @param outputs   交易输出
      * @return  原始交易数据 可以使用rest接口api/v1/transaction发送给节点
@@ -21,11 +21,15 @@ public class SignTxAbnormal {
     public static RawTx makeSingleSignTx(UTXOTxInput[] inputs, TxOutput[] outputs , List<String> privateKeySign) throws IOException {
         Tx tx = Tx.NewTransferAssetTransaction(inputs, outputs);
         return SingleSignTx(tx,privateKeySign);
-
     }
 
     public static RawTx makeSingleSignTx(UTXOTxInput[] inputs, TxOutput[] outputs , List<String> privateKeySign,PayloadRecord payloadRecord) throws IOException {
         Tx tx = Tx.NewTransferAssetTransaction(inputs, outputs,payloadRecord);
+        return SingleSignTx(tx,privateKeySign);
+    }
+
+    public static RawTx makeSingleSignTx(UTXOTxInput[] inputs, TxOutput[] outputs , List<String> privateKeySign,String memo) throws IOException {
+        Tx tx = Tx.NewTransferAssetTransaction(inputs, outputs,memo);
         return SingleSignTx(tx,privateKeySign);
 
     }

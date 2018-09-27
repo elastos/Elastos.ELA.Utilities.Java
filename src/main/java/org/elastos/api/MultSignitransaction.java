@@ -59,11 +59,15 @@ public class MultSignitransaction {
 
                 LinkedHashMap<String, Object> resultMap = new LinkedHashMap<String, Object>();
                 RawTx rawTx;
-                if (bool) {
+                if (payload != null && bool){
+                    return ErrorCode.ParamErr("PayloadRecord And Memo can't be used at the same time");
+                }else if (payload == null){
+                    rawTx = Ela.MultiSignTransaction(utxoTxInputs, txOutputs, privateKeyScripteList, privateKeySignList, M);
+                }else if (bool){
                     String memo = json_transaction.getString("Memo");
                     rawTx = Ela.MultiSignTransaction(utxoTxInputs, txOutputs, privateKeyScripteList, privateKeySignList, M, memo);
-                } else {
-                    rawTx = Ela.MultiSignTransaction(utxoTxInputs, txOutputs, privateKeyScripteList, privateKeySignList, M);
+                }else{
+                    rawTx = Ela.MultiSignTransaction(utxoTxInputs, txOutputs, privateKeyScripteList, privateKeySignList, M,payload);
                 }
                 resultMap.put("rawTx", rawTx.getRawTxString());
                 resultMap.put("txHash", rawTx.getTxHash());

@@ -38,6 +38,11 @@ public class Ela {
         return SingleSignTx(tx);
     }
 
+    public static RawTx makeAndSignTx(UTXOTxInput[] inputs, TxOutput[] outputs,String memo) throws IOException {
+        Tx tx = Tx.NewTransferAssetTransaction( inputs, outputs, memo);
+        return SingleSignTx(tx);
+    }
+
     public static RawTx SingleSignTx (Tx tx) throws  IOException{
         byte[][] phashes = tx.getUniqAndOrdedProgramHashes();
         for(int i=0;i<phashes.length;i++){
@@ -69,6 +74,12 @@ public class Ela {
     public static RawTx MultiSignTransaction(UTXOTxInput[] inputs, TxOutput[] outputs , List<String> privateKeyScript , List<String> privateKeySign , int M , String memo) throws Exception {
         //创建交易
         Tx tx = Tx.NewTransferAssetTransaction(inputs, outputs,memo);
+        return MultiSignTx(tx, privateKeyScript, privateKeySign , M);
+    }
+
+    public static RawTx MultiSignTransaction(UTXOTxInput[] inputs, TxOutput[] outputs , List<String> privateKeyScript , List<String> privateKeySign , int M , PayloadRecord payloadRecord) throws Exception {
+        //创建交易
+        Tx tx = Tx.NewTransferAssetTransaction(inputs, outputs,payloadRecord);
         return MultiSignTx(tx, privateKeyScript, privateKeySign , M);
     }
 

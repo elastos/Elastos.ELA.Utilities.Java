@@ -48,6 +48,13 @@ public class FinishUtxo {
         return rawTx.getRawTxString();
     }
 
+    public static String makeAndSignTx(List<String> privates , LinkedList<TxOutput> outputs , String ChangeAddress,String memo) throws Exception {
+        List<String> availablePrivates = finishUtxo(privates,outputs,ChangeAddress);
+        RawTx rawTx = SignTxAbnormal.makeSingleSignTx(inputList.toArray(new UTXOTxInput[inputList.size()]), outputs.toArray(new TxOutput[outputs.size()]), availablePrivates,memo);
+        txHash = rawTx.getTxHash();
+        return rawTx.getRawTxString();
+    }
+
         /**
          * 整合utxo
          * @param privates

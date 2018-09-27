@@ -43,12 +43,20 @@ public class SingleSignTransaction {
             //解析payloadRecord
             PayloadRecord payload   = Basic.parsePayloadRecord(json_transaction);
 
+            boolean bool = json_transaction.has("Memo");
+
             //创建rawTransaction
             LinkedHashMap<String, Object> resultMap = new LinkedHashMap<String, Object>();
             RawTx rawTx = new RawTx("","");
-            if (payload == null){
+
+            if (payload != null && bool){
+                return ErrorCode.ParamErr("PayloadRecord And Memo can't be used at the same time");
+            }else if (payload == null){
                 rawTx = Ela.makeAndSignTx(utxoTxInputs,txOutputs);
-            }else {
+            }else if (bool){
+                String memo = json_transaction.getString("Memo");
+                rawTx = Ela.makeAndSignTx(utxoTxInputs,txOutputs,memo);
+            }else{
                 rawTx = Ela.makeAndSignTx(utxoTxInputs,txOutputs,payload);
             }
             resultMap.put("rawTx",rawTx.getRawTxString());
@@ -92,9 +100,15 @@ public class SingleSignTransaction {
             LinkedHashMap<String, Object> resultMap = new LinkedHashMap<String, Object>();
 
             String rawTx = "";
-            if (payload == null){
+            boolean bool = json_transaction.has("Memo");
+            if (payload != null && bool){
+                return ErrorCode.ParamErr("PayloadRecord And Memo can't be used at the same time");
+            }else if (payload == null){
                 rawTx = FinishUtxo.makeAndSignTx(privateList, outputList, changeAddress);
-            }else {
+            }else if (bool){
+                String memo = json_transaction.getString("Memo");
+                rawTx = FinishUtxo.makeAndSignTx(privateList, outputList, changeAddress,memo);
+            }else{
                 rawTx = FinishUtxo.makeAndSignTx(privateList, outputList, changeAddress,payload);
             }
             resultMap.put("rawTx", rawTx);
