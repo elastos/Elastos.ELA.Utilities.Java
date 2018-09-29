@@ -18,17 +18,21 @@ public class TxOutput {
     private long OutputLock = 0; //uint32
     private byte[] ProgramHash; //21byte unit168
     private String Address;
-
+    private final String DESTROY_ADDRESS = "0000000000000000000000000000000000";
 
     /**
      *
-     * @param Address 地址
+     * @param address 地址
      * @param amount 金额
      */
-    public TxOutput(String Address,long amount){
-        this.Address = Address;
+    public TxOutput(String address,long amount){
+        this.Address = address;
         this.Value = amount;
-        this.ProgramHash = Util.ToScriptHash(Address);
+        if (address.equals(DESTROY_ADDRESS)){
+            this.ProgramHash = new byte[21];
+        }else {
+            this.ProgramHash = Util.ToScriptHash(address);
+        }
     }
 
     void Serialize(DataOutputStream o) throws IOException {
