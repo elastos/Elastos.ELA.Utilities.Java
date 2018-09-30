@@ -1002,7 +1002,7 @@ Transaction type is 3,use the payload.recordType cannot be Chinese
 ```
 
 
- - #### genCrossChainRawTransaction
+ - #### genCrossChainMultiSignRawTransaction
 
 ##### Request
 ```
@@ -1061,6 +1061,57 @@ Transaction type is 3,use the payload.recordType cannot be Chinese
 {
     "Desc": "SUCCESS",
     "Action": "genCrossChainMultiSignRawTransaction",
+    "Result": {
+        "rawTx": "02000100132D39353032333632323639300001B037DB964A033990D77CBFD9E9BE08651456BB7C2A0854AE",
+        "txHash": "0605EE84FA7C28B353806E00CC40477487586A9A03AAAD7154DBE0AD4197E15F"
+    }
+}
+```
+
+ - #### genCrossChainRawTransactionByPrivateKey
+
+##### Request
+```
+        
+{
+    "method":"genCrossChainRawTransactionByPrivateKey",
+    "id":0,
+    "params":[
+        {
+            "Transactions":[
+                {
+                    "PrivateKeys":[
+                        {
+                            "privateKey":"5FA927E5664E563F019F50DCD4D7E2D9404F2D5D49E31F9482912E23D6D7B9EB"
+                        }
+                    ],  
+                    "Outputs":[
+                        {
+                            "address":"XLC69K4932zZf1SRwJCDbv5HGk7DbDYZ9H",
+                            "amount":100000
+                        }
+                    ],
+                    "CrossChainAsset":[
+                        {
+                            "address":"ESH5SrT7GZ4uxTH6aQF3ne7X8AUzWdREzz",
+                            "amount":20000
+                        }
+                    ],
+                   
+                    "ChangeAddress":"Edi5WWMFBsEL2qgggrFhnJe1HTjDnw447H"
+                }
+            ]
+        }
+    ]
+}
+
+```
+
+##### Response
+```
+{
+    "Desc": "SUCCESS",
+    "Action": "genCrossChainRawTransactionByPrivateKey",
     "Result": {
         "rawTx": "02000100132D39353032333632323639300001B037DB964A033990D77CBFD9E9BE08651456BB7C2A0854AE",
         "txHash": "0605EE84FA7C28B353806E00CC40477487586A9A03AAAD7154DBE0AD4197E15F"

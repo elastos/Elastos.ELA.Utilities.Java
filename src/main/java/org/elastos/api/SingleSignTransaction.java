@@ -159,6 +159,38 @@ public class SingleSignTransaction {
         }
     }
 
+    public static String genCrossChainRawTransactionByPrivateKey(JSONObject inputsAddOutpus){
+        try {
+            final JSONArray transaction = inputsAddOutpus.getJSONArray("Transactions");
+            JSONObject json_transaction = (JSONObject) transaction.get(0);
+            final JSONArray PrivateKeys = json_transaction.getJSONArray("PrivateKeys");
+            final JSONArray outputs = json_transaction.getJSONArray("Outputs");
+            final JSONArray CrossChainAsset = json_transaction.getJSONArray("CrossChainAsset");
+
+            List<String> privateList = Basic.parsePrivates(PrivateKeys);
+            //解析outputs
+//            TxOutput[] txOutputs = Basic.parseCrossChainOutputs(outputs).toArray(new TxOutput[outputs.size()]);
+            LinkedList<TxOutput> txOutputs = Basic.parseCrossChainOutputs(outputs);
+            //解析 CrossChain
+            PayloadTransferCrossChainAsset[] payloadTransferCrossChainAssets = Basic.parseCrossChainAsset(CrossChainAsset).toArray(new PayloadTransferCrossChainAsset[CrossChainAsset.size()]);
+
+            Verify.verifyParameter(Verify.Type.ChangeAddress,json_transaction);
+            String changeAddress = json_transaction.getString("ChangeAddress");
+
+            LinkedHashMap<String, Object> resultMap = new LinkedHashMap<String, Object>();
+            RawTx rawTx = FinishUtxo.makeAndSignTxByCrossChain(privateList, txOutputs,payloadTransferCrossChainAssets,changeAddress);
+            resultMap.put("rawTx", rawTx.getRawTxString());
+            resultMap.put("txHash", rawTx.getTxHash());
+
+            LOGGER.info(Basic.getSuccess("genCrossChainRawTransaction" ,resultMap));
+            return Basic.getSuccess("genCrossChainRawTransaction" , resultMap);
+        } catch (Exception e) {
+            LOGGER.error(e.toString());
+            return e.toString();
+        }
+    }
+
+
     /**
      * 发送Rawtransaction
      * @param rawTx

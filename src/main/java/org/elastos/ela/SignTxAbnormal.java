@@ -31,7 +31,6 @@ public class SignTxAbnormal {
     public static RawTx makeSingleSignTx(UTXOTxInput[] inputs, TxOutput[] outputs , List<String> privateKeySign,String memo) throws IOException {
         Tx tx = Tx.NewTransferAssetTransaction(inputs, outputs,memo);
         return SingleSignTx(tx,privateKeySign);
-
     }
 
     public static RawTx SingleSignTx(Tx tx,List<String> privateKeySign) throws IOException {
@@ -49,4 +48,5 @@ public class SignTxAbnormal {
         String txHash =  DatatypeConverter.printHexBinary(tx.getHash());
         return  new RawTx(txHash,rawTxString);
     }
+
 }

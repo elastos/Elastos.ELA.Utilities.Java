@@ -285,7 +285,9 @@ public class Basic {
             Verify.verifyParameter(Verify.Type.PrivateKeyLower,utxoInput);
             privateList.add(utxoInput.getString("privateKey"));
         }
-        return privateList;
+        //去重
+        ArrayList<String> privates = new ArrayList<String>(new HashSet<String>(privateList));
+        return privates;
     }
 
     public static ArrayList<String> genPrivateKeySignByM(int M , JSONArray privateKeyScripte) throws SDKException {
@@ -300,8 +302,8 @@ public class Basic {
         return privateKeySignList;
     }
 
-    public static ArrayList<PayloadTransferCrossChainAsset> parseCrossChainAsset(JSONArray CrossChainAsset) throws SDKException {
-        ArrayList<PayloadTransferCrossChainAsset> CrossChainAssetList = new ArrayList<PayloadTransferCrossChainAsset>();
+    public static LinkedList<PayloadTransferCrossChainAsset> parseCrossChainAsset(JSONArray CrossChainAsset) throws SDKException {
+        LinkedList<PayloadTransferCrossChainAsset> CrossChainAssetList = new LinkedList<PayloadTransferCrossChainAsset>();
         for (int n = 0; n < CrossChainAsset.size(); n++) {
             JSONObject output = (JSONObject) CrossChainAsset.get(n);
             Verify.verifyParameter(Verify.Type.AmountLower,output);

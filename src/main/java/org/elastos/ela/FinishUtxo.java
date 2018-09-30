@@ -55,18 +55,41 @@ public class FinishUtxo {
         return rawTx.getRawTxString();
     }
 
-        /**
-         * 整合utxo
-         * @param privates
-         * @param outputs
-         * @param ChangeAddress
-         * @return
-         */
+    /**
+     * 单签自动获取utxo跨链转账
+     * @param privates
+     * @param txOutputs
+     * @param payloadTransferCrossChainAssets
+     * @param ChangeAddress
+     * @return
+     * @throws Exception
+     */
+    public static RawTx makeAndSignTxByCrossChain(List<String> privates , LinkedList<TxOutput> txOutputs ,PayloadTransferCrossChainAsset[] payloadTransferCrossChainAssets, String ChangeAddress) throws Exception {
+        List<String> availablePrivates = finishUtxo(privates,txOutputs,ChangeAddress);
+        RawTx rawTx = Ela.CrossChainSignTx(inputList.toArray(new UTXOTxInput[inputList.size()]),txOutputs.toArray(new TxOutput[txOutputs.size()]),payloadTransferCrossChainAssets, availablePrivates);
+        return rawTx;
+    }
+
+
+    /**
+     * 整合utxo
+     * @param privates
+     * @param outputs
+     * @param ChangeAddress
+     * @return
+     */
     public static List<String> finishUtxo(List<String> privates , LinkedList<TxOutput> outputs , String ChangeAddress) throws Exception {
 
+        String utxo = getUtxoAndConfig(privates);
+        getUtxoAndChangeAddress(utxo , outputs , ChangeAddress);
+        //地址去重，地址对应私钥进行签名
+        ArrayList<String> addrArray = new ArrayList<String>(new HashSet<String>(addrList));
+        return availablePrivate(privates, addrArray);
+    }
+
+    public static String getUtxoAndConfig(List<String> privates) throws Exception {
         //去重
         ArrayList<String> privateList = new ArrayList<String>(new HashSet<String>(privates));
-
         //获取utxo
         Map<String,String[]> params = new HashMap<String,String[]>();
         String[] addressList = new String[privateList.size()];
@@ -76,15 +99,10 @@ public class FinishUtxo {
         }
         params.put("addresses",addressList);
         getConfig_url();
-
-//        System.out.println("==================== 通过地址查询uxto  ====================");
+        //        System.out.println("==================== 通过地址查询uxto  ====================");
         String utxo = Rpc.call_("listunspent",params,RPCURL);
-        getUtxo(utxo , outputs , ChangeAddress);
-        //地址去重，地址对应私钥进行签名
-        ArrayList<String> addrArray = new ArrayList<String>(new HashSet<String>(addrList));
-        return availablePrivate(privates, addrArray);
+        return utxo;
     }
-
 
     /**
      * 获取可用utxo
@@ -93,10 +111,59 @@ public class FinishUtxo {
      * @param ChangeAddress
      * @return
      */
-    public static void getUtxo(String utxo , LinkedList<TxOutput> outputs , String ChangeAddress) throws SDKException {
+    public static void getUtxoAndChangeAddress(String utxo , LinkedList<TxOutput> outputs , String ChangeAddress) throws SDKException {
+        List<UTXOInputSort> UTXOInputList = checkUtxo(utxo);
 
-//        String flag = "ok";
+        //outputs.amount > 可用utxo.amout
+        inputList = new LinkedList<UTXOTxInput>();
 
+        long outputValue = getOutput(outputs);
+
+        long inputValue = getInputs(UTXOInputList, outputValue);
+
+        if (inputValue >= outputValue + FEE){
+            //计算找零金额
+            long ChangeValue = inputValue - outputValue - FEE;
+            outputs.add(new TxOutput(ChangeAddress, ChangeValue));
+        }else {
+            throw new SDKException(ErrorCode.ParamErr("Utxo deficiency , inputValue : " + inputValue + " , outputValue :" + outputValue));
+        }
+    }
+
+
+    public static  long getInputs(List<UTXOInputSort> UTXOInputList,long CrossChainAmount){
+        //计算所有的input金额
+        long inputValue = 0;
+        addrList = new ArrayList<String>();
+        for (int j = 0 ; j < UTXOInputList.size() ; j++){
+            UTXOInputSort input = UTXOInputList.get(j);
+            String inputTxid = input.getTxid();
+            String inputAddress = input.getAddress();
+            int inputVont = input.getVont();
+
+            inputValue += input.getAmount();
+            inputList.add(new UTXOTxInput(inputTxid,inputVont,"",inputAddress));
+            addrList.add(inputAddress);
+            //input金额够用
+            if (inputValue >= CrossChainAmount + FEE){
+                break;
+            }
+        }
+        return inputValue;
+    }
+
+    public static long getOutput(LinkedList<TxOutput> outputs){
+        long outputValue = 0;
+        for (int k = 0 ; k < outputs.size() ; k++){
+            TxOutput output = outputs.get(k);
+            long value = output.getValue();
+            outputValue += value;
+        }
+        return outputValue;
+    }
+
+
+    public static List<UTXOInputSort> checkUtxo(String utxo) throws SDKException {
         JSONObject jsonObject = JSONObject.fromObject(utxo);
         String error = jsonObject.getString("error");
         if (error != "null"){
@@ -108,7 +175,7 @@ public class FinishUtxo {
         }
 
         Object resultObject = jsonObject.get("result");
-        if (resultObject.equals(null)) {
+        if (resultObject == null) {
 //            return "The address is not utxo , Please check the address";
             throw new SDKException(ErrorCode.ParamErr("The address is not utxo , Please check the address"));
         }
@@ -132,44 +199,10 @@ public class FinishUtxo {
         }
 
         Collections.sort(UTXOInputList);
-
-        //outputs.amount > 可用utxo.amout
-        inputList = new LinkedList<UTXOTxInput>();
-
-        //计算所有的output金额
-        long outputValue = 0;
-        for (int k = 0 ; k < outputs.size() ; k++){
-            TxOutput output = outputs.get(k);
-            long value = output.getValue();
-            outputValue += value;
-        }
-
-        //计算所有的input金额
-        long inputValue = 0;
-        addrList = new ArrayList<String>();
-        for (int j = 0 ; j < UTXOInputList.size() ; j++){
-            UTXOInputSort input = UTXOInputList.get(j);
-            String inputTxid = input.getTxid();
-            String inputAddress = input.getAddress();
-            int inputVont = input.getVont();
-
-            inputValue += input.getAmount();
-            inputList.add(new UTXOTxInput(inputTxid,inputVont,"",inputAddress));
-            addrList.add(inputAddress);
-            //input金额够用
-            if (inputValue >= outputValue + FEE){
-                break;
-            }
-        }
-
-        if (inputValue >= outputValue + FEE){
-            //计算找零金额
-            long ChangeValue = inputValue - outputValue - FEE;
-            outputs.add(new TxOutput(ChangeAddress, ChangeValue));
-        }else {
-            throw new SDKException(ErrorCode.ParamErr("Utxo deficiency , inputValue : " + inputValue + " , outputValue :" + outputValue));
-        }
+        return UTXOInputList;
     }
+
+
 
     /**
      * 解析区块信息判断可用utxo
@@ -305,7 +338,7 @@ public class FinishUtxo {
     }
 
     /**
-     *
+     * 拿到需要花费utxo的地址对应的私钥
      * @param privateList
      * @param addressList
      * @return

@@ -115,7 +115,7 @@ public class Ela {
      */
     public static RawTx CrossChainSignTx(UTXOTxInput[] inputs, TxOutput[] outputs , PayloadTransferCrossChainAsset[] CrossChainAsset ,  List<String> privateKeySign) throws IOException {
         Tx tx = Tx.NewCrossChainTransaction( inputs, outputs ,CrossChainAsset);
-
+        System.out.println("CrossChainAsset : " + CrossChainAsset.length);
         for(int i = 0 ; i < privateKeySign.size() ; i ++){
             ECKey ec = ECKey.fromPrivate(DatatypeConverter.parseHexBinary(privateKeySign.get(i)));
             byte[] code = Util.CreateSingleSignatureRedeemScript(ec.getPubBytes(),1);

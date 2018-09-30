@@ -6,6 +6,7 @@ import javax.xml.bind.DatatypeConverter;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.math.BigInteger;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -13,8 +14,9 @@ import java.util.Map;
  * Created by nan on 18/1/10.
  */
 public class TxOutput {
-    private byte[] AssetID= Common.ELA_ASSETID; //32 byte unit256
+    private byte[] AssetID; //32 byte unit256
     private long Value; //Fixed64
+    private BigInteger TokenValue;
     private long OutputLock = 0; //uint32
     private byte[] ProgramHash; //21byte unit168
     private String Address;
@@ -26,8 +28,20 @@ public class TxOutput {
      * @param amount 金额
      */
     public TxOutput(String address,long amount){
+        this.AssetID = Common.ELA_ASSETID;
         this.Address = address;
         this.Value = amount;
+        if (address.equals(DESTROY_ADDRESS)){
+            this.ProgramHash = new byte[21];
+        }else {
+            this.ProgramHash = Util.ToScriptHash(address);
+        }
+    }
+
+    public TxOutput(String address,BigInteger amount,String assetId){
+        this.AssetID =  Utils.reverseBytes(DatatypeConverter.parseHexBinary(assetId));
+        this.Address = address;
+        this.TokenValue = amount;
         if (address.equals(DESTROY_ADDRESS)){
             this.ProgramHash = new byte[21];
         }else {
@@ -40,7 +54,6 @@ public class TxOutput {
         o.writeLong(Long.reverseBytes(this.Value));
         o.writeInt(Integer.reverseBytes((int)this.OutputLock));
         o.write(this.ProgramHash);
-
     }
 
     public static Map DeSerialize(DataInputStream o) throws IOException {
