@@ -20,6 +20,8 @@ public class Verify {
         AddressLower("address"),
         ChangeAddress("ChangeAddress"),
         AmountLower("amount"),
+        TokenAmountLower("tokenAmount"),
+        AssetIdLower("assetId"),
         MUpper("M"),
         Host("Host"),
         Fee("Fee"),
@@ -67,6 +69,25 @@ public class Verify {
                         throw new SDKException(ErrorCode.InvalidBlockHash);
                     }
                 }else throw new SDKException(ErrorCode.BlockHashNotNull);
+                break;
+            case TokenAmountLower:
+                Object TokenAmountLower = jsonObject.get(type.getValue());
+                if (TokenAmountLower != null) {
+                    if (TokenAmountLower instanceof String ){}else throw new SDKException(ErrorCode.InvalidTokenAmount);
+                }else throw new SDKException(ErrorCode.TokenAmountNotNull) ;
+                break;
+            case AssetIdLower:
+                Object AssetIdLower = jsonObject.get(type.getValue());
+                if (AssetIdLower != null) {
+                    if (((String)AssetIdLower).length() != 64){
+                        throw new SDKException(ErrorCode.InvalidAssetId);
+                    }
+                    try {
+                        DatatypeConverter.parseHexBinary((String)AssetIdLower);
+                    }catch (Exception e){
+                        throw new SDKException(ErrorCode.InvalidAssetId);
+                    }
+                }else throw new SDKException(ErrorCode.AssetIdNotNull);
                 break;
             case PrivateKeyLower:
                 Object PrivateKeyLower = jsonObject.get(type.getValue());

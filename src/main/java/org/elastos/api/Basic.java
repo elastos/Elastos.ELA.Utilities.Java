@@ -9,7 +9,11 @@ import org.elastos.ela.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.math.BigDecimal;
 import java.util.*;
+
+import static org.elastos.ela.PayloadRegisterAsset.ElaPrecision;
+import static org.elastos.ela.PayloadRegisterAsset.MaxPrecision;
 
 /**
  * @author: DongLei.Tan
@@ -208,6 +212,61 @@ public class Basic {
         return null;
     }
 
+    public static PayloadRegisterAsset payloadRegisterAsset(JSONObject json_transaction) throws SDKException {
+        Object payload = json_transaction.get("PayloadRegisterAsset");
+        if (payload != null){
+            final JSONObject PayloadObject = json_transaction.getJSONObject("PayloadRegisterAsset");
+            String assetname = PayloadObject.getString("name");
+            String description = PayloadObject.getString("description");
+            int precision = PayloadObject.getInt("precision");
+            String address = PayloadObject.getString("address");
+            long amount = PayloadObject.getLong("amount");
+
+            //生成assetId
+            Asset asset = new Asset(assetname, description, (byte) precision, (byte) 0x00);
+            return new PayloadRegisterAsset(asset,amount,address);
+        }throw new SDKException(ErrorCode.ParamErr("PayloadRegisterAsset can not be empty"));
+    }
+
+
+    public static TxOutput[] parseRegisterAsset(JSONObject json_transaction) throws SDKException {
+        LinkedList<TxOutput> outputList = new LinkedList<TxOutput>();
+        //添加注册资产
+        final JSONObject PayloadObject = json_transaction.getJSONObject("PayloadRegisterAsset");
+        String tokenAddress = PayloadObject.getString("address");
+        String tokenAmount = PayloadObject.getString("amount");
+        outputList.add(new TxOutput(tokenAddress, tokenAmount,Asset.AssetId,MaxPrecision));
+
+        //添加消费ELA
+        final JSONObject output = json_transaction.getJSONObject("Outputs");
+        String amount = output.getString("amount");
+        String address = output.getString("address");
+        outputList.add(new TxOutput(address, amount,Common.SystemAssetID,ElaPrecision));
+
+        return outputList.toArray(new TxOutput[outputList.size()]);
+    }
+
+    public static LinkedList<TxOutput>  parseOutputsByAsset(JSONArray outputs) throws SDKException {
+        LinkedList<TxOutput> outputList = new LinkedList<TxOutput>();
+        for (int t = 0; t < outputs.size(); t++) {
+            JSONObject output = (JSONObject) outputs.get(t);
+
+//            Verify.verifyParameter(Verify.Type.AddressLower,output);
+//            Verify.verifyParameter(Verify.Type.AmountLower,output);
+
+            String  assetId = output.getString("assetId");
+            String address = output.getString("address");
+            String  amount = output.getString("amount");
+            int precision = output.getInt("precision");
+            if (!assetId.toLowerCase().equals(Common.SystemAssetID)){
+                precision = MaxPrecision;
+            }
+            outputList.add(new TxOutput(address,amount,assetId,precision));
+
+        }
+        return outputList;
+    }
+
 
     public static LinkedList<TxOutput> parseOutputs(JSONArray outputs) throws SDKException {
         LinkedList<TxOutput> outputList = new LinkedList<TxOutput>();
@@ -223,6 +282,7 @@ public class Basic {
         }
         return outputList;
     }
+
 
     public static LinkedList<TxOutput> parseCrossChainOutputs(JSONArray outputs) throws SDKException {
         LinkedList<TxOutput> outputList = new LinkedList<TxOutput>();

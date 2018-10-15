@@ -6,6 +6,7 @@ import javax.xml.bind.DatatypeConverter;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -14,7 +15,8 @@ import java.util.Map;
  * Created by nan on 18/1/10.
  */
 public class TxOutput {
-    private byte[] AssetID; //32 byte unit256
+    private byte[] SystemAssetID; //32 byte unit256
+    private byte[] TokenAssetID; //32 byte unit256
     private long Value; //Fixed64
     private BigInteger TokenValue;
     private long OutputLock = 0; //uint32
@@ -28,7 +30,7 @@ public class TxOutput {
      * @param amount 金额
      */
     public TxOutput(String address,long amount){
-        this.AssetID = Common.ELA_ASSETID;
+        this.SystemAssetID = Common.ELA_ASSETID;
         this.Address = address;
         this.Value = amount;
         if (address.equals(DESTROY_ADDRESS)){
@@ -38,20 +40,28 @@ public class TxOutput {
         }
     }
 
-    public TxOutput(String address,BigInteger amount,String assetId){
-        this.AssetID =  Utils.reverseBytes(DatatypeConverter.parseHexBinary(assetId));
+    //Token链业务
+    public TxOutput(String address,String amount,String assetId,int precision){
         this.Address = address;
-        this.TokenValue = amount;
-        if (address.equals(DESTROY_ADDRESS)){
-            this.ProgramHash = new byte[21];
+        if (assetId.toLowerCase().equals(Common.SystemAssetID)){
+            this.SystemAssetID = Common.ELA_ASSETID;
+            this.Value = Util.multiplyAmountELA(new BigDecimal(amount), precision).toBigInteger().longValue();
         }else {
-            this.ProgramHash = Util.ToScriptHash(address);
+            this.TokenAssetID =  Utils.reverseBytes(DatatypeConverter.parseHexBinary(assetId));
+            this.TokenValue = Util.multiplyAmountETH(new BigDecimal(amount),precision).toBigInteger();
         }
+        this.ProgramHash = Util.ToScriptHash(address);
     }
 
     void Serialize(DataOutputStream o) throws IOException {
-        o.write(this.AssetID);
-        o.writeLong(Long.reverseBytes(this.Value));
+        if (this.SystemAssetID != null){
+            o.write(this.SystemAssetID);
+            o.writeLong(Long.reverseBytes(this.Value)); //TODO 验证是否反转
+        }else if (this.TokenAssetID != null){
+            o.write(this.TokenAssetID);
+            Util.WriteVarBytes(o,this.TokenValue.toByteArray());
+        }
+
         o.writeInt(Integer.reverseBytes((int)this.OutputLock));
         o.write(this.ProgramHash);
     }
@@ -82,8 +92,8 @@ public class TxOutput {
         return outputMap;
     }
 
-    public byte[] getAssetID() {
-        return AssetID;
+    public byte[] getSystemAssetID() {
+        return SystemAssetID;
     }
 
     public long getValue() {

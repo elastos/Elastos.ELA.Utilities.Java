@@ -5,6 +5,7 @@ import org.junit.Test;
 import javax.xml.bind.DatatypeConverter;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
+import java.math.BigDecimal;
 
 import static org.junit.Assert.*;
 
@@ -95,14 +96,20 @@ public class UtilTest {
 //    }
 
     @Test
-    public void sortByteArrayArrayUseRevertBytesSequence(){
-        byte[][] baa ={{0x01,0x02,0x02,0x01},{0x02,0x02,0x03,0x01}};
+    public void sortByteArrayArrayUseRevertBytesSequence() {
+        byte[][] baa = {{0x01, 0x02, 0x02, 0x01}, {0x02, 0x02, 0x03, 0x01}};
 
         Util.sortByteArrayArrayUseRevertBytesSequence(baa);
 
-        for(int i=0;i<baa.length;i++){
+        for (int i = 0; i < baa.length; i++) {
             System.out.println(DatatypeConverter.printHexBinary(baa[i]));
         }
+    }
 
+    @Test
+    public void bigDecimal(){
+        String amount = "123.123456789";
+        BigDecimal bigDecimal = Util.multiplyAmountETH(new BigDecimal(amount), 18);
+        System.out.println(bigDecimal);
     }
 }

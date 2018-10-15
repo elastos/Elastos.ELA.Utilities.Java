@@ -16,7 +16,7 @@ public class ErrorCode {
     //account error
     public static String  PrikeyLengthError    = getError(51001, "encryptedPrivateKey length error");
     public static String  SaltLengthError      = getError(51002, "salt n dkLen length error");
-    public static String  EncryptedPrivateKeyAddressPasswordErr = getError(51015, "encryptedPrivateKey address password not match.");
+    public static String  EncryptedPrivateKeyAddressPasswordErr = getError(51015, "encryptedPrivateKey address password not match");
     public static String  EncriptPrivateKeyError = getError(51003, "encript privatekey error,");
     public static String  PasswordNotNull      = getError(51004, "password can not be empty");
     public static String  InvalidPassword      = getError(51005, "invalid Password");
@@ -44,8 +44,12 @@ public class ErrorCode {
     public static String  RecordDataNotNull    = getError(51025, "recordData can not be empty");
     public static String  InvalidBlockHash     = getError(51026, "invalid blockHash");
     public static String  BlockHashNotNull     = getError(51027, "blockHash key can not be empty");
-    public static String  InvalidM             = getError(51016, "invalid M");
-    public static String  MNotNull             = getError(51017, "M can not be empty");
+    public static String  InvalidM             = getError(51028, "invalid M");
+    public static String  MNotNull             = getError(51029, "M can not be empty");
+    public static String  InvalidTokenAmount   = getError(51030, "invalid tokenAmount");
+    public static String  TokenAmountNotNull   = getError(51031, "tokenAmount can not be empty");
+    public static String  InvalidAssetId       = getError(51032, "invalid assetId");
+    public static String  AssetIdNotNull       = getError(51033, "assetId can not be empty");
 
     // java-config.json
     public static String  HostNotNull          = getError(52001, "host can not be empty");

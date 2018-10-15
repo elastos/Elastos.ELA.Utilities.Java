@@ -8,7 +8,7 @@ import javax.xml.bind.DatatypeConverter;
 /**
  * Created by nan on 18/1/15.
  */
-public class SignToolTest {
+public class  SignToolTest {
     @Test
     public void doSign() throws Exception {
         byte[] signature = SignTool.doSign("hello".getBytes(),

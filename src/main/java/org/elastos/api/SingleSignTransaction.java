@@ -68,6 +68,74 @@ public class SingleSignTransaction {
         }
     }
 
+    public static String genRegisterTransaction(JSONObject inputsAddOutpus){
+        try {
+            final JSONArray transaction = inputsAddOutpus.getJSONArray("Transactions");
+            JSONObject json_transaction = (JSONObject) transaction.get(0);
+            final JSONArray utxoInputs = json_transaction.getJSONArray("UTXOInputs");
+
+            //解析inputs
+            UTXOTxInput[] utxoTxInputs = Basic.parseInputs(utxoInputs).toArray(new UTXOTxInput[utxoInputs.size()]);
+            //解析PayloadRegisterAsset
+            PayloadRegisterAsset payload   = Basic.payloadRegisterAsset(json_transaction);
+            //解析outputs
+            TxOutput[] txOutputs = Basic.parseRegisterAsset(json_transaction);
+
+            //创建rawTransaction
+            LinkedHashMap<String, Object> resultMap = new LinkedHashMap<String, Object>();
+            RawTx rawTx = Ela.makeAndSignTx(utxoTxInputs,txOutputs,payload);
+            resultMap.put("rawTx",rawTx.getRawTxString());
+            resultMap.put("txHash",rawTx.getTxHash());
+
+            LOGGER.info(Basic.getSuccess("genRegisterTransaction",resultMap));
+            return Basic.getSuccess("genRegisterTransaction",resultMap);
+        } catch (Exception e) {
+            LOGGER.error(e.toString());
+            return e.toString();
+        }
+    }
+
+    public static String genRawTransactionByToken(JSONObject inputsAddOutpus){
+        try {
+            final JSONArray transaction = inputsAddOutpus.getJSONArray("Transactions");
+            JSONObject json_transaction = (JSONObject) transaction.get(0);
+            final JSONArray utxoInputs = json_transaction.getJSONArray("UTXOInputs");
+            final JSONArray outputs = json_transaction.getJSONArray("Outputs");
+
+            //解析inputs
+            UTXOTxInput[] utxoTxInputs = Basic.parseInputs(utxoInputs).toArray(new UTXOTxInput[utxoInputs.size()]);
+            //解析outputs
+            TxOutput[] txOutputs = Basic.parseOutputsByAsset(outputs).toArray(new TxOutput[outputs.size()]);
+            //解析payloadRecord
+            PayloadRecord payload   = Basic.parsePayloadRecord(json_transaction);
+
+            boolean bool = json_transaction.has("Memo");
+
+            //创建rawTransaction
+            LinkedHashMap<String, Object> resultMap = new LinkedHashMap<String, Object>();
+            RawTx rawTx = new RawTx("","");
+
+            if (payload != null && bool){
+                return ErrorCode.ParamErr("PayloadRecord And Memo can't be used at the same time");
+            }else if (payload == null && !bool){
+                rawTx = Ela.makeAndSignTx(utxoTxInputs,txOutputs);
+            }else if (bool){
+                String memo = json_transaction.getString("Memo");
+                rawTx = Ela.makeAndSignTx(utxoTxInputs,txOutputs,memo);
+            }else{
+                rawTx = Ela.makeAndSignTx(utxoTxInputs,txOutputs,payload);
+            }
+            resultMap.put("rawTx",rawTx.getRawTxString());
+            resultMap.put("txHash",rawTx.getTxHash());
+
+            LOGGER.info(Basic.getSuccess("genRawTransactionByToken",resultMap));
+            return Basic.getSuccess("genRawTransactionByToken",resultMap);
+        } catch (Exception e) {
+            LOGGER.error(e.toString());
+            return e.toString();
+        }
+    }
+
 
     /**
      * 根据私钥获取utxo生成RawTrnsaction

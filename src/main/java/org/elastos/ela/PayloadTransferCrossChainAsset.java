@@ -20,7 +20,7 @@ public class PayloadTransferCrossChainAsset {
     }
 
 
-    void Serialize(DataOutputStream o) throws IOException {
+    public void Serialize(DataOutputStream o) throws IOException {
         o.write(this.CrossChainAddress.length());
         o.writeBytes(this.CrossChainAddress);
         Util.WriteVarUint(o,this.OutputIndex);
