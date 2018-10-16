@@ -216,6 +216,13 @@ public class Basic {
         Object payload = json_transaction.get("PayloadRegisterAsset");
         if (payload != null){
             final JSONObject PayloadObject = json_transaction.getJSONObject("PayloadRegisterAsset");
+
+            Verify.verifyParameter(Verify.Type.NameLower,PayloadObject);
+            Verify.verifyParameter(Verify.Type.DescriptionLower,PayloadObject);
+            Verify.verifyParameter(Verify.Type.PrecisionLower,PayloadObject);
+            Verify.verifyParameter(Verify.Type.AddressLower,PayloadObject);
+            Verify.verifyParameter(Verify.Type.AmountLower,PayloadObject);
+
             String assetname = PayloadObject.getString("name");
             String description = PayloadObject.getString("description");
             int precision = PayloadObject.getInt("precision");
@@ -239,6 +246,9 @@ public class Basic {
 
         //添加消费ELA
         final JSONObject output = json_transaction.getJSONObject("Outputs");
+        Verify.verifyParameter(Verify.Type.AddressLower,output);
+        Verify.verifyParameter(Verify.Type.TokenAmountLower,output);
+
         String amount = output.getString("amount");
         String address = output.getString("address");
         outputList.add(new TxOutput(address, amount,Common.SystemAssetID,ElaPrecision));
@@ -251,8 +261,9 @@ public class Basic {
         for (int t = 0; t < outputs.size(); t++) {
             JSONObject output = (JSONObject) outputs.get(t);
 
-//            Verify.verifyParameter(Verify.Type.AddressLower,output);
-//            Verify.verifyParameter(Verify.Type.AmountLower,output);
+            Verify.verifyParameter(Verify.Type.AssetIdLower,output);
+            Verify.verifyParameter(Verify.Type.AddressLower,output);
+            Verify.verifyParameter(Verify.Type.TokenAmountLower,output);
 
             String  assetId = output.getString("assetId");
             String address = output.getString("address");

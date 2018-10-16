@@ -20,7 +20,7 @@ public class Verify {
         AddressLower("address"),
         ChangeAddress("ChangeAddress"),
         AmountLower("amount"),
-        TokenAmountLower("tokenAmount"),
+        TokenAmountLower("amount"),
         AssetIdLower("assetId"),
         MUpper("M"),
         Host("Host"),
@@ -31,7 +31,11 @@ public class Verify {
         PasswordLower("password"),
         RecordTypeLower("recordType"),
         RecordDataLower("recordData"),
-        BlockHashUpper("BlockHash");
+        BlockHashUpper("BlockHash"),
+
+        NameLower("name"),
+        DescriptionLower("description"),
+        PrecisionLower("precision");
         private String type;
         private Type(String t) {
             this.type = t;
@@ -157,7 +161,7 @@ public class Verify {
             case MUpper:
                 Object MUpper = jsonObject.get(type.getValue());
                 if (MUpper != null) {
-                    if (MUpper instanceof Long || MUpper instanceof Integer && (int)MUpper >= 0){}else throw new SDKException(ErrorCode.InvalidM);
+                    if (MUpper instanceof Integer && (int)MUpper >= 0){}else throw new SDKException(ErrorCode.InvalidM);
                 }else throw new SDKException(ErrorCode.MNotNull);
                 break;
             case Fee:
@@ -169,7 +173,7 @@ public class Verify {
             case Confirmation:
                 Object Confirmation = jsonObject.get(type.getValue());
                 if (Confirmation != null) {
-                    if (Confirmation instanceof Long || Confirmation instanceof Integer && (int)Confirmation >= 0){}else throw new SDKException(ErrorCode.InvalConfirmation);
+                    if (Confirmation instanceof Integer && (int)Confirmation >= 0){}else throw new SDKException(ErrorCode.InvalConfirmation);
                 }else throw new SDKException(ErrorCode.ConfirmationNotNull);
                 break;
             case IndexLower:
@@ -188,6 +192,27 @@ public class Verify {
                 Object RecordDataLower = jsonObject.get(type.getValue());
                 if (RecordDataLower != null) {
                 }else throw new SDKException(ErrorCode.RecordDataNotNull);
+                break;
+
+
+            case NameLower:
+                Object NameLower = jsonObject.get(type.getValue());
+                if (NameLower != null) {
+                    boolean isWord=((String)NameLower).matches("[a-zA-Z]+");
+                    if (!isWord)throw new SDKException(ErrorCode.InvalidName);
+                }else throw new SDKException(ErrorCode.NameNotNull);
+                break;
+            case DescriptionLower:
+                Object DescriptionLower = jsonObject.get(type.getValue());
+                if (DescriptionLower != null) {
+                    if (Util.isChinese((String)DescriptionLower))throw new SDKException(ErrorCode.InvalidDescription);
+                }else throw new SDKException(ErrorCode.DescriptionNotNull);
+                break;
+            case PrecisionLower:
+                Object PrecisionLower = jsonObject.get(type.getValue());
+                if (PrecisionLower != null) {
+                    if (PrecisionLower instanceof Integer && (int)PrecisionLower >= 0){}else throw new SDKException(ErrorCode.InvalidPrecision);
+                }else throw new SDKException(ErrorCode.PrecisionNotNull);
                 break;
         }
     }

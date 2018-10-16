@@ -105,11 +105,4 @@ public class UtilTest {
             System.out.println(DatatypeConverter.printHexBinary(baa[i]));
         }
     }
-
-    @Test
-    public void bigDecimal(){
-        String amount = "123.123456789";
-        BigDecimal bigDecimal = Util.multiplyAmountETH(new BigDecimal(amount), 18);
-        System.out.println(bigDecimal);
-    }
 }

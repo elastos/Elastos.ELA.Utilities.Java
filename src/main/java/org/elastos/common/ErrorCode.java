@@ -46,10 +46,18 @@ public class ErrorCode {
     public static String  BlockHashNotNull     = getError(51027, "blockHash key can not be empty");
     public static String  InvalidM             = getError(51028, "invalid M");
     public static String  MNotNull             = getError(51029, "M can not be empty");
-    public static String  InvalidTokenAmount   = getError(51030, "invalid tokenAmount");
-    public static String  TokenAmountNotNull   = getError(51031, "tokenAmount can not be empty");
+
+    public static String  InvalidTokenAmount   = getError(51030, "amount can not be int");
+    public static String  TokenAmountNotNull   = getError(51031, "amount can not be empty");
     public static String  InvalidAssetId       = getError(51032, "invalid assetId");
     public static String  AssetIdNotNull       = getError(51033, "assetId can not be empty");
+    public static String  InvalidDescription   = getError(51034, "description can not be chinese");
+    public static String  DescriptionNotNull   = getError(51035, "description can not be empty");
+    public static String  InvalidName          = getError(51032, "name can only be an english character");
+    public static String  NameNotNull          = getError(51033, "name can not be empty");
+    public static String  InvalidPrecision     = getError(51034, "invalid precision");
+    public static String  PrecisionNotNull     = getError(51035, "precision can not be empty");
+
 
     // java-config.json
     public static String  HostNotNull          = getError(52001, "host can not be empty");
