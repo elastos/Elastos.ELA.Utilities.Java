@@ -150,4 +150,5 @@ public class ElaTest {
         DataInputStream dos = new DataInputStream(byteArrayInputStream);
         Tx.DeSerialize(dos);
     }
+
 }

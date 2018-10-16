@@ -53,6 +53,7 @@ public class Ela {
         byte[][] phashes = tx.getUniqAndOrdedProgramHashes();
         for(int i=0;i<phashes.length;i++){
             String privateKey = tx.hashMapPriv.get(DatatypeConverter.printHexBinary(phashes[i]));
+            System.out.println("privatekey : " + privateKey);
             ECKey ec = ECKey.fromPrivate(DatatypeConverter.parseHexBinary(privateKey));
 
             byte[] code = Util.CreateSingleSignatureRedeemScript(ec.getPubBytes(),1);

@@ -257,7 +257,7 @@ public class Basic {
             String  assetId = output.getString("assetId");
             String address = output.getString("address");
             String  amount = output.getString("amount");
-            int precision = output.getInt("precision");
+            int precision = ElaPrecision;
             if (!assetId.toLowerCase().equals(Common.SystemAssetID)){
                 precision = MaxPrecision;
             }

@@ -1,6 +1,5 @@
 package org.elastos.ela;
 
-import org.elastos.common.SDKException;
 import org.elastos.ela.bitcoinj.Sha256Hash;
 
 import javax.xml.bind.DatatypeConverter;
@@ -45,11 +44,8 @@ public class Tx {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         DataOutputStream dos = new DataOutputStream(baos);
         this.SerializeUnsigned(dos);
-
         byte[] signature = SignTool.doSign(baos.toByteArray(), DatatypeConverter.parseHexBinary(privateKey));
         this.Programs.add(new Program(code,signature));
-
-        return;
     }
 
     public void multiSign(String privateKey,byte[] code) throws Exception {
@@ -272,7 +268,6 @@ public class Tx {
                 utxo.Serialize(o);
             }
         }
-
         //[]*Outputs
         Util.WriteVarUint(o,this.Outputs.length);
         if (this.Outputs.length > 0) {

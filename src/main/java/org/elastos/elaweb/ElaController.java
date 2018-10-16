@@ -62,6 +62,9 @@ public class ElaController {
             if (method.equals("genRawTransactionByToken")){
                 return SingleSignTransaction.genRawTransactionByToken(param);
             }
+            if (method.equals("genMultiSignRawTransactionByToken")){
+                return MultSignitransaction.genMultiSignRawTransactionByToken(param);
+            }
             if (method.equals("decodeRawTransaction")){
                 String rawTransaction = param.getString("RawTransaction");
                 return SingleSignTransaction.decodeRawTransaction(rawTransaction);

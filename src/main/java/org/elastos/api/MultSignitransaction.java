@@ -84,6 +84,57 @@ public class MultSignitransaction {
     }
 
 
+    public static String genMultiSignRawTransactionByToken(JSONObject inputsAddOutpus){
+
+        final JSONArray transaction = inputsAddOutpus.getJSONArray("Transactions");
+        JSONObject json_transaction = (JSONObject) transaction.get(0);
+        final JSONArray utxoInputs = json_transaction.getJSONArray("UTXOInputs");
+
+        final JSONArray outputs = json_transaction.getJSONArray("Outputs");
+        final JSONArray privateKeyScripte = json_transaction.getJSONArray("PrivateKeyScripte");
+
+        try {
+            //解析inputs
+            UTXOTxInput[] utxoTxInputs = Basic.parseInputsAddress(utxoInputs).toArray(new UTXOTxInput[utxoInputs.size()]);
+            //解析outputs
+            TxOutput[] txOutputs = Basic.parseOutputsByAsset(outputs).toArray(new TxOutput[outputs.size()]);
+            //解析payloadRecord
+            PayloadRecord payload = Basic.parsePayloadRecord(json_transaction);
+
+            //解析 创建赎回脚本所需要的私钥
+            List<String> privateKeyScripteList = Basic.parsePrivates(privateKeyScripte);
+
+            boolean bool = json_transaction.has("Memo");
+
+            Verify.verifyParameter(Verify.Type.MUpper,json_transaction);
+            final int M = json_transaction.getInt("M");
+
+            //得到 签名所需要的私钥
+            ArrayList<String> privateKeySignList = Basic.genPrivateKeySignByM(M, privateKeyScripte);
+
+            LinkedHashMap<String, Object> resultMap = new LinkedHashMap<String, Object>();
+            RawTx rawTx;
+            if (payload != null && bool){
+                return ErrorCode.ParamErr("PayloadRecord And Memo can't be used at the same time");
+            }else if (payload == null && !bool){
+                rawTx = Ela.MultiSignTransaction(utxoTxInputs, txOutputs, privateKeyScripteList, privateKeySignList, M);
+            }else if (bool){
+                String memo = json_transaction.getString("Memo");
+                rawTx = Ela.MultiSignTransaction(utxoTxInputs, txOutputs, privateKeyScripteList, privateKeySignList, M, memo);
+            }else{
+                rawTx = Ela.MultiSignTransaction(utxoTxInputs, txOutputs, privateKeyScripteList, privateKeySignList, M,payload);
+            }
+            resultMap.put("rawTx", rawTx.getRawTxString());
+            resultMap.put("txHash", rawTx.getTxHash());
+
+
+            return Basic.getSuccess("genMultiSignRawTransactionByToken", resultMap);
+        } catch (Exception e) {
+            LOGGER.error(e.toString());
+            return e.toString();
+        }
+    }
+
     /**
      * 跨链多签生成RawTrnsaction
      *

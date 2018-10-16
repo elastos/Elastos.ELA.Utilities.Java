@@ -17,7 +17,6 @@ public class TxAttribute {
     public void Serialize(DataOutputStream o) throws IOException {
         o.writeByte(this.Usage);
         Util.WriteVarBytes(o,this.Data);
-        return;
     }
 
     public static void DeSerialize(DataInputStream o) throws IOException {
