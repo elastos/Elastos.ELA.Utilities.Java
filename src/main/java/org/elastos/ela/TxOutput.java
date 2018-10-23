@@ -56,7 +56,7 @@ public class TxOutput {
     void Serialize(DataOutputStream o) throws IOException {
         if (this.SystemAssetID != null){
             o.write(this.SystemAssetID);
-            o.writeLong(Long.reverseBytes(this.Value)); //TODO 验证是否反转
+            o.writeLong(Long.reverseBytes(this.Value));
         }else if (this.TokenAssetID != null){
             o.write(this.TokenAssetID);
             Util.WriteVarBytes(o,this.TokenValue.toByteArray());

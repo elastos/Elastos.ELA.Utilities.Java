@@ -17,8 +17,8 @@ import java.util.List;
  * @contact: tandonglei28@gmail.com
  * @time: 2018/9/26
  */
-public class MultSignitransaction {
-    private static final Logger LOGGER = LoggerFactory.getLogger(MultSignitransaction.class);
+public class MultSigntransaction {
+    private static final Logger LOGGER = LoggerFactory.getLogger(MultSigntransaction.class);
 
     /**
      * 多签生成RawTrnsaction

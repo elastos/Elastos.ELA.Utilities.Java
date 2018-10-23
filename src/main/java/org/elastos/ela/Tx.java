@@ -22,7 +22,7 @@ public class Tx {
     UTXOTxInput[] UTXOInputs;
     //BalanceInputs  []*BalanceTxInput
     TxOutput[] Outputs;
-    long LockTime; //uint32
+    int LockTime; //uint32
     List<Program> Programs;
     byte[] hash;    //256byte
 
@@ -251,7 +251,6 @@ public class Tx {
 
         //payloadRegisterAsset
         if ( this.payloadRegisterAsset != null) {
-//            Util.WriteVarUint(o, 1);
             this.payloadRegisterAsset.Serialize(o);
         }
         //[]*txAttribute

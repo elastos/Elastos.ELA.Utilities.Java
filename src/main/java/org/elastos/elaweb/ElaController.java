@@ -4,7 +4,7 @@ import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.elastos.api.Account;
 import org.elastos.api.Basic;
-import org.elastos.api.MultSignitransaction;
+import org.elastos.api.MultSigntransaction;
 import org.elastos.api.SingleSignTransaction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -63,7 +63,7 @@ public class ElaController {
                 return SingleSignTransaction.genRawTransactionByToken(param);
             }
             if (method.equals("genMultiSignRawTransactionByToken")){
-                return MultSignitransaction.genMultiSignRawTransactionByToken(param);
+                return MultSigntransaction.genMultiSignRawTransactionByToken(param);
             }
             if (method.equals("decodeRawTransaction")){
                 String rawTransaction = param.getString("RawTransaction");
@@ -100,7 +100,7 @@ public class ElaController {
                 return Basic.genMultiSignAddress(param);
             }
             if (method.equals("genMultiSignRawTransaction")) {
-                return MultSignitransaction.genMultiSignRawTransaction(param);
+                return MultSigntransaction.genMultiSignRawTransaction(param);
             }
             if (method.equals("genGenesisAddress")) {
                 return Basic.genGenesisAddress(param);
@@ -109,7 +109,7 @@ public class ElaController {
                 return SingleSignTransaction.genCrossChainRawTransaction(param);
             }
             if (method.equals("genCrossChainMultiSignRawTransaction")) {
-                return MultSignitransaction.genCrossChainMultiSignRawTransaction(param);
+                return MultSigntransaction.genCrossChainMultiSignRawTransaction(param);
             }
             if (method.equals("genCrossChainRawTransactionByPrivateKey")) {
                 return SingleSignTransaction.genCrossChainRawTransactionByPrivateKey(param);

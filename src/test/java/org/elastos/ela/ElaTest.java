@@ -96,19 +96,20 @@ public class ElaTest {
      */
     @Test
     public void SignTx() throws Exception {
-        int account = 1;
+        int account = 100;
         List<UTXOTxInput> inputs = new LinkedList<UTXOTxInput>();
-        for (int i = 0 ; i < account ; i++){
+        for (int i = 0 ; i < 1 ; i++){
             inputs.add(new UTXOTxInput(
-                    "22bade15481f1af8240993207e1df61144a7776e6087994d240917a887f72052",
+                    "4efe9c9edad6f54da11c290f30d9d978f999150fcc940249fb7a8dfdb7aee6fd",
                     0,
-                    "4C573939323F11BCDB57B61CCE095D4B1E55E986F9944F88072141F3DFA883A3",
-                    "Eazj14ifau5eH1SP5F8MJRuiSsPMiGbJV1"));
+                    "5FA927E5664E563F019F50DCD4D7E2D9404F2D5D49E31F9482912E23D6D7B9EB",
+                    "EQSpUzE4XYJhBSx5j7Tf2cteaKdFdixfVB"));
         }
 
         List<TxOutput>  outputs = new LinkedList<TxOutput>();
         for (int i = 0 ; i < account; i++){
-            outputs.add(new TxOutput("Eazj14ifau5eH1SP5F8MJRuiSsPMiGbJV1",2999000000000000l));
+            int amount = (int)(100 +Math.random()*(10000000-100+1));
+            outputs.add(new TxOutput("Ed8ZSxSB98roeyuRZwwekrnRqcgnfiUDeQ",amount));
 //            outputs.add(new TxOutput("EKjeZEmLSXyyJ42xxjJP4QsKJYWwEXabuC",2));
         }
 
