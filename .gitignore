@@ -12,4 +12,4 @@ Logs/
 .DS_Store 
 /out
 /target
-classes/
+/classes

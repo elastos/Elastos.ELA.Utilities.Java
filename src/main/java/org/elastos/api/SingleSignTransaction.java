@@ -250,8 +250,8 @@ public class SingleSignTransaction {
             resultMap.put("rawTx", rawTx.getRawTxString());
             resultMap.put("txHash", rawTx.getTxHash());
 
-            LOGGER.info(Basic.getSuccess("genCrossChainRawTransaction" ,resultMap));
-            return Basic.getSuccess("genCrossChainRawTransaction" , resultMap);
+            LOGGER.info(Basic.getSuccess("genCrossChainRawTransactionByPrivateKey" ,resultMap));
+            return Basic.getSuccess("genCrossChainRawTransactionByPrivateKey" , resultMap);
         } catch (Exception e) {
             LOGGER.error(e.toString());
             return e.toString();

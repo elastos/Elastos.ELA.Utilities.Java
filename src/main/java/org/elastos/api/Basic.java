@@ -302,6 +302,7 @@ public class Basic {
 
             Verify.verifyParameter(Verify.Type.AmountLower,output);
 
+            //没有用到的blockhash是为了接口灵活，找零逻辑不用很麻烦
             long amount = output.getLong("amount");
             String address = output.getString("address");
             outputList.add(new TxOutput(address, amount));

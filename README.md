@@ -1119,6 +1119,7 @@ Transaction type is 3,use the payload.recordType cannot be Chinese
 }
 ```
 
+
 ### JAR package
  ```
 File -> Project Structure -> Artifacts -> + -> JAR -> From modules with 
