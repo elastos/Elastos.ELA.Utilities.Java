@@ -25,8 +25,6 @@ public class ReqSign {
     String privateKey;
     int amount;
 
-
-
     public String toString(){
         StringBuilder sb = new StringBuilder();
         sb.append("privateKey:"+privateKey+" ");

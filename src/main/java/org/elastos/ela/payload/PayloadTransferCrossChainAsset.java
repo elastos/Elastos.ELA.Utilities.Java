@@ -1,4 +1,6 @@
-package org.elastos.ela;
+package org.elastos.ela.payload;
+
+import org.elastos.ela.Util;
 
 import java.io.DataOutputStream;
 import java.io.IOException;

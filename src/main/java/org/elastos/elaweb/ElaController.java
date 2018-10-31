@@ -114,6 +114,9 @@ public class ElaController {
             if (method.equals("genCrossChainRawTransactionByPrivateKey")) {
                 return SingleSignTransaction.genCrossChainRawTransactionByPrivateKey(param);
             }
+            if (method.equals("gendeyplyContractTransaction")) {
+                return SingleSignTransaction.gendeyplyContractTransaction(param);
+            }
         }
         return null;
     }

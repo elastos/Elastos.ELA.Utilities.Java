@@ -6,6 +6,8 @@ import org.apache.commons.io.FileUtils;
 import org.elastos.common.ErrorCode;
 import org.elastos.common.SDKException;
 import org.elastos.api.Verify;
+import org.elastos.ela.payload.PayloadRecord;
+import org.elastos.ela.payload.PayloadTransferCrossChainAsset;
 import org.elastos.framework.rpc.Rpc;
 
 import java.io.File;
@@ -64,7 +66,7 @@ public class FinishUtxo {
      * @return
      * @throws Exception
      */
-    public static RawTx makeAndSignTxByCrossChain(List<String> privates , LinkedList<TxOutput> txOutputs ,PayloadTransferCrossChainAsset[] payloadTransferCrossChainAssets, String ChangeAddress) throws Exception {
+    public static RawTx makeAndSignTxByCrossChain(List<String> privates , LinkedList<TxOutput> txOutputs , PayloadTransferCrossChainAsset[] payloadTransferCrossChainAssets, String ChangeAddress) throws Exception {
         List<String> availablePrivates = finishUtxo(privates,txOutputs,ChangeAddress);
         RawTx rawTx = Ela.CrossChainSignTx(inputList.toArray(new UTXOTxInput[inputList.size()]),txOutputs.toArray(new TxOutput[txOutputs.size()]),payloadTransferCrossChainAssets, availablePrivates);
         return rawTx;

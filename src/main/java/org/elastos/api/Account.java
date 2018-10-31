@@ -5,7 +5,7 @@ import net.sf.json.JSONObject;
 import org.elastos.common.ErrorCode;
 import org.elastos.common.SDKException;
 import org.elastos.ela.FinishUtxo;
-import org.elastos.ela.PayloadRecord;
+import org.elastos.ela.payload.PayloadRecord;
 import org.elastos.ela.TxOutput;
 import org.elastos.wallet.KeystoreFile;
 import org.elastos.wallet.WalletMgr;
@@ -179,7 +179,7 @@ public class Account {
         LinkedList<String> privateKeyList = new LinkedList<String>();
         for (int i = 0; i < accountArray.size(); i++) {
             JSONObject JsonAccount = (JSONObject) accountArray.get(i);
-            String privateKey = "";
+            String privateKey ;
             try {
                 Verify.verifyParameter(Verify.Type.PasswordLower,JsonAccount);
                 Verify.verifyParameter(Verify.Type.AddressLower,JsonAccount);

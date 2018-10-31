@@ -1,5 +1,7 @@
 package org.elastos.ela;
 
+import org.elastos.ela.payload.PayloadRecord;
+
 import javax.xml.bind.DatatypeConverter;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
@@ -27,7 +29,7 @@ public class SignTxAbnormal {
     }
 
     public static RawTx makeSingleSignTx(UTXOTxInput[] inputs, TxOutput[] outputs , List<String> privateKeySign,PayloadRecord payloadRecord) throws Exception {
-        Tx tx = Tx.NewTransferAssetTransaction(Record,inputs, outputs,payloadRecord);
+        Tx tx = Tx.RecordTransaction(Record,inputs, outputs,payloadRecord);
         return SingleSignTx(tx,privateKeySign);
     }
 

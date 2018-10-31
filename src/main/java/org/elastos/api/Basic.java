@@ -6,14 +6,20 @@ import net.sf.json.JSONObject;
 import org.elastos.common.ErrorCode;
 import org.elastos.common.SDKException;
 import org.elastos.ela.*;
+import org.elastos.ela.contract.ContractParameterType;
+import org.elastos.ela.contract.FunctionCode;
+import org.elastos.ela.payload.PayloadDeploy;
+import org.elastos.ela.payload.PayloadRecord;
+import org.elastos.ela.payload.PayloadRegisterAsset;
+import org.elastos.ela.payload.PayloadTransferCrossChainAsset;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.math.BigDecimal;
+import javax.xml.bind.DatatypeConverter;
 import java.util.*;
 
-import static org.elastos.ela.PayloadRegisterAsset.ElaPrecision;
-import static org.elastos.ela.PayloadRegisterAsset.MaxPrecision;
+import static org.elastos.ela.payload.PayloadRegisterAsset.ElaPrecision;
+import static org.elastos.ela.payload.PayloadRegisterAsset.MaxPrecision;
 
 /**
  * @author: DongLei.Tan
@@ -155,7 +161,7 @@ public class Basic {
      */
     public static String genGenesisAddress(JSONObject jsonObject) {
 
-        String address = null;
+        String address ;
         try {
             Verify.verifyParameter(Verify.Type.BlockHashUpper,jsonObject);
             String blockHash = jsonObject.getString("BlockHash");
@@ -176,7 +182,7 @@ public class Basic {
      */
     public static String genMultiSignAddress(JSONObject jsonObject) {
 
-        String address = null;
+        String address ;
         try {
             final JSONArray PrivateKeys = jsonObject.getJSONArray("PrivateKeys");
             List<String> privateKeyList = new ArrayList<String>();
@@ -341,7 +347,6 @@ public class Basic {
             Verify.verifyParameter(Verify.Type.IndexLower,utxoInput);
             Verify.verifyParameter(Verify.Type.AddressLower,utxoInput);
 
-
             String txid = utxoInput.getString("txid");
             int index = utxoInput.getInt("index");
             String address = utxoInput.getString("address");
@@ -358,8 +363,7 @@ public class Basic {
             privateList.add(utxoInput.getString("privateKey"));
         }
         //去重
-        ArrayList<String> privates = new ArrayList<String>(new HashSet<String>(privateList));
-        return privates;
+        return new ArrayList<>(new HashSet<>(privateList));
     }
 
     public static ArrayList<String> genPrivateKeySignByM(int M , JSONArray privateKeyScripte) throws SDKException {
@@ -381,9 +385,95 @@ public class Basic {
             Verify.verifyParameter(Verify.Type.AmountLower,output);
             String address = output.getString("address");
             Long amount = output.getLong("amount");
-            int index_ = n;
-            CrossChainAssetList.add(new PayloadTransferCrossChainAsset(address, amount, index_));
+            CrossChainAssetList.add(new PayloadTransferCrossChainAsset(address, amount, n));
         }
         return CrossChainAssetList;
+    }
+
+    public static UTXOTxInput[] parseDeployInputs(JSONObject json_transaction) throws SDKException {
+
+        List<UTXOTxInput> inputList = new LinkedList<UTXOTxInput>();
+        JSONObject utxoInput = json_transaction.getJSONObject("UTXOInputs");
+
+        Verify.verifyParameter(Verify.Type.TxidLower,utxoInput);
+        Verify.verifyParameter(Verify.Type.IndexLower,utxoInput);
+        Verify.verifyParameter(Verify.Type.PrivateKeyLower,utxoInput);
+
+
+        String txid = utxoInput.getString("txid");
+        int index = utxoInput.getInt("index");
+        String privateKey = utxoInput.getString("privateKey");
+        String address = Ela.getAddressFromPrivate(privateKey);
+
+        inputList.add(new UTXOTxInput(txid,index,privateKey,address));
+
+        PayloadDeploy.ProgramHash = Ela.getPublicFromPrivate(privateKey);
+
+        return inputList.toArray(new UTXOTxInput[inputList.size()]);
+    }
+
+    public static FunctionCode genfunctionCode(JSONObject json_transaction) throws SDKException {
+        HashMap<String, Byte> parameterTypemap = ContractParameterType.ContractParameterTypemap();
+        byte returnTypeByte ;
+        byte[] parameterTypes ;
+        byte[] code ;
+
+        Object ParamTypes = json_transaction.get("ParamTypes");
+        if (ParamTypes != null){
+            final JSONArray paramTypes = json_transaction.getJSONArray("ParamTypes");
+            List<Byte> list = new ArrayList<>();
+            for (int i = 0; i<paramTypes.size();i++){
+                String paramType = paramTypes.getString(i);
+                byte iota = parameterTypemap.get(paramType);
+                list.add(iota);
+            }
+            parameterTypes = Util.byteToByteArray(list);
+        }else throw  new SDKException(ErrorCode.ParamErr("ParamTypes can not be empty"));
+
+        Object ReturnType = json_transaction.get("ReturnType");
+        if (ReturnType != null){
+            String returnTypeStr = json_transaction.getString("ReturnType");
+            returnTypeByte = parameterTypemap.get(returnTypeStr);
+        }else throw new SDKException(ErrorCode.ParamErr("ReturnType can not be empty"));
+
+        Object ContractCode = json_transaction.get("ContractCode");
+        if (ContractCode != null){
+            String contractCodeStr = json_transaction.getString("ContractCode");
+            code = DatatypeConverter.parseHexBinary(contractCodeStr);
+
+            FunctionCode functionCode = new FunctionCode(returnTypeByte, parameterTypes, code);
+            PayloadDeploy.Code = functionCode;
+
+            return functionCode;
+        }else throw new SDKException(ErrorCode.ParamErr("ContractCode can not be empty"));
+    }
+
+    public static TxOutput[] parseOutput(JSONObject json_transaction) throws SDKException {
+        LinkedList<TxOutput> outputList = new LinkedList<TxOutput>();
+        JSONObject output = json_transaction.getJSONObject("Outputs");
+
+        Verify.verifyParameter(Verify.Type.AddressLower,output);
+        Verify.verifyParameter(Verify.Type.AmountStrLower,output);
+
+        String address = output.getString("address");
+        String amount = output.getString("amount");
+
+        outputList.add(new TxOutput(address, amount,Common.SystemAssetID,ElaPrecision));
+        return outputList.toArray(new TxOutput[outputList.size()]);
+    }
+
+    public static PayloadDeploy parsePayloadDeploy(JSONObject json_transaction) throws SDKException {
+        Object PayloadDeploy = json_transaction.get("PayloadDeploy");
+        if (PayloadDeploy != null){
+            final JSONObject PayloadObject = json_transaction.getJSONObject("PayloadDeploy");
+
+            String name = PayloadObject.getString("name");
+            String codeVersion = PayloadObject.getString("codeVersion");
+            String address = PayloadObject.getString("author");
+            String email = PayloadObject.getString("email");
+            String description = PayloadObject.getString("description");
+
+            return new PayloadDeploy(name,codeVersion,address,email,description);
+        }throw new SDKException(ErrorCode.ParamErr("PayloadDeploy can not be empty"));
     }
 }

@@ -1,15 +1,17 @@
-package org.elastos.ela;
+package org.elastos.ela.payload;
 
 import org.elastos.common.ErrorCode;
 import org.elastos.common.SDKException;
+import org.elastos.ela.Asset;
+import org.elastos.ela.Util;
 
 import javax.xml.bind.DatatypeConverter;
 import java.io.DataOutputStream;
 
 public class PayloadRegisterAsset {
-    private Asset  asset;
+    private Asset asset;
     private long   Amount;
-    private String Controller;
+    private String Controller; //Uint168
 
     public static int MaxPrecision = 18;
     public static int ElaPrecision = 8;

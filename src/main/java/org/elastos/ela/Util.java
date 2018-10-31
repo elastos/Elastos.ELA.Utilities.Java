@@ -244,6 +244,15 @@ public class Util {
         return false;
     }
 
+    public static byte[] byteToByteArray(List<Byte> list){
+        int size = list.size();
+        byte[] bytes = new byte[size];
+        for(int i= 0; i < size; i++ ){
+            bytes[i] = list.get(i);
+        }
+        return bytes;
+    }
+
 
     /**
      * 生成x地址

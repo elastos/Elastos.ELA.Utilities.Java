@@ -5,6 +5,8 @@ import net.sf.json.JSONObject;
 import org.elastos.common.ErrorCode;
 import org.elastos.common.SDKException;
 import org.elastos.ela.*;
+import org.elastos.ela.payload.PayloadRecord;
+import org.elastos.ela.payload.PayloadTransferCrossChainAsset;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

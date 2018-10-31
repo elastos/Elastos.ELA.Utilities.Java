@@ -20,6 +20,7 @@ public class Verify {
         AddressLower("address"),
         ChangeAddress("ChangeAddress"),
         AmountLower("amount"),
+        AmountStrLower("amount"),
         TokenAmountLower("amount"),
         AssetIdLower("assetId"),
         MUpper("M"),
@@ -80,6 +81,14 @@ public class Verify {
                     if (TokenAmountLower instanceof String ){}else throw new SDKException(ErrorCode.InvalidTokenAmount);
                 }else throw new SDKException(ErrorCode.TokenAmountNotNull) ;
                 break;
+
+            case AmountStrLower:
+                Object AmountStrLower = jsonObject.get(type.getValue());
+                if (AmountStrLower != null) {
+                    if (AmountStrLower instanceof String ){}else throw new SDKException(ErrorCode.InvalidAmount);
+                }else throw new SDKException(ErrorCode.AmountNotNull) ;
+                break;
+
             case AssetIdLower:
                 Object AssetIdLower = jsonObject.get(type.getValue());
                 if (AssetIdLower != null) {

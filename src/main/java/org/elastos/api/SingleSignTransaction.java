@@ -4,6 +4,11 @@ import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.elastos.common.ErrorCode;
 import org.elastos.ela.*;
+import org.elastos.ela.contract.FunctionCode;
+import org.elastos.ela.payload.PayloadDeploy;
+import org.elastos.ela.payload.PayloadRecord;
+import org.elastos.ela.payload.PayloadRegisterAsset;
+import org.elastos.ela.payload.PayloadTransferCrossChainAsset;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -12,6 +17,8 @@ import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.util.*;
+
+import static org.elastos.api.Basic.genfunctionCode;
 
 /**
  * @author: DongLei.Tan
@@ -45,7 +52,7 @@ public class SingleSignTransaction {
 
             //创建rawTransaction
             LinkedHashMap<String, Object> resultMap = new LinkedHashMap<String, Object>();
-            RawTx rawTx = new RawTx("","");
+            RawTx rawTx ;
 
             if (payload != null && bool){
                 return ErrorCode.ParamErr("PayloadRecord And Memo can't be used at the same time");
@@ -113,7 +120,7 @@ public class SingleSignTransaction {
 
             //创建rawTransaction
             LinkedHashMap<String, Object> resultMap = new LinkedHashMap<String, Object>();
-            RawTx rawTx = new RawTx("","");
+            RawTx rawTx ;
 
             if (payload != null && bool){
                 return ErrorCode.ParamErr("PayloadRecord And Memo can't be used at the same time");
@@ -165,7 +172,7 @@ public class SingleSignTransaction {
 
             LinkedHashMap<String, Object> resultMap = new LinkedHashMap<String, Object>();
 
-            String rawTx = "";
+            String rawTx ;
             boolean bool = json_transaction.has("Memo");
             if (payload != null && bool){
                 return ErrorCode.ParamErr("PayloadRecord And Memo can't be used at the same time");
@@ -227,6 +234,35 @@ public class SingleSignTransaction {
         }
     }
 
+
+
+    public static String gendeyplyContractTransaction(JSONObject inputsAddOutpus){
+        try {
+            final JSONArray transaction = inputsAddOutpus.getJSONArray("Transactions");
+            JSONObject json_transaction = (JSONObject) transaction.get(0);
+
+            //解析inputs
+            UTXOTxInput[] utxoTxInput = Basic.parseDeployInputs(json_transaction);
+            // outputs
+            TxOutput[] output = Basic.parseOutput(json_transaction);
+            //functionCode
+            FunctionCode functionCode = genfunctionCode(json_transaction);
+            //PayloadDeploy
+            PayloadDeploy payloadDeploy = Basic.parsePayloadDeploy(json_transaction);
+
+            LinkedHashMap<String, Object> resultMap = new LinkedHashMap<String, Object>();
+            RawTx rawTx = Ela.deployContractTransaction(utxoTxInput,output,functionCode,payloadDeploy);
+            resultMap.put("rawTx", rawTx.getRawTxString());
+            resultMap.put("txHash", rawTx.getTxHash());
+
+            LOGGER.info(Basic.getSuccess("gendeyplyContractTransaction" ,resultMap));
+            return Basic.getSuccess("gendeyplyContractTransaction" , resultMap);
+        } catch (Exception e) {
+            LOGGER.error(e.toString());
+            return e.toString();
+        }
+    }
+
     public static String genCrossChainRawTransactionByPrivateKey(JSONObject inputsAddOutpus){
         try {
             final JSONArray transaction = inputsAddOutpus.getJSONArray("Transactions");
@@ -237,7 +273,6 @@ public class SingleSignTransaction {
 
             List<String> privateList = Basic.parsePrivates(PrivateKeys);
             //解析outputs
-//            TxOutput[] txOutputs = Basic.parseCrossChainOutputs(outputs).toArray(new TxOutput[outputs.size()]);
             LinkedList<TxOutput> txOutputs = Basic.parseCrossChainOutputs(outputs);
             //解析 CrossChain
             PayloadTransferCrossChainAsset[] payloadTransferCrossChainAssets = Basic.parseCrossChainAsset(CrossChainAsset).toArray(new PayloadTransferCrossChainAsset[CrossChainAsset.size()]);

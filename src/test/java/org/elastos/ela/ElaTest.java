@@ -5,11 +5,13 @@ import net.sf.json.JSONObject;
 import org.elastos.api.Basic;
 import org.elastos.api.SingleSignTransaction;
 import org.elastos.ela.bitcoinj.Utils;
+import org.elastos.ela.contract.ContractParameterType;
 import org.junit.Test;
 
 import javax.xml.bind.DatatypeConverter;
 
 import java.io.*;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -120,11 +122,16 @@ public class ElaTest {
 
     @Test
     public void revers(){
-        byte[] hex = DatatypeConverter.parseHexBinary("b037db964a231458d2d6ffd5ea18944c4f90e63d547c5d3b9874df66a4ead0a3");
-        System.out.println(DatatypeConverter.printHexBinary(Utils.reverseBytes(hex)).toLowerCase());
+//        byte[] hex = DatatypeConverter.parseHexBinary("b037db964a231458d2d6ffd5ea18944c4f90e63d547c5d3b9874df66a4ead0a3");
+//        System.out.println(DatatypeConverter.printHexBinary(Utils.reverseBytes(hex)).toLowerCase());
+
+        HashMap<String, Byte> parameterTypemap = ContractParameterType.ContractParameterTypemap();
+        byte aByte = parameterTypemap.get("String");
+        System.out.println(aByte);
     }
+
     /**
-     * 生成私钥、公钥、地址
+     * 生成私钥、公钥、地址 
      */
     @Test
     public void generateBasic() throws Exception{

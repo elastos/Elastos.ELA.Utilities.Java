@@ -32,7 +32,7 @@ public class ErrorCode {
     public static String  IndexNotNull         = getError(51013, "index can not be empty");
     public static String  InvalidChangeAddress = getError(51014, "invalid changeAddress");
     public static String  ChangeAddressNotNull = getError(51015, "changeAddress can not be empty");
-    public static String  InvalidAmount        = getError(51016, "invalid amount");
+    public static String  InvalidAmount        = getError(51016, "amount can not be positive integer");
     public static String  AmountNotNull        = getError(51017, "amount can not be empty");
     public static String  KeystoreExist        = getError(51018, "keystore file exist");
     public static String  KeystoreNotExist     = getError(51019, "keystore file not exist");
@@ -57,7 +57,7 @@ public class ErrorCode {
     public static String  NameNotNull          = getError(51033, "name can not be empty");
     public static String  InvalidPrecision     = getError(51034, "invalid precision");
     public static String  PrecisionNotNull     = getError(51035, "precision can not be empty");
-
+    public static String  InvalidAmountStr     = getError(51036, "amount can not be string");
 
     // java-config.json
     public static String  HostNotNull          = getError(52001, "host can not be empty");

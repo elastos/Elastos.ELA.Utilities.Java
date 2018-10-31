@@ -19,7 +19,7 @@ public class TxOutput {
     private byte[] TokenAssetID; //32 byte unit256
     private long Value; //Fixed64
     private BigInteger TokenValue;
-    private long OutputLock = 0; //uint32
+    private int OutputLock = 0; //uint32
     private byte[] ProgramHash; //21byte unit168
     private String Address;
     private final String DESTROY_ADDRESS = "0000000000000000000000000000000000";
@@ -62,7 +62,7 @@ public class TxOutput {
             Util.WriteVarBytes(o,this.TokenValue.toByteArray());
         }
 
-        o.writeInt(Integer.reverseBytes((int)this.OutputLock));
+        o.writeInt(Integer.reverseBytes(this.OutputLock));
         o.write(this.ProgramHash);
     }
 
