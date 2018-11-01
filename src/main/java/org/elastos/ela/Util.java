@@ -41,6 +41,8 @@ public class Util {
     }
     public static void WriteVarBytes(DataOutputStream writer,byte[] value) throws IOException {
         WriteVarUint(writer,value.length);
+        System.out.println("Token length = " + value.length);
+        System.out.println("token valule = " + DatatypeConverter.printHexBinary(value));
         writer.write(value);
     }
 
@@ -304,6 +306,21 @@ public class Util {
         }catch (Exception e){
             throw new SDKException(ErrorCode.ParamErr("create multiSignature redeem Script failure , " + e));
         }
+    }
+
+    /**
+     * conversion Positive BigInteger
+     * @param bigInteger
+     * @return
+     */
+    public static byte[] BigIntegerToPositiveBigInteger(BigInteger bigInteger){
+        byte[] bytes = bigInteger.toByteArray();
+        if (bytes[0] == 0){
+            byte[] tmp = new byte[bytes.length - 1];
+            System.arraycopy(bytes,1,tmp,0,tmp.length);
+            bytes = tmp;
+        }
+        return bytes;
     }
 }
 

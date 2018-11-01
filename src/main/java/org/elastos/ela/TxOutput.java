@@ -3,6 +3,7 @@ package org.elastos.ela;
 import org.elastos.ela.bitcoinj.Utils;
 
 import javax.xml.bind.DatatypeConverter;
+import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -48,7 +49,7 @@ public class TxOutput {
             this.Value = Util.multiplyAmountELA(new BigDecimal(amount), precision).toBigInteger().longValue();
         }else {
             this.TokenAssetID =  Utils.reverseBytes(DatatypeConverter.parseHexBinary(assetId));
-            this.TokenValue = Util.multiplyAmountETH(new BigDecimal(amount),precision).toBigInteger();
+            this.TokenValue = Util.multiplyAmountETH(new BigDecimal(amount),precision).toBigIntegerExact();
         }
         this.ProgramHash = Util.ToScriptHash(address);
     }
@@ -59,9 +60,10 @@ public class TxOutput {
             o.writeLong(Long.reverseBytes(this.Value));
         }else if (this.TokenAssetID != null){
             o.write(this.TokenAssetID);
-            Util.WriteVarBytes(o,this.TokenValue.toByteArray());
+            //因为TokenValue始终为正整数，所以取消bigInter第一个字节（补码）
+            byte[] toPositiveBigInteger = Util.BigIntegerToPositiveBigInteger(this.TokenValue);
+            Util.WriteVarBytes(o,toPositiveBigInteger);
         }
-
         o.writeInt(Integer.reverseBytes(this.OutputLock));
         o.write(this.ProgramHash);
     }
