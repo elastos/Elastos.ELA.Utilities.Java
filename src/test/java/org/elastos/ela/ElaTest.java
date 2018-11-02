@@ -5,13 +5,11 @@ import net.sf.json.JSONObject;
 import org.elastos.api.Basic;
 import org.elastos.api.ELATransaction;
 import org.elastos.ela.bitcoinj.Utils;
-import org.elastos.ela.contract.ContractParameterType;
 import org.junit.Test;
 
 import javax.xml.bind.DatatypeConverter;
 
 import java.io.*;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -66,18 +64,18 @@ public class ElaTest {
      */
     @Test
     public void makeAndSignTx() throws Exception {
-        List<UTXOTxInput> inputs = new LinkedList<UTXOTxInput>();
-        inputs.add(new UTXOTxInput(
+        List<utxoTxInput> inputs = new LinkedList<utxoTxInput>();
+        inputs.add(new utxoTxInput(
                 "cd96ca8f7bf76b25dbb90e2edd33bb6f7df95fa804f4af89d177ff72d8fabf0e",
                 1,      //矿工为1，转账为0
                 "5FA927E5664E563F019F50DCD4D7E2D9404F2D5D49E31F9482912E23D6D7B9EB",
                 "EQSpUzE4XYJhBSx5j7Tf2cteaKdFdixfVB"));
-//        inputs.add(new UTXOTxInput(
+//        inputs.add(new utxoTxInput(
 //                "cd96ca8f7bf76b25dbb90e2edd33bb6f7df95fa804f4af89d177ff72d8fabf0e",
 //                1,
 //                "A65E9FB6735C5FD33F839036B15D2DA373E15AED38054B69386E322C6BE52994",
 //                "EgSph8GNaNSMwpv6UseAihsAc5sqSrA7ga"));
-//        inputs.add(new UTXOTxInput(
+//        inputs.add(new utxoTxInput(
 //                "22bade15481f1af8240993207e1df61144a7776e6087994d240917a887f72052",
 //                0,
 //                "4C573939323F11BCDB57B61CCE095D4B1E55E986F9944F88072141F3DFA883A3",
@@ -87,7 +85,7 @@ public class ElaTest {
 //        outputs.add(new TxOutput("Eazj14ifau5eH1SP5F8MJRuiSsPMiGbJV1",2999000000000000l));
         outputs.add(new TxOutput("EXkNxfzanRVZumirTudiTBfvMyV2Rt6w95",100000));
 
-        RawTx rawTx = Ela.makeAndSignTx(inputs.toArray(new UTXOTxInput[inputs.size()]),outputs.toArray(new TxOutput[outputs.size()]));
+        RawTx rawTx = Ela.makeAndSignTx(inputs.toArray(new utxoTxInput[inputs.size()]),outputs.toArray(new TxOutput[outputs.size()]));
         System.out.println("rawTx:"+rawTx.getRawTxString());
         System.out.println("txHash:"+rawTx.getTxHash());
     }
@@ -99,9 +97,9 @@ public class ElaTest {
     @Test
     public void SignTx() throws Exception {
         int account = 100;
-        List<UTXOTxInput> inputs = new LinkedList<UTXOTxInput>();
+        List<utxoTxInput> inputs = new LinkedList<utxoTxInput>();
         for (int i = 0 ; i < 1 ; i++){
-            inputs.add(new UTXOTxInput(
+            inputs.add(new utxoTxInput(
                     "4efe9c9edad6f54da11c290f30d9d978f999150fcc940249fb7a8dfdb7aee6fd",
                     0,
                     "5FA927E5664E563F019F50DCD4D7E2D9404F2D5D49E31F9482912E23D6D7B9EB",
@@ -115,7 +113,7 @@ public class ElaTest {
 //            outputs.add(new TxOutput("EKjeZEmLSXyyJ42xxjJP4QsKJYWwEXabuC",2));
         }
 
-        RawTx rawTx = Ela.makeAndSignTx(inputs.toArray(new UTXOTxInput[inputs.size()]),outputs.toArray(new TxOutput[outputs.size()]));
+        RawTx rawTx = Ela.makeAndSignTx(inputs.toArray(new utxoTxInput[inputs.size()]),outputs.toArray(new TxOutput[outputs.size()]));
         System.out.println("rawTx:"+rawTx.getRawTxString());
         System.out.println("txHash:"+rawTx.getTxHash());
     }
@@ -152,7 +150,7 @@ public class ElaTest {
         byte[] rawTxByte = DatatypeConverter.parseHexBinary(rawTxString);
         ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(rawTxByte);
         DataInputStream dos = new DataInputStream(byteArrayInputStream);
-        Tx.DeSerialize(dos);
+        Tx.deserialize(dos);
     }
 
 }

@@ -16,13 +16,13 @@ public class Program {
     public Program(byte[] Code,byte[] Paramter) throws IOException {
         this.Code = Code;
 
-        ProgramBuilder pb =  ProgramBuilder.NewProgramBuilder();
-        pb.PushData(Paramter);
+        ProgramBuilder pb =  ProgramBuilder.newProgramBuilder();
+        pb.pushData(Paramter);
 
         this.Parameter = pb.ToArray();
     }
 
-    //Serialize the Program
+    //serialize the Program
     void Serialize(DataOutputStream o) throws IOException {
 
         Util.WriteVarBytes(o,this.Parameter);

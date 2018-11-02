@@ -18,6 +18,7 @@ import org.slf4j.LoggerFactory;
 import javax.xml.bind.DatatypeConverter;
 import java.util.*;
 
+import static org.elastos.ela.Tx.SMART_CONTRACT;
 import static org.elastos.ela.payload.PayloadRegisterAsset.ElaPrecision;
 import static org.elastos.ela.payload.PayloadRegisterAsset.MaxPrecision;
 
@@ -316,9 +317,9 @@ public class Basic {
         return outputList;
     }
 
-    public static List<UTXOTxInput> parseInputs(JSONArray utxoInputs) throws SDKException {
+    public static List<utxoTxInput> parseInputs(JSONArray utxoInputs) throws SDKException {
 
-        List<UTXOTxInput> inputList = new LinkedList<UTXOTxInput>();
+        List<utxoTxInput> inputList = new LinkedList<utxoTxInput>();
         for (int i = 0 ; i < utxoInputs.size() ; i++){
             JSONObject utxoInput = (JSONObject)utxoInputs.get(i);
 
@@ -332,14 +333,14 @@ public class Basic {
             String privateKey = utxoInput.getString("privateKey");
             String address = Ela.getAddressFromPrivate(privateKey);
 
-            inputList.add(new UTXOTxInput(txid,index,privateKey,address));
+            inputList.add(new utxoTxInput(txid,index,privateKey,address));
         }
         return inputList;
     }
 
-    public static List<UTXOTxInput> parseInputsAddress(JSONArray utxoInputs) throws SDKException {
+    public static List<utxoTxInput> parseInputsAddress(JSONArray utxoInputs) throws SDKException {
 
-        List<UTXOTxInput> inputList = new LinkedList<UTXOTxInput>();
+        List<utxoTxInput> inputList = new LinkedList<utxoTxInput>();
         for (int i = 0 ; i < utxoInputs.size() ; i++){
             JSONObject utxoInput = (JSONObject)utxoInputs.get(i);
 
@@ -350,7 +351,7 @@ public class Basic {
             String txid = utxoInput.getString("txid");
             int index = utxoInput.getInt("index");
             String address = utxoInput.getString("address");
-            inputList.add(new UTXOTxInput(txid,index,"",address));
+            inputList.add(new utxoTxInput(txid,index,"",address));
         }
         return inputList;
     }
@@ -390,9 +391,9 @@ public class Basic {
         return CrossChainAssetList;
     }
 
-    public static UTXOTxInput[] parseDeployInputs(JSONObject json_transaction) throws SDKException {
+    public static utxoTxInput[] parseDeployInputs(JSONObject json_transaction) throws SDKException {
 
-        List<UTXOTxInput> inputList = new LinkedList<UTXOTxInput>();
+        List<utxoTxInput> inputList = new LinkedList<utxoTxInput>();
         JSONObject utxoInput = json_transaction.getJSONObject("UTXOInputs");
 
         Verify.verifyParameter(Verify.Type.TxidLower,utxoInput);
@@ -405,11 +406,8 @@ public class Basic {
         String privateKey = utxoInput.getString("privateKey");
         String address = Ela.getAddressFromPrivate(privateKey);
 
-        inputList.add(new UTXOTxInput(txid,index,privateKey,address));
-
-        PayloadDeploy.ProgramHash = Ela.getPublicFromPrivate(privateKey);
-
-        return inputList.toArray(new UTXOTxInput[inputList.size()]);
+        inputList.add(new utxoTxInput(txid,index,privateKey,address));
+        return inputList.toArray(new utxoTxInput[inputList.size()]);
     }
 
     public static FunctionCode genfunctionCode(JSONObject json_transaction) throws SDKException {
@@ -441,7 +439,14 @@ public class Basic {
             String contractCodeStr = json_transaction.getString("ContractCode");
             code = DatatypeConverter.parseHexBinary(contractCodeStr);
 
-            FunctionCode functionCode = new FunctionCode(returnTypeByte, parameterTypes, code);
+            // byte[] + byte
+            byte[] smartContractArray = new byte[1];
+            smartContractArray[0] = SMART_CONTRACT;
+            byte[] code_buf = new byte[code.length + smartContractArray.length];
+            System.arraycopy(code,0,code_buf,0,code.length);
+            System.arraycopy(smartContractArray,0,code_buf,code.length,smartContractArray.length);
+
+            FunctionCode functionCode = new FunctionCode(returnTypeByte, parameterTypes, code_buf);
             PayloadDeploy.Code = functionCode;
 
             return functionCode;
@@ -463,6 +468,11 @@ public class Basic {
     }
 
     public static PayloadDeploy parsePayloadDeploy(JSONObject json_transaction) throws SDKException {
+
+        JSONObject utxoInput = json_transaction.getJSONObject("UTXOInputs");
+        String privateKey = utxoInput.getString("privateKey");
+        String publickey = Ela.getPublicFromPrivate(privateKey);
+
         Object PayloadDeploy = json_transaction.get("PayloadDeploy");
         if (PayloadDeploy != null){
             final JSONObject PayloadObject = json_transaction.getJSONObject("PayloadDeploy");
@@ -472,8 +482,9 @@ public class Basic {
             String address = PayloadObject.getString("author");
             String email = PayloadObject.getString("email");
             String description = PayloadObject.getString("description");
+            long gas = PayloadObject.getLong("Gas");
 
-            return new PayloadDeploy(name,codeVersion,address,email,description);
+            return new PayloadDeploy(name,codeVersion,address,email,description,publickey,gas);
         }throw new SDKException(ErrorCode.ParamErr("PayloadDeploy can not be empty"));
     }
 }

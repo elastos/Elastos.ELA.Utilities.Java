@@ -40,7 +40,7 @@ public class CrossChainTransaction {
             final JSONArray privateKeySign = json_transaction.getJSONArray("PrivateKeySign");
 
             //解析inputs
-            UTXOTxInput[] utxoTxInputs = Basic.parseInputsAddress(utxoInputs).toArray(new UTXOTxInput[utxoInputs.size()]);
+            utxoTxInput[] utxoTxInputs = Basic.parseInputsAddress(utxoInputs).toArray(new utxoTxInput[utxoInputs.size()]);
             //解析outputs
             TxOutput[] txOutputs = Basic.parseCrossChainOutputs(outputs).toArray(new TxOutput[outputs.size()]);
             //解析 CrossChain
@@ -49,7 +49,7 @@ public class CrossChainTransaction {
             List<String> privateKeySignList = Basic.parsePrivates(privateKeySign);
 
             LinkedHashMap<String, Object> resultMap = new LinkedHashMap<String, Object>();
-            RawTx rawTx = Ela.CrossChainSignTx(utxoTxInputs, txOutputs,payloadTransferCrossChainAssets, privateKeySignList);
+            RawTx rawTx = Ela.crossChainSignTx(utxoTxInputs, txOutputs,payloadTransferCrossChainAssets, privateKeySignList);
             resultMap.put("rawTx", rawTx.getRawTxString());
             resultMap.put("txHash", rawTx.getTxHash());
 
@@ -112,7 +112,7 @@ public class CrossChainTransaction {
 
             try {
                 //解析inputs
-                UTXOTxInput[] utxoTxInputs = Basic.parseInputsAddress(utxoInputs).toArray(new UTXOTxInput[utxoInputs.size()]);
+                utxoTxInput[] utxoTxInputs = Basic.parseInputsAddress(utxoInputs).toArray(new utxoTxInput[utxoInputs.size()]);
                 //解析outputs
                 TxOutput[] txOutputs = Basic.parseCrossChainOutputs(outputs).toArray(new TxOutput[outputs.size()]);
                 //解析 CrossChain
@@ -126,7 +126,7 @@ public class CrossChainTransaction {
                 ArrayList<String> privateKeySignList = Basic.genPrivateKeySignByM(M, privateKeyScripte);
 
                 LinkedHashMap<String, Object> resultMap = new LinkedHashMap<String, Object>();
-                RawTx rawTx = Ela.CrossChainMultiSignTx(utxoTxInputs,txOutputs,payloadTransferCrossChainAssets, privateKeyScripteList, privateKeySignList, M);
+                RawTx rawTx = Ela.crossChainMultiSignTx(utxoTxInputs,txOutputs,payloadTransferCrossChainAssets, privateKeyScripteList, privateKeySignList, M);
                 resultMap.put("rawTx", rawTx.getRawTxString());
                 resultMap.put("txHash", rawTx.getTxHash());
 

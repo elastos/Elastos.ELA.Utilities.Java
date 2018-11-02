@@ -2,10 +2,7 @@ package org.elastos.ela;
 
 import org.elastos.ela.bitcoinj.Sha256Hash;
 import org.elastos.ela.contract.FunctionCode;
-import org.elastos.ela.payload.PayloadDeploy;
-import org.elastos.ela.payload.PayloadRecord;
-import org.elastos.ela.payload.PayloadRegisterAsset;
-import org.elastos.ela.payload.PayloadTransferCrossChainAsset;
+import org.elastos.ela.payload.*;
 
 import javax.xml.bind.DatatypeConverter;
 import java.io.ByteArrayOutputStream;
@@ -21,7 +18,7 @@ public class Tx {
     private byte TxType;
     private byte PayloadVersion;
     private TxAttribute[] Attributes;
-    private UTXOTxInput[] UTXOInputs;
+    private utxoTxInput[] UTXOInputs;
     private TxOutput[] Outputs;
     private int LockTime; //uint32
     private List<Program> Programs;
@@ -32,18 +29,27 @@ public class Tx {
     private PayloadTransferCrossChainAsset[] CrossChainAsset;
     private PayloadDeploy payloadDeploy;
     private FunctionCode functionCode;
+    private PayloadInvoke payloadInvoke;
 
-    static byte CoinBase                = 0x00;
-    static byte RegisterAsset           = 0x01;
-    static byte TransferAsset           = 0x02;
-    static byte Record                  = 0x03;
-    static byte Deploy                  = 0x04;
-    static byte SideChainPow            = 0x05;
-    static byte RechargeToSideChain     = 0x06;
-    static byte WithdrawFromSideChain   = 0x07;
-    static byte TransferCrossChainAsset = 0x08;
-    static byte RegisterIdentification  = 0x09;
-    static byte Invoke                  = 0x0A;
+    //Transction types
+    static byte COIN_BASE = 0x00;
+    static byte REGISTER_ASSET = 0x01;
+    static byte TRANSFER_ASSET = 0x02;
+    static byte RECORD = 0x03;
+    static byte Deploy = 0x04;
+    static byte SIDECHAINPOW = 0x05;
+    static byte RECHARGE_TO_SIDE_CHAIN = 0x06;
+    static byte WITHDRAW_FROM_SIDE_CHAIN = 0x07;
+    static byte TRANSFER_CROSS_CHAIN_ASSET = 0x08;
+    static byte REGISTER_IDENTI_FICATION = 0x09;
+    static byte INVOKE = 0x0A;
+
+    // Address types
+    public static byte SMART_CONTRACT =(byte)0xAB;
+    static byte STANDARD =(byte)0xAC;
+    static byte REGISTER_ID =(byte)0xAD;
+    static byte MULTI_SIG =(byte)0xAE;
+    static byte CROSS_CHAIN =(byte)0xAF;
 
     Map<String,String> hashMapPriv = new HashMap<String,String>();
 
@@ -52,7 +58,7 @@ public class Tx {
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         DataOutputStream dos = new DataOutputStream(baos);
-        this.SerializeUnsigned(dos);
+        this.serializeUnsigned(dos);
         byte[] signature = SignTool.doSign(baos.toByteArray(), DatatypeConverter.parseHexBinary(privateKey));
         this.Programs.add(new Program(code,signature));
     }
@@ -62,7 +68,7 @@ public class Tx {
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         DataOutputStream dos = new DataOutputStream(baos);
-        this.SerializeUnsigned(dos);
+        this.serializeUnsigned(dos);
 
         byte[] signature = SignTool.doSign(baos.toByteArray(), DatatypeConverter.parseHexBinary(privateKey));
         Program  program =  new Program(code,signature);
@@ -79,21 +85,21 @@ public class Tx {
     }
 
     //Ordinary transaction
-    public static Tx  NewTransferAssetTransaction(byte TransactionType, UTXOTxInput[] inputs, TxOutput[] outputs) {
+    public static Tx newTransferAssetTransaction(byte TransactionType, utxoTxInput[] inputs, TxOutput[] outputs) {
         Tx tx = new Tx();
         commonalityTransaction(tx,TransactionType,inputs,outputs);
         return tx;
     }
 
     //Ordinary transaction memo
-    public static Tx  NewTransferAssetTransaction(byte TransactionType, UTXOTxInput[] inputs, TxOutput[] outputs , String memo) {
+    public static Tx newTransferAssetTransaction(byte TransactionType, utxoTxInput[] inputs, TxOutput[] outputs , String memo) {
         Tx tx = new Tx();
         commonalityTransaction(tx,TransactionType,inputs,outputs,memo);
         return tx;
     }
 
-    // Record Transaction
-    public static Tx  RecordTransaction(byte TransactionType,UTXOTxInput[] inputs, TxOutput[] outputs,PayloadRecord parloadRecord) {
+    // RECORD Transaction
+    public static Tx recordTransaction(byte TransactionType, utxoTxInput[] inputs, TxOutput[] outputs, PayloadRecord parloadRecord) {
         Tx tx = new Tx();
         tx.parloadRecord = parloadRecord;
         commonalityTransaction(tx,TransactionType,inputs,outputs);
@@ -101,23 +107,23 @@ public class Tx {
     }
 
     // Register Aseet
-    public static Tx  RegisterAssetTransaction(byte TransactionType,UTXOTxInput[] inputs, TxOutput[] outputs,PayloadRegisterAsset payloadRegisterAsset) {
+    public static Tx registerAssetTransaction(byte TransactionType, utxoTxInput[] inputs, TxOutput[] outputs, PayloadRegisterAsset payloadRegisterAsset) {
         Tx tx = new Tx();
         tx.payloadRegisterAsset = payloadRegisterAsset;
         commonalityTransaction(tx,TransactionType,inputs,outputs);
         return tx;
     }
 
-    // CrossChain Transaction
-    public static Tx  CrossChainTransaction(byte TransactionType,UTXOTxInput[] inputs, TxOutput[] outputs , PayloadTransferCrossChainAsset[] CrossChainAsset) {
+    // CROSS_CHAIN Transaction
+    public static Tx crossChainTransaction(byte TransactionType, utxoTxInput[] inputs, TxOutput[] outputs , PayloadTransferCrossChainAsset[] CrossChainAsset) {
         Tx tx = new Tx();
         tx.CrossChainAsset = CrossChainAsset;
         commonalityTransaction(tx,TransactionType,inputs,outputs);
         return tx;
     }
 
-    // CrossChain Transaction
-    public static Tx DeployContractTransaction(byte TransactionType, UTXOTxInput[] inputs, TxOutput[] outputs, FunctionCode functionCode , PayloadDeploy payloadDeploy) {
+    // DeployContract Transaction
+    public static Tx deployContractTransaction(byte TransactionType, utxoTxInput[] inputs, TxOutput[] outputs, FunctionCode functionCode , PayloadDeploy payloadDeploy) {
         Tx tx = new Tx();
         tx.functionCode = functionCode;
         tx.payloadDeploy = payloadDeploy;
@@ -125,8 +131,16 @@ public class Tx {
         return tx;
     }
 
+    // InvokeContract Transaction
+    public static Tx invokeContractTransaction(byte TransactionType, utxoTxInput[] inputs, TxOutput[] outputs, PayloadInvoke payloadInvoke) {
+        Tx tx = new Tx();
+        tx.payloadInvoke = payloadInvoke;
+        commonalityTransaction(tx,TransactionType,inputs,outputs);
+        return tx;
+    }
+
     // commonality transaction parameter
-    private static void commonalityTransaction(Tx tx, byte TransactionType,UTXOTxInput[] inputs, TxOutput[] outputs){
+    private static void commonalityTransaction(Tx tx, byte TransactionType, utxoTxInput[] inputs, TxOutput[] outputs){
         tx.UTXOInputs = inputs;
         tx.Outputs = outputs;
         tx.TxType = TransactionType;
@@ -136,14 +150,14 @@ public class Tx {
         TxAttribute ta = TxAttribute.NewTxNonceAttribute();
         tx.Attributes[0] = ta;
 
-        for(UTXOTxInput txin : tx.UTXOInputs){
+        for(utxoTxInput txin : tx.UTXOInputs){
 
             tx.hashMapPriv.put(txin.getProgramHash(),txin.getPrivateKey());
         }
         //使用私钥构造出公钥,通过公钥构造出contract,通过contract构造出programhash,写入到 UTXOInputs
     }
 
-    private static void commonalityTransaction(Tx tx, byte TransactionType,UTXOTxInput[] inputs, TxOutput[] outputs,String memo){
+    private static void commonalityTransaction(Tx tx, byte TransactionType, utxoTxInput[] inputs, TxOutput[] outputs, String memo){
         tx.UTXOInputs = inputs;
         tx.Outputs = outputs;
         tx.TxType = TransactionType;
@@ -153,18 +167,18 @@ public class Tx {
         TxAttribute ta = TxAttribute.NewTxNonceAttribute(memo);
         tx.Attributes[0] = ta;
 
-        for(UTXOTxInput txin : tx.UTXOInputs){
+        for(utxoTxInput txin : tx.UTXOInputs){
 
             tx.hashMapPriv.put(txin.getProgramHash(),txin.getPrivateKey());
         }
         //使用私钥构造出公钥,通过公钥构造出contract,通过contract构造出programhash,写入到 UTXOInputs
     }
 
-    //Serialize the Transaction
-    public void Serialize(DataOutputStream o) throws Exception {
-        SerializeUnsigned(o);
+    //serialize the Transaction
+    public void serialize(DataOutputStream o) throws Exception {
+        serializeUnsigned(o);
 
-        //Serialize  Transaction's programs
+        //serialize  Transaction's programs
         Util.WriteVarUint(o,Programs.size());
 
 
@@ -175,8 +189,8 @@ public class Tx {
         }
     }
 
-    public static Map DeSerialize(DataInputStream o) throws IOException {
-        return DeSerializeUnsigned(o);
+    public static Map deserialize(DataInputStream o) throws IOException {
+        return deSerializeUnsigned(o);
     }
 
     public byte[][] getUniqAndOrdedProgramHashes() {
@@ -206,8 +220,8 @@ public class Tx {
         return this.Programs;
     }
 
-    //Serialize the Transaction data without contracts
-    public void SerializeUnsigned(DataOutputStream o) throws Exception{
+    //serialize the Transaction data without contracts
+    public void serializeUnsigned(DataOutputStream o) throws Exception{
         //txType
         o.writeByte(this.TxType);
 
@@ -252,8 +266,8 @@ public class Tx {
         //[]*UTXOInputs
         Util.WriteVarUint(o,this.UTXOInputs.length);
         if (this.UTXOInputs.length > 0) {
-            for  (UTXOTxInput utxo : this.UTXOInputs) {
-                utxo.Serialize(o);
+            for  (utxoTxInput utxo : this.UTXOInputs) {
+                utxo.serialize(o);
             }
         }
         //[]*Outputs
@@ -268,7 +282,7 @@ public class Tx {
         return;
     }
 
-    public static Map DeSerializeUnsigned(DataInputStream o) throws IOException {
+    public static Map deSerializeUnsigned(DataInputStream o) throws IOException {
         //txType
         byte TxType = o.readByte();
 
@@ -284,7 +298,7 @@ public class Tx {
         len =  Util.ReadVarUint(o);
         List<Map>  inputList = new LinkedList<Map>();
         for (int i = 0 ; i < len ; i++){
-            Map inputMap = UTXOTxInput.DeSerialize(o);
+            Map inputMap = utxoTxInput.deSerialize(o);
             inputList.add(inputMap);
         }
 
@@ -306,7 +320,7 @@ public class Tx {
         if(this.hash == null){
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             DataOutputStream dos = new DataOutputStream(baos);
-            this.SerializeUnsigned(dos);
+            this.serializeUnsigned(dos);
             byte[] txUnsigned = baos.toByteArray();
             Sha256Hash sh = Sha256Hash.twiceOf(txUnsigned);
             this.hash = sh.getReversedBytes();

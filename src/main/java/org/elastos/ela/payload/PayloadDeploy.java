@@ -13,15 +13,17 @@ public class PayloadDeploy {
     private String Author;
     private String Email;
     private String Description;
-    public static String ProgramHash;
+    private String ProgramHash;
     private long   Gas;
 
-    public PayloadDeploy(String name,String codeVersion,String author,String email,String description){
+    public PayloadDeploy(String name,String codeVersion,String author,String email,String description,String programHash,long gas){
         this.Name = name;
         this.CodeVersion = codeVersion;
         this.Author = author;
         this.Email = email;
         this.Description = description;
+        this.ProgramHash = programHash;
+        this.Gas = gas;
     }
 
     public void Serialize(DataOutputStream o) throws SDKException {
@@ -43,8 +45,8 @@ public class PayloadDeploy {
             o.write(this.Description.length());
             o.writeBytes(this.Description);
 
-            o.write(PayloadDeploy.ProgramHash.length());
-            o.writeBytes(PayloadDeploy.ProgramHash);
+            o.write(this.ProgramHash.length());
+            o.writeBytes(this.ProgramHash);
 
             o.writeLong(Long.reverseBytes(this.Gas)); //TODO this is nesessary to reverse?
         }catch (Exception e){

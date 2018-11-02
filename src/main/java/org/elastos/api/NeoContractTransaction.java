@@ -5,7 +5,7 @@ import net.sf.json.JSONObject;
 import org.elastos.ela.Ela;
 import org.elastos.ela.RawTx;
 import org.elastos.ela.TxOutput;
-import org.elastos.ela.UTXOTxInput;
+import org.elastos.ela.utxoTxInput;
 import org.elastos.ela.contract.FunctionCode;
 import org.elastos.ela.payload.PayloadDeploy;
 import org.slf4j.Logger;
@@ -25,7 +25,7 @@ public class NeoContractTransaction {
             JSONObject json_transaction = (JSONObject) transaction.get(0);
 
             //解析inputs
-            UTXOTxInput[] utxoTxInput = Basic.parseDeployInputs(json_transaction);
+            utxoTxInput[] utxoTxInput = Basic.parseDeployInputs(json_transaction);
             // outputs
             TxOutput[] output = Basic.parseOutput(json_transaction);
             //functionCode

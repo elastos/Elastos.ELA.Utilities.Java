@@ -25,7 +25,7 @@ public class PayloadRegisterAsset {
 
     public void Serialize(DataOutputStream o) throws SDKException {
         try {
-            this.asset.Serialize(o);
+            this.asset.serialize(o);
             o.writeLong(Long.reverseBytes(this.Amount));
             o.write(DatatypeConverter.parseHexBinary(this.Controller));
         }catch (Exception e){

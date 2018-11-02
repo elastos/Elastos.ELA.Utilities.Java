@@ -53,14 +53,14 @@ public class Transaction_multi_uxto {
 
         int count = 15 ;
         //一个地址多个uxto给多个地址转账
-        LinkedList<UTXOTxInput> inputList_miner = new LinkedList<UTXOTxInput>();
+        LinkedList<utxoTxInput> inputList_miner = new LinkedList<utxoTxInput>();
         List<TxOutput>  outputList_target = new LinkedList<TxOutput>();
         for (int k = 1 ;k < count ; k++ ) {
             JSONObject jsonObject = HttpRequestUtil.httpGet(restfulUrl + Restful.api.API_GETBLOCKBYHEIGHT + String.valueOf(k));
             JSONObject result       = (JSONObject) jsonObject.get("Result");
             JSONObject transactions = (JSONObject)result.getJSONArray("tx").get(0);
             String Txid             = transactions.get("txid").toString();
-            inputList_miner.add(new UTXOTxInput(Txid,1,MINERPRIVATE,MINERADDRESS));
+            inputList_miner.add(new utxoTxInput(Txid,1,MINERPRIVATE,MINERADDRESS));
 
             String private_target = Ela.getPrivateKey();
             String outputAddress_target    = Ela.getAddressFromPrivate(private_target);
@@ -68,7 +68,7 @@ public class Transaction_multi_uxto {
 
             System.out.println("k = " + k);
         }
-        RawTx rawTx = Ela.makeAndSignTx(inputList_miner.toArray(new UTXOTxInput[inputList_miner.size()]),outputList_target.toArray(new TxOutput[outputList_target.size()]));
+        RawTx rawTx = Ela.makeAndSignTx(inputList_miner.toArray(new utxoTxInput[inputList_miner.size()]),outputList_target.toArray(new TxOutput[outputList_target.size()]));
 
         //发送RawTransaction
         String TxHash = ELATransaction.sendRawTransaction(rawTx.getRawTxString(),rpcUrl);

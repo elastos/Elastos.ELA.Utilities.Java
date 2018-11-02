@@ -1,6 +1,5 @@
 package org.elastos.ela;
 
-import javax.xml.bind.DatatypeConverter;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -18,16 +17,16 @@ public class ProgramBuilder {
     DataOutputStream dos = new DataOutputStream(baos);
 
 
-    public static ProgramBuilder NewProgramBuilder()  {
+    public static ProgramBuilder newProgramBuilder()  {
         return new ProgramBuilder();
     }
-    public void  AddOp(byte op) throws IOException {
+    public void addOp(byte op) throws IOException {
         dos.writeByte(op);
 
     }
 
 
-    public void PushData(byte[] data) throws IOException {
+    public void pushData(byte[] data) throws IOException {
         if (data == null) {
             return; //TODO: add error
         }
@@ -36,18 +35,18 @@ public class ProgramBuilder {
             dos.writeByte(data.length);
             dos.write(data);
         } else if (data.length < 0x100) {
-            this.AddOp(PUSHDATA1);
+            this.addOp(PUSHDATA1);
             dos.writeByte(data.length);
             dos.write(data);
         } else if (data.length < 0x10000) {
-            this.AddOp(PUSHDATA2);
+            this.addOp(PUSHDATA2);
             short len = (short)data.length;
             len = Short.reverseBytes(len);
             dos.writeShort(len);
             dos.write(data);
 
         } else {
-            this.AddOp(PUSHDATA4);
+            this.addOp(PUSHDATA4);
             int len = (short)data.length;
             len = Integer.reverseBytes(len);
             dos.writeInt(len);

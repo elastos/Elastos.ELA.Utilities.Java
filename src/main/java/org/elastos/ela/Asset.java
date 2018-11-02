@@ -36,7 +36,7 @@ public class Asset {
         getAssetId();
     }
 
-    public void Serialize(DataOutputStream o)throws IOException{
+    public void serialize(DataOutputStream o)throws IOException{
         o.write(this.Name.length());
         o.writeBytes(this.Name);
         o.write(this.Description.length());
@@ -50,7 +50,7 @@ public class Asset {
         try {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             DataOutputStream dos = new DataOutputStream(baos);
-            Serialize(dos);
+            serialize(dos);
             byte[] txUnsigned = baos.toByteArray();
             Sha256Hash sh = Sha256Hash.twiceOf(txUnsigned);
             AssetId = DatatypeConverter.printHexBinary(sh.getReversedBytes());

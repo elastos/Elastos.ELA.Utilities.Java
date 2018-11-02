@@ -20,7 +20,7 @@ public class WalletMgr {
             // keystore 文件不存在，创建账户
             List account = createAccount(password,"");
             KeystoreFile.createAccount(account.toString());
-        }else throw new SDKException(ErrorCode.KeystoreExist);
+        }else throw new SDKException(ErrorCode.KEY_STORE_EXIST);
 
         return KeystoreFile.readAccount();
     }
@@ -35,7 +35,7 @@ public class WalletMgr {
             if (!KeystoreFile.isExistAccount(address)){
                 List account = createAccount(password,privateKey);
                 KeystoreFile.addAccount((String) account.get(0));
-            }else throw new SDKException(ErrorCode.AccountExist);
+            }else throw new SDKException(ErrorCode.ACCOUNT_EXIST);
         }else {
             //keystore 文件不存在，创建账户
             List account = createAccount(password, privateKey);
@@ -69,8 +69,8 @@ public class WalletMgr {
                 }catch (Exception e){
                     throw e;
                 }
-            }else throw new SDKException(ErrorCode.AccountNotExist);
-        }else throw new SDKException(ErrorCode.KeystoreNotExist);
+            }else throw new SDKException(ErrorCode.ACCOUNT_NOT_EXIST);
+        }else throw new SDKException(ErrorCode.KEY_STORE_NOT_EXIST);
         return null;
     }
 
@@ -89,7 +89,7 @@ public class WalletMgr {
             }catch (Exception e){
                 e.printStackTrace();
             }
-        }else throw new SDKException(ErrorCode.KeystoreNotExist);
+        }else throw new SDKException(ErrorCode.KEY_STORE_NOT_EXIST);
         return null;
     }
 
@@ -119,8 +119,8 @@ public class WalletMgr {
                 }catch (Exception e){
                     throw e;
                 }
-            }else throw new SDKException(ErrorCode.AccountNotExist);
-        }else throw new SDKException(ErrorCode.KeystoreNotExist);
+            }else throw new SDKException(ErrorCode.ACCOUNT_NOT_EXIST);
+        }else throw new SDKException(ErrorCode.KEY_STORE_NOT_EXIST);
         return KeystoreFile.readAccount();
     }
 

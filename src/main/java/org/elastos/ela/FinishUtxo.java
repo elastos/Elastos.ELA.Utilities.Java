@@ -27,7 +27,7 @@ public class FinishUtxo {
     private static int CONFIRMATION ;
 
     private static long utxoAmount;
-    private static List<UTXOTxInput> inputList;
+    private static List<utxoTxInput> inputList;
 
     public static String txHash;
     public static Boolean STATE = true;
@@ -38,21 +38,21 @@ public class FinishUtxo {
 
     public static String makeAndSignTx(List<String> privates , LinkedList<TxOutput> outputs , String ChangeAddress) throws Exception {
         List<String> availablePrivates = finishUtxo(privates, outputs, ChangeAddress);
-        RawTx rawTx = SignTxAbnormal.makeSingleSignTx(inputList.toArray(new UTXOTxInput[inputList.size()]), outputs.toArray(new TxOutput[outputs.size()]), availablePrivates);
+        RawTx rawTx = SignTxAbnormal.makeSingleSignTx(inputList.toArray(new utxoTxInput[inputList.size()]), outputs.toArray(new TxOutput[outputs.size()]), availablePrivates);
         txHash = rawTx.getTxHash();
         return rawTx.getRawTxString();
     }
 
     public static String makeAndSignTx(List<String> privates , LinkedList<TxOutput> outputs , String ChangeAddress,PayloadRecord payloadRecord) throws Exception {
         List<String> availablePrivates = finishUtxo(privates,outputs,ChangeAddress);
-        RawTx rawTx = SignTxAbnormal.makeSingleSignTx(inputList.toArray(new UTXOTxInput[inputList.size()]), outputs.toArray(new TxOutput[outputs.size()]), availablePrivates,payloadRecord);
+        RawTx rawTx = SignTxAbnormal.makeSingleSignTx(inputList.toArray(new utxoTxInput[inputList.size()]), outputs.toArray(new TxOutput[outputs.size()]), availablePrivates,payloadRecord);
         txHash = rawTx.getTxHash();
         return rawTx.getRawTxString();
     }
 
     public static String makeAndSignTx(List<String> privates , LinkedList<TxOutput> outputs , String ChangeAddress,String memo) throws Exception {
         List<String> availablePrivates = finishUtxo(privates,outputs,ChangeAddress);
-        RawTx rawTx = SignTxAbnormal.makeSingleSignTx(inputList.toArray(new UTXOTxInput[inputList.size()]), outputs.toArray(new TxOutput[outputs.size()]), availablePrivates,memo);
+        RawTx rawTx = SignTxAbnormal.makeSingleSignTx(inputList.toArray(new utxoTxInput[inputList.size()]), outputs.toArray(new TxOutput[outputs.size()]), availablePrivates,memo);
         txHash = rawTx.getTxHash();
         return rawTx.getRawTxString();
     }
@@ -68,7 +68,7 @@ public class FinishUtxo {
      */
     public static RawTx makeAndSignTxByCrossChain(List<String> privates , LinkedList<TxOutput> txOutputs , PayloadTransferCrossChainAsset[] payloadTransferCrossChainAssets, String ChangeAddress) throws Exception {
         List<String> availablePrivates = finishUtxo(privates,txOutputs,ChangeAddress);
-        RawTx rawTx = Ela.CrossChainSignTx(inputList.toArray(new UTXOTxInput[inputList.size()]),txOutputs.toArray(new TxOutput[txOutputs.size()]),payloadTransferCrossChainAssets, availablePrivates);
+        RawTx rawTx = Ela.crossChainSignTx(inputList.toArray(new utxoTxInput[inputList.size()]),txOutputs.toArray(new TxOutput[txOutputs.size()]),payloadTransferCrossChainAssets, availablePrivates);
         return rawTx;
     }
 
@@ -117,7 +117,7 @@ public class FinishUtxo {
         List<UTXOInputSort> UTXOInputList = checkUtxo(utxo);
 
         //outputs.amount > 可用utxo.amout
-        inputList = new LinkedList<UTXOTxInput>();
+        inputList = new LinkedList<utxoTxInput>();
 
         long outputValue = getOutput(outputs);
 
@@ -144,7 +144,7 @@ public class FinishUtxo {
             int inputVont = input.getVont();
 
             inputValue += input.getAmount();
-            inputList.add(new UTXOTxInput(inputTxid,inputVont,"",inputAddress));
+            inputList.add(new utxoTxInput(inputTxid,inputVont,"",inputAddress));
             addrList.add(inputAddress);
             //input金额够用
             if (inputValue >= CrossChainAmount + FEE){

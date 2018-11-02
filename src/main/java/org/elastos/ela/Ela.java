@@ -4,10 +4,7 @@ package org.elastos.ela;
 
 import org.elastos.common.SDKException;
 import org.elastos.ela.contract.FunctionCode;
-import org.elastos.ela.payload.PayloadDeploy;
-import org.elastos.ela.payload.PayloadRecord;
-import org.elastos.ela.payload.PayloadRegisterAsset;
-import org.elastos.ela.payload.PayloadTransferCrossChainAsset;
+import org.elastos.ela.payload.*;
 
 import javax.xml.bind.DatatypeConverter;
 import java.io.ByteArrayOutputStream;
@@ -31,33 +28,38 @@ public class Ela {
      * @return  原始交易数据 可以使用rest接口api/v1/transaction发送给节点
      * @throws IOException
      */
-    public static RawTx makeAndSignTx(UTXOTxInput[] inputs, TxOutput[] outputs) throws Exception {
-        Tx tx = Tx.NewTransferAssetTransaction(TransferAsset,inputs, outputs);
-        return SingleSignTx(tx);
+    public static RawTx makeAndSignTx(utxoTxInput[] inputs, TxOutput[] outputs) throws Exception {
+        Tx tx = Tx.newTransferAssetTransaction(TRANSFER_ASSET,inputs, outputs);
+        return singleSignTx(tx);
     }
 
 
-    public static RawTx makeAndSignTx(UTXOTxInput[] inputs, TxOutput[] outputs,PayloadRecord payloadRecord) throws Exception {
-        Tx tx = Tx.RecordTransaction(Record, inputs, outputs, payloadRecord);
-        return SingleSignTx(tx);
+    public static RawTx makeAndSignTx(utxoTxInput[] inputs, TxOutput[] outputs, PayloadRecord payloadRecord) throws Exception {
+        Tx tx = Tx.recordTransaction(RECORD, inputs, outputs, payloadRecord);
+        return singleSignTx(tx);
     }
 
-    public static RawTx makeAndSignTx(UTXOTxInput[] inputs, TxOutput[] outputs,PayloadRegisterAsset payloadRegisterAsset) throws Exception {
-        Tx tx = Tx.RegisterAssetTransaction(RegisterAsset, inputs, outputs, payloadRegisterAsset);
-        return SingleSignTx(tx);
+    public static RawTx makeAndSignTx(utxoTxInput[] inputs, TxOutput[] outputs, PayloadRegisterAsset payloadRegisterAsset) throws Exception {
+        Tx tx = Tx.registerAssetTransaction(REGISTER_ASSET, inputs, outputs, payloadRegisterAsset);
+        return singleSignTx(tx);
     }
 
-    public static RawTx makeAndSignTx(UTXOTxInput[] inputs, TxOutput[] outputs,String memo) throws Exception {
-        Tx tx = Tx.NewTransferAssetTransaction(TransferAsset, inputs, outputs, memo);
-        return SingleSignTx(tx);
+    public static RawTx makeAndSignTx(utxoTxInput[] inputs, TxOutput[] outputs, String memo) throws Exception {
+        Tx tx = Tx.newTransferAssetTransaction(TRANSFER_ASSET, inputs, outputs, memo);
+        return singleSignTx(tx);
     }
 
-    public static RawTx deployContractTransaction(UTXOTxInput[] inputs, TxOutput[] outputs, FunctionCode functionCode , PayloadDeploy payloadDeploy) throws Exception {
-        Tx tx = Tx.DeployContractTransaction(Deploy, inputs, outputs,functionCode,payloadDeploy);
-        return SingleSignTx(tx);
+    public static RawTx deployContractTransaction(utxoTxInput[] inputs, TxOutput[] outputs, FunctionCode functionCode , PayloadDeploy payloadDeploy) throws Exception {
+        Tx tx = Tx.deployContractTransaction(Deploy, inputs, outputs,functionCode,payloadDeploy);
+        return singleSignTx(tx);
     }
 
-    public static RawTx SingleSignTx (Tx tx) throws  Exception{
+    public static RawTx invokenContractTransaction(utxoTxInput[] inputs, TxOutput[] outputs, PayloadInvoke payloadInvoke) throws Exception {
+        Tx tx = Tx.invokeContractTransaction(INVOKE, inputs, outputs, payloadInvoke);
+        return singleSignTx(tx);
+    }
+
+    public static RawTx singleSignTx(Tx tx) throws  Exception{
         byte[][] phashes = tx.getUniqAndOrdedProgramHashes();
         for(int i=0;i<phashes.length;i++){
             String privateKey = tx.hashMapPriv.get(DatatypeConverter.printHexBinary(phashes[i]));
@@ -70,7 +72,7 @@ public class Ela {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         DataOutputStream dos = new DataOutputStream(baos);
 
-        tx.Serialize(dos);
+        tx.serialize(dos);
 
         String rawTxString = DatatypeConverter.printHexBinary(baos.toByteArray());
         String txHash = DatatypeConverter.printHexBinary(tx.getHash());
@@ -78,26 +80,26 @@ public class Ela {
         return new RawTx(txHash,rawTxString);
     }
 
-    public static RawTx  MultiSignTransaction(UTXOTxInput[] inputs, TxOutput[] outputs , List<String> privateKeyScript , List<String> privateKeySign , int M) throws Exception {
+    public static RawTx multiSignTransaction(utxoTxInput[] inputs, TxOutput[] outputs , List<String> privateKeyScript , List<String> privateKeySign , int M) throws Exception {
         //创建交易
-        Tx tx = Tx.NewTransferAssetTransaction(TransferAsset,inputs, outputs);
+        Tx tx = Tx.newTransferAssetTransaction(TRANSFER_ASSET,inputs, outputs);
 
-        return MultiSignTx(tx, privateKeyScript, privateKeySign , M);
+        return multiSignTx(tx, privateKeyScript, privateKeySign , M);
     }
 
-    public static RawTx MultiSignTransaction(UTXOTxInput[] inputs, TxOutput[] outputs , List<String> privateKeyScript , List<String> privateKeySign , int M , String memo) throws Exception {
+    public static RawTx multiSignTransaction(utxoTxInput[] inputs, TxOutput[] outputs , List<String> privateKeyScript , List<String> privateKeySign , int M , String memo) throws Exception {
         //创建交易
-        Tx tx = Tx.NewTransferAssetTransaction(TransferAsset,inputs, outputs,memo);
-        return MultiSignTx(tx, privateKeyScript, privateKeySign , M);
+        Tx tx = Tx.newTransferAssetTransaction(TRANSFER_ASSET,inputs, outputs,memo);
+        return multiSignTx(tx, privateKeyScript, privateKeySign , M);
     }
 
-    public static RawTx MultiSignTransaction(UTXOTxInput[] inputs, TxOutput[] outputs , List<String> privateKeyScript , List<String> privateKeySign , int M , PayloadRecord payloadRecord) throws Exception {
+    public static RawTx multiSignTransaction(utxoTxInput[] inputs, TxOutput[] outputs , List<String> privateKeyScript , List<String> privateKeySign , int M , PayloadRecord payloadRecord) throws Exception {
         //创建交易
-        Tx tx = Tx.RecordTransaction(Record,inputs, outputs,payloadRecord);
-        return MultiSignTx(tx, privateKeyScript, privateKeySign , M);
+        Tx tx = Tx.recordTransaction(RECORD,inputs, outputs,payloadRecord);
+        return multiSignTx(tx, privateKeyScript, privateKeySign , M);
     }
 
-    public static RawTx MultiSignTx(Tx tx , List<String> privateKeyScript , List<String> privateKeySign , int M ) throws Exception {
+    public static RawTx multiSignTx(Tx tx , List<String> privateKeyScript , List<String> privateKeySign , int M ) throws Exception {
         //创建赎回脚本
         List<PublicX> privateKeyList = new ArrayList<PublicX>();
         for (int j = 0 ; j < privateKeyScript.size() ; j++) {
@@ -112,7 +114,7 @@ public class Ela {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         DataOutputStream dos = new DataOutputStream(baos);
 
-        tx.Serialize(dos);
+        tx.serialize(dos);
         String rawTxString = DatatypeConverter.printHexBinary(baos.toByteArray());
         String txHash =  DatatypeConverter.printHexBinary(tx.getHash());
         return  new RawTx(txHash,rawTxString);
@@ -127,8 +129,8 @@ public class Ela {
      * @return  原始交易数据 可以使用rest接口api/v1/transaction发送给节点
      * @throws IOException
      */
-    public static RawTx CrossChainSignTx(UTXOTxInput[] inputs, TxOutput[] outputs , PayloadTransferCrossChainAsset[] CrossChainAsset , List<String> privateKeySign) throws Exception {
-        Tx tx = Tx.CrossChainTransaction(TransferCrossChainAsset, inputs, outputs ,CrossChainAsset);
+    public static RawTx crossChainSignTx(utxoTxInput[] inputs, TxOutput[] outputs , PayloadTransferCrossChainAsset[] CrossChainAsset , List<String> privateKeySign) throws Exception {
+        Tx tx = Tx.crossChainTransaction(TRANSFER_CROSS_CHAIN_ASSET, inputs, outputs ,CrossChainAsset);
         System.out.println("CrossChainAsset : " + CrossChainAsset.length);
         for(int i = 0 ; i < privateKeySign.size() ; i ++){
             ECKey ec = ECKey.fromPrivate(DatatypeConverter.parseHexBinary(privateKeySign.get(i)));
@@ -138,7 +140,7 @@ public class Ela {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         DataOutputStream dos = new DataOutputStream(baos);
 
-        tx.Serialize(dos);
+        tx.serialize(dos);
 
         String rawTxString = DatatypeConverter.printHexBinary(baos.toByteArray());
         String txHash = DatatypeConverter.printHexBinary(tx.getHash());
@@ -155,10 +157,10 @@ public class Ela {
      * @return  原始交易数据 可以使用rest接口api/v1/transaction发送给节点
      * @throws IOException
      */
-    public static RawTx CrossChainMultiSignTx(UTXOTxInput[] inputs, TxOutput[] outputs , PayloadTransferCrossChainAsset[] CrossChainAsset , List<String> privateKeyScript , List<String> privateKeySign , int M) throws Exception {
-        Tx tx = Tx.CrossChainTransaction(TransferCrossChainAsset, inputs, outputs ,CrossChainAsset);
+    public static RawTx crossChainMultiSignTx(utxoTxInput[] inputs, TxOutput[] outputs , PayloadTransferCrossChainAsset[] CrossChainAsset , List<String> privateKeyScript , List<String> privateKeySign , int M) throws Exception {
+        Tx tx = Tx.crossChainTransaction(TRANSFER_CROSS_CHAIN_ASSET, inputs, outputs ,CrossChainAsset);
 
-        return MultiSignTx(tx, privateKeyScript, privateKeySign , M);
+        return multiSignTx(tx, privateKeyScript, privateKeySign , M);
     }
 
     /**

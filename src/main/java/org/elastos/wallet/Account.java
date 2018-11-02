@@ -72,7 +72,7 @@ public class Account {
                 return Helper.toHexString(bytes);
             }
         }catch (Exception e){
-            throw new Exception(ErrorCode.EncriptPrivateKeyError);
+            throw new Exception(ErrorCode.ENCRIPT_PRIVATE_KEY_ERROR);
         }
         return Helper.toHexString(d);
     }
@@ -95,16 +95,16 @@ public class Account {
             encryptedPrivateKey = new String(Base64.getEncoder().encode(encryptedkey));
         }catch (Exception e){
             e.printStackTrace();
-            throw new Exception(ErrorCode.EncriptPrivateKeyError);
+            throw new Exception(ErrorCode.ENCRIPT_PRIVATE_KEY_ERROR);
         }
     }
 
     public static byte[] getGcmDecodedPrivateKey(String encryptedPrivateKey, String passphrase ,String address ,byte[] salt , int n) throws Exception {
         if (encryptedPrivateKey == null) {
-            throw new Exception(ErrorCode.PrikeyLengthError);
+            throw new Exception(ErrorCode.PRIKEY_LENGTH_ERROR);
         }
         if (salt.length != 16) {
-            throw new Exception(ErrorCode.SaltLengthError);
+            throw new Exception(ErrorCode.SALT_LENGTHE_RROR);
         }
         byte[] encryptedkey = new byte[]{};
         try{
@@ -132,10 +132,10 @@ public class Account {
             cipher.updateAAD(address.getBytes());
             rawkey = cipher.doFinal(encryptedkey);
         } catch (Exception e) {
-            throw new Exception(ErrorCode.EncryptedPrivateKeyAddressPasswordErr);
+            throw new Exception(ErrorCode.ENCRYPTED_PRIVATE_KEY_ADDRESS_PASSWORD_ERR);
         }
         if (!address.equals(Ela.getAddressFromPrivate(parsePrivateKey(rawkey)))) {
-            throw new Exception(ErrorCode.EncryptedPrivateKeyAddressPasswordErr);
+            throw new Exception(ErrorCode.ENCRYPTED_PRIVATE_KEY_ADDRESS_PASSWORD_ERR);
         }
         return rawkey;
     }

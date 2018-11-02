@@ -6,7 +6,7 @@ import org.elastos.common.ErrorCode;
 import org.elastos.ela.Ela;
 import org.elastos.ela.RawTx;
 import org.elastos.ela.TxOutput;
-import org.elastos.ela.UTXOTxInput;
+import org.elastos.ela.utxoTxInput;
 import org.elastos.ela.payload.PayloadRecord;
 import org.elastos.ela.payload.PayloadRegisterAsset;
 import org.slf4j.Logger;
@@ -27,7 +27,7 @@ public class TokenTransaction {
             final JSONArray utxoInputs = json_transaction.getJSONArray("UTXOInputs");
 
             //解析inputs
-            UTXOTxInput[] utxoTxInputs = Basic.parseInputs(utxoInputs).toArray(new UTXOTxInput[utxoInputs.size()]);
+            utxoTxInput[] utxoTxInputs = Basic.parseInputs(utxoInputs).toArray(new utxoTxInput[utxoInputs.size()]);
             //解析PayloadRegisterAsset
             PayloadRegisterAsset payload   = Basic.payloadRegisterAsset(json_transaction);
             //解析outputs
@@ -55,7 +55,7 @@ public class TokenTransaction {
             final JSONArray outputs = json_transaction.getJSONArray("Outputs");
 
             //解析inputs
-            UTXOTxInput[] utxoTxInputs = Basic.parseInputs(utxoInputs).toArray(new UTXOTxInput[utxoInputs.size()]);
+            utxoTxInput[] utxoTxInputs = Basic.parseInputs(utxoInputs).toArray(new utxoTxInput[utxoInputs.size()]);
             //解析outputs
             TxOutput[] txOutputs = Basic.parseOutputsByAsset(outputs).toArray(new TxOutput[outputs.size()]);
             //解析payloadRecord
@@ -99,7 +99,7 @@ public class TokenTransaction {
 
         try {
             //解析inputs
-            UTXOTxInput[] utxoTxInputs = Basic.parseInputsAddress(utxoInputs).toArray(new UTXOTxInput[utxoInputs.size()]);
+            utxoTxInput[] utxoTxInputs = Basic.parseInputsAddress(utxoInputs).toArray(new utxoTxInput[utxoInputs.size()]);
             //解析outputs
             TxOutput[] txOutputs = Basic.parseOutputsByAsset(outputs).toArray(new TxOutput[outputs.size()]);
             //解析payloadRecord
@@ -121,12 +121,12 @@ public class TokenTransaction {
             if (payload != null && bool){
                 return ErrorCode.ParamErr("PayloadRecord And Memo can't be used at the same time");
             }else if (payload == null && !bool){
-                rawTx = Ela.MultiSignTransaction(utxoTxInputs, txOutputs, privateKeyScripteList, privateKeySignList, M);
+                rawTx = Ela.multiSignTransaction(utxoTxInputs, txOutputs, privateKeyScripteList, privateKeySignList, M);
             }else if (bool){
                 String memo = json_transaction.getString("Memo");
-                rawTx = Ela.MultiSignTransaction(utxoTxInputs, txOutputs, privateKeyScripteList, privateKeySignList, M, memo);
+                rawTx = Ela.multiSignTransaction(utxoTxInputs, txOutputs, privateKeyScripteList, privateKeySignList, M, memo);
             }else{
-                rawTx = Ela.MultiSignTransaction(utxoTxInputs, txOutputs, privateKeyScripteList, privateKeySignList, M,payload);
+                rawTx = Ela.multiSignTransaction(utxoTxInputs, txOutputs, privateKeyScripteList, privateKeySignList, M,payload);
             }
             resultMap.put("rawTx", rawTx.getRawTxString());
             resultMap.put("txHash", rawTx.getTxHash());

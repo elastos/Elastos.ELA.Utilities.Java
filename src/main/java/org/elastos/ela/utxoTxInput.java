@@ -12,7 +12,7 @@ import java.util.Map;
 /**
  * Created by nan on 18/1/10.
  */
-public class UTXOTxInput {
+public class utxoTxInput {
     public byte[] getReferTxID() {
         return ReferTxID;
     }
@@ -57,20 +57,20 @@ public class UTXOTxInput {
      * @param privateKey utxo所属账户的私钥
      * @param address utxo所属账户的地址
      */
-    public UTXOTxInput(String txid,int index,String privateKey,String address){
+    public utxoTxInput(String txid, int index, String privateKey, String address){
         this.ReferTxID = Utils.reverseBytes(DatatypeConverter.parseHexBinary(txid));
         this.privateKey = privateKey;
         this.ReferTxOutputIndex = index;
         this.programHash = DatatypeConverter.printHexBinary(Util.ToScriptHash(address));
     }
 
-    public void Serialize(DataOutputStream o) throws IOException {
+    public void serialize(DataOutputStream o) throws IOException {
         o.write(this.ReferTxID);
         o.writeShort(Short.reverseBytes((short)this.ReferTxOutputIndex));
         o.writeInt(Integer.reverseBytes(this.Sequence));
     }
 
-    public static Map DeSerialize(DataInputStream o) throws IOException {
+    public static Map deSerialize(DataInputStream o) throws IOException {
         //ReferTxID
         byte[] buf = new byte[32];
         o.read(buf,0,32);

@@ -8,8 +8,8 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.List;
 
-import static org.elastos.ela.Tx.Record;
-import static org.elastos.ela.Tx.TransferAsset;
+import static org.elastos.ela.Tx.RECORD;
+import static org.elastos.ela.Tx.TRANSFER_ASSET;
 
 /**
  * Created by donglei on 18/6/6.
@@ -23,18 +23,18 @@ public class SignTxAbnormal {
      * @return  原始交易数据 可以使用rest接口api/v1/transaction发送给节点
      * @throws IOException
      */
-    public static RawTx makeSingleSignTx(UTXOTxInput[] inputs, TxOutput[] outputs , List<String> privateKeySign) throws Exception {
-        Tx tx = Tx.NewTransferAssetTransaction(Tx.TransferAsset,inputs, outputs);
+    public static RawTx makeSingleSignTx(utxoTxInput[] inputs, TxOutput[] outputs , List<String> privateKeySign) throws Exception {
+        Tx tx = Tx.newTransferAssetTransaction(Tx.TRANSFER_ASSET,inputs, outputs);
         return SingleSignTx(tx,privateKeySign);
     }
 
-    public static RawTx makeSingleSignTx(UTXOTxInput[] inputs, TxOutput[] outputs , List<String> privateKeySign,PayloadRecord payloadRecord) throws Exception {
-        Tx tx = Tx.RecordTransaction(Record,inputs, outputs,payloadRecord);
+    public static RawTx makeSingleSignTx(utxoTxInput[] inputs, TxOutput[] outputs , List<String> privateKeySign, PayloadRecord payloadRecord) throws Exception {
+        Tx tx = Tx.recordTransaction(RECORD,inputs, outputs,payloadRecord);
         return SingleSignTx(tx,privateKeySign);
     }
 
-    public static RawTx makeSingleSignTx(UTXOTxInput[] inputs, TxOutput[] outputs , List<String> privateKeySign,String memo) throws Exception {
-        Tx tx = Tx.NewTransferAssetTransaction(TransferAsset,inputs, outputs,memo);
+    public static RawTx makeSingleSignTx(utxoTxInput[] inputs, TxOutput[] outputs , List<String> privateKeySign, String memo) throws Exception {
+        Tx tx = Tx.newTransferAssetTransaction(TRANSFER_ASSET,inputs, outputs,memo);
         return SingleSignTx(tx,privateKeySign);
     }
 
@@ -47,7 +47,7 @@ public class SignTxAbnormal {
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         DataOutputStream dos = new DataOutputStream(baos);
-        tx.Serialize(dos);
+        tx.serialize(dos);
 
         String rawTxString = DatatypeConverter.printHexBinary(baos.toByteArray());
         String txHash =  DatatypeConverter.printHexBinary(tx.getHash());
