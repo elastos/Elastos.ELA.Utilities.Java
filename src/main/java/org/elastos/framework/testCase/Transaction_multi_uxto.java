@@ -1,7 +1,7 @@
 package org.elastos.framework.testCase;
 
 import net.sf.json.JSONObject;
-import org.elastos.api.SingleSignTransaction;
+import org.elastos.api.ELATransaction;
 import org.elastos.ela.*;
 import org.elastos.framework.node.Runner;
 import org.elastos.framework.restful.Restful;
@@ -71,7 +71,7 @@ public class Transaction_multi_uxto {
         RawTx rawTx = Ela.makeAndSignTx(inputList_miner.toArray(new UTXOTxInput[inputList_miner.size()]),outputList_target.toArray(new TxOutput[outputList_target.size()]));
 
         //发送RawTransaction
-        String TxHash = SingleSignTransaction.sendRawTransaction(rawTx.getRawTxString(),rpcUrl);
+        String TxHash = ELATransaction.sendRawTransaction(rawTx.getRawTxString(),rpcUrl);
         JSONObject jsonTxHash = JSONObject.fromObject(TxHash);
         String txhash = (String)jsonTxHash.get("result");
         System.out.println("txhash = " + txhash);

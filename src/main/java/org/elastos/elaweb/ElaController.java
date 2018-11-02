@@ -2,10 +2,7 @@ package org.elastos.elaweb;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
-import org.elastos.api.Account;
-import org.elastos.api.Basic;
-import org.elastos.api.MultSigntransaction;
-import org.elastos.api.SingleSignTransaction;
+import org.elastos.api.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,23 +51,23 @@ public class ElaController {
                 return Basic.genAddress(param);
             }
             if (method.equals("genRawTransaction")){
-                return SingleSignTransaction.genRawTransaction(param);
+                return ELATransaction.genRawTransaction(param);
             }
             if (method.equals("genRegisterTransaction")){
-                return SingleSignTransaction.genRegisterTransaction(param);
+                return TokenTransaction.genRegisterTransaction(param);
             }
             if (method.equals("genRawTransactionByToken")){
-                return SingleSignTransaction.genRawTransactionByToken(param);
+                return TokenTransaction.genRawTransactionByToken(param);
             }
             if (method.equals("genMultiSignRawTransactionByToken")){
-                return MultSigntransaction.genMultiSignRawTransactionByToken(param);
+                return TokenTransaction.genMultiSignRawTransactionByToken(param);
             }
             if (method.equals("decodeRawTransaction")){
                 String rawTransaction = param.getString("RawTransaction");
-                return SingleSignTransaction.decodeRawTransaction(rawTransaction);
+                return ELATransaction.decodeRawTransaction(rawTransaction);
             }
             if (method.equals("genRawTransactionByPrivateKey")) {
-                return SingleSignTransaction.genRawTransactionByPrivateKey(param);
+                return ELATransaction.genRawTransactionByPrivateKey(param);
             }
             if (method.equals("checkAddress")) {
                 return Basic.checkAddress(param);
@@ -100,22 +97,22 @@ public class ElaController {
                 return Basic.genMultiSignAddress(param);
             }
             if (method.equals("genMultiSignRawTransaction")) {
-                return MultSigntransaction.genMultiSignRawTransaction(param);
+                return ELATransaction.genMultiSignRawTransaction(param);
             }
             if (method.equals("genGenesisAddress")) {
                 return Basic.genGenesisAddress(param);
             }
             if (method.equals("genCrossChainRawTransaction")) {
-                return SingleSignTransaction.genCrossChainRawTransaction(param);
+                return CrossChainTransaction.genCrossChainRawTransaction(param);
             }
             if (method.equals("genCrossChainMultiSignRawTransaction")) {
-                return MultSigntransaction.genCrossChainMultiSignRawTransaction(param);
+                return CrossChainTransaction.genCrossChainMultiSignRawTransaction(param);
             }
             if (method.equals("genCrossChainRawTransactionByPrivateKey")) {
-                return SingleSignTransaction.genCrossChainRawTransactionByPrivateKey(param);
+                return CrossChainTransaction.genCrossChainRawTransactionByPrivateKey(param);
             }
-            if (method.equals("gendeyplyContractTransaction")) {
-                return SingleSignTransaction.gendeyplyContractTransaction(param);
+            if (method.equals("genDeyplyContractTransaction")) {
+                return NeoContractTransaction.genDeyplyContractTransaction(param);
             }
         }
         return null;

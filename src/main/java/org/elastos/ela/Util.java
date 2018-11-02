@@ -41,8 +41,6 @@ public class Util {
     }
     public static void WriteVarBytes(DataOutputStream writer,byte[] value) throws IOException {
         WriteVarUint(writer,value.length);
-        System.out.println("Token length = " + value.length);
-        System.out.println("token valule = " + DatatypeConverter.printHexBinary(value));
         writer.write(value);
     }
 

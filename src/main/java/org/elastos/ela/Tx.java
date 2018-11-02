@@ -160,11 +160,11 @@ public class Tx {
         //使用私钥构造出公钥,通过公钥构造出contract,通过contract构造出programhash,写入到 UTXOInputs
     }
 
-    //Serialize the SingleSignTransaction
+    //Serialize the Transaction
     public void Serialize(DataOutputStream o) throws Exception {
         SerializeUnsigned(o);
 
-        //Serialize  SingleSignTransaction's programs
+        //Serialize  Transaction's programs
         Util.WriteVarUint(o,Programs.size());
 
 
@@ -206,7 +206,7 @@ public class Tx {
         return this.Programs;
     }
 
-    //Serialize the SingleSignTransaction data without contracts
+    //Serialize the Transaction data without contracts
     public void SerializeUnsigned(DataOutputStream o) throws Exception{
         //txType
         o.writeByte(this.TxType);

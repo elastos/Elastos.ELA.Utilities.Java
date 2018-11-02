@@ -3,7 +3,7 @@ package org.elastos.ela;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.elastos.api.Basic;
-import org.elastos.api.SingleSignTransaction;
+import org.elastos.api.ELATransaction;
 import org.elastos.ela.bitcoinj.Utils;
 import org.elastos.ela.contract.ContractParameterType;
 import org.junit.Test;
@@ -53,7 +53,7 @@ public class ElaTest {
                 System.out.println((Basic.genAddress(param)));
             }
             if (method.equals("getRawTransaction")){
-                System.out.println(SingleSignTransaction.genRawTransaction(param));
+                System.out.println(ELATransaction.genRawTransaction(param));
             }
         }
         inputStream.close();
@@ -122,12 +122,8 @@ public class ElaTest {
 
     @Test
     public void revers(){
-//        byte[] hex = DatatypeConverter.parseHexBinary("b037db964a231458d2d6ffd5ea18944c4f90e63d547c5d3b9874df66a4ead0a3");
-//        System.out.println(DatatypeConverter.printHexBinary(Utils.reverseBytes(hex)).toLowerCase());
-
-        HashMap<String, Byte> parameterTypemap = ContractParameterType.ContractParameterTypemap();
-        byte aByte = parameterTypemap.get("String");
-        System.out.println(aByte);
+        byte[] hex = DatatypeConverter.parseHexBinary("b037db964a231458d2d6ffd5ea18944c4f90e63d547c5d3b9874df66a4ead0a3");
+        System.out.println(DatatypeConverter.printHexBinary(Utils.reverseBytes(hex)).toLowerCase());
     }
 
     /**
