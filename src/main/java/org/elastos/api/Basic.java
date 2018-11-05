@@ -207,22 +207,21 @@ public class Basic {
 
 
     public static PayloadRecord parsePayloadRecord(JSONObject json_transaction) throws SDKException {
-        Object payload = json_transaction.get("PayloadRecord");
+        Object payload = json_transaction.get("Payload");
         if (payload != null){
-            final JSONObject PayloadObject = json_transaction.getJSONObject("PayloadRecord");
+            final JSONObject PayloadObject = json_transaction.getJSONObject("Payload");
 
             Verify.verifyParameter(Verify.Type.RecordTypeLower,PayloadObject);
             Verify.verifyParameter(Verify.Type.RecordDataLower,PayloadObject);
 
             return new PayloadRecord(PayloadObject.getString("recordType"),PayloadObject.getString("recordData"));
-        }
-        return null;
+        }else throw new SDKException(ErrorCode.ParamErr("Payload can not be empty"));
     }
 
     public static PayloadRegisterAsset payloadRegisterAsset(JSONObject json_transaction) throws SDKException {
-        Object payload = json_transaction.get("PayloadRegisterAsset");
+        Object payload = json_transaction.get("Payload");
         if (payload != null){
-            final JSONObject PayloadObject = json_transaction.getJSONObject("PayloadRegisterAsset");
+            final JSONObject PayloadObject = json_transaction.getJSONObject("Payload");
 
             Verify.verifyParameter(Verify.Type.NameLower,PayloadObject);
             Verify.verifyParameter(Verify.Type.DescriptionLower,PayloadObject);
@@ -239,7 +238,7 @@ public class Basic {
             //生成assetId
             Asset asset = new Asset(assetname, description, (byte) precision, (byte) 0x00);
             return new PayloadRegisterAsset(asset,amount,address);
-        }throw new SDKException(ErrorCode.ParamErr("PayloadRegisterAsset can not be empty"));
+        }throw new SDKException(ErrorCode.ParamErr("Payload can not be empty"));
     }
 
 
@@ -248,7 +247,7 @@ public class Basic {
         final JSONArray outputs = json_transaction.getJSONArray("Outputs");
 
         //添加注册资产
-        final JSONObject PayloadObject = json_transaction.getJSONObject("PayloadRegisterAsset");
+        final JSONObject PayloadObject = json_transaction.getJSONObject("Payload");
         String tokenAddress = PayloadObject.getString("address");
         String tokenAmount = PayloadObject.getString("amount");
         outputList.add(new TxOutput(tokenAddress, tokenAmount,Asset.AssetId,MaxPrecision));
@@ -461,9 +460,9 @@ public class Basic {
         String privateKey = utxoInput.getString("privateKey");
         String publickey = Ela.getPublicFromPrivate(privateKey);
 
-        Object PayloadDeploy = json_transaction.get("PayloadDeploy");
+        Object PayloadDeploy = json_transaction.get("Payload");
         if (PayloadDeploy != null){
-            final JSONObject PayloadObject = json_transaction.getJSONObject("PayloadDeploy");
+            final JSONObject PayloadObject = json_transaction.getJSONObject("Payload");
 
             String name = PayloadObject.getString("name");
             String codeVersion = PayloadObject.getString("codeVersion");
@@ -473,7 +472,7 @@ public class Basic {
             long gas = PayloadObject.getLong("Gas");
 
             return new PayloadDeploy(name,codeVersion,address,email,description,publickey,gas);
-        }throw new SDKException(ErrorCode.ParamErr("PayloadDeploy can not be empty"));
+        }throw new SDKException(ErrorCode.ParamErr("Payload can not be empty"));
     }
 
 
