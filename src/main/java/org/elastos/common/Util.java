@@ -1,7 +1,9 @@
-package org.elastos.ela;
+package org.elastos.common;
 
-import org.elastos.common.ErrorCode;
-import org.elastos.common.SDKException;
+
+import org.elastos.ela.Ela;
+import org.elastos.ela.FormatTransfer;
+import org.elastos.ela.PublicX;
 import org.elastos.ela.bitcoinj.Base58;
 import org.elastos.ela.bitcoinj.Sha256Hash;
 import org.elastos.ela.bitcoinj.Utils;
@@ -280,7 +282,7 @@ public class Util {
      * @param M
      * @return
      */
-    public static byte[] CreatemultiSignatureRedeemScript(List<PublicX> privateKeyList ,int M) throws SDKException {
+    public static byte[] CreatemultiSignatureRedeemScript(List<PublicX> privateKeyList , int M) throws SDKException {
         try {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             DataOutputStream dos = new DataOutputStream(baos);

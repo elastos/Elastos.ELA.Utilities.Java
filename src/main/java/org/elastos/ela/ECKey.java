@@ -1,6 +1,7 @@
 package org.elastos.ela;
 
 import org.elastos.common.SDKException;
+import org.elastos.common.Util;
 import org.elastos.ela.bitcoinj.LazyECPoint;
 import org.elastos.ela.bitcoinj.Utils;
 import org.spongycastle.asn1.x9.X9ECParameters;
@@ -17,10 +18,8 @@ import org.spongycastle.math.ec.FixedPointCombMultiplier;
 import org.spongycastle.math.ec.FixedPointUtil;
 
 import javax.annotation.Nullable;
-import javax.xml.bind.DatatypeConverter;
 import java.math.BigInteger;
 import java.security.SecureRandom;
-import java.util.Arrays;
 import java.util.List;
 
 import static com.google.common.base.Preconditions.checkArgument;

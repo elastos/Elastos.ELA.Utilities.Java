@@ -1,11 +1,11 @@
 package org.elastos.ela.payload;
 
-import org.elastos.ela.Util;
+import org.elastos.common.Util;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
 
-import static org.elastos.ela.Util.WriteVarUint;
+import static org.elastos.common.Util.WriteVarUint;
 public class PayloadRecord {
     String RecordType;
     byte[] RecordData;

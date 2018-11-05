@@ -3,11 +3,11 @@ package org.elastos.api;
 import net.sf.json.JSONObject;
 import org.elastos.common.ErrorCode;
 import org.elastos.common.SDKException;
-import org.elastos.ela.Util;
+import org.elastos.common.Util;
 
 import javax.xml.bind.DatatypeConverter;
 
-import static org.elastos.ela.Util.ToScriptHash;
+import static org.elastos.common.Util.ToScriptHash;
 /**
  * @author: DongLei.Tan
  * @contact: tandonglei28@gmail.com
@@ -21,7 +21,6 @@ public class Verify {
         ChangeAddress("ChangeAddress"),
         AmountLower("amount"),
         AmountStrLower("amount"),
-        TokenAmountLower("amount"),
         AssetIdLower("assetId"),
         MUpper("M"),
         Host("Host"),
@@ -75,13 +74,6 @@ public class Verify {
                     }
                 }else throw new SDKException(ErrorCode.BLOCK_HASH_NOT_NULL);
                 break;
-            case TokenAmountLower:
-                Object TokenAmountLower = jsonObject.get(type.getValue());
-                if (TokenAmountLower != null) {
-                    if (TokenAmountLower instanceof String ){}else throw new SDKException(ErrorCode.INVALID_TOKEN_AMOUNT);
-                }else throw new SDKException(ErrorCode.TOKEN_AMOUNT_NOT_NULL) ;
-                break;
-
             case AmountStrLower:
                 Object AmountStrLower = jsonObject.get(type.getValue());
                 if (AmountStrLower != null) {

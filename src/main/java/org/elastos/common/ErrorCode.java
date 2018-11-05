@@ -47,17 +47,15 @@ public class ErrorCode {
     public static String INVALID_M = getError(51028, "invalid M");
     public static String M_NOT_NULL = getError(51029, "M can not be empty");
 
-    public static String INVALID_TOKEN_AMOUNT = getError(51030, "amount can not be int");
-    public static String TOKEN_AMOUNT_NOT_NULL = getError(51031, "amount can not be empty");
-    public static String INVALID_ASSET_ID = getError(51032, "invalid assetId");
-    public static String ASSET_ID_NOT_NULL = getError(51033, "assetId can not be empty");
-    public static String INVALID_DESCRIPTION = getError(51034, "description can not be chinese");
-    public static String DESCRIPTION_NOT_NULL = getError(51035, "description can not be empty");
-    public static String INVALID_NAME = getError(51032, "name can only be an english character");
-    public static String NAME_NOT_NULL = getError(51033, "name can not be empty");
-    public static String INVALID_PRECISION = getError(51034, "invalid precision");
-    public static String PRECISION_NOT_NULL = getError(51035, "precision can not be empty");
-    public static String INVALID_AMOUNT_STR = getError(51036, "amount can not be string");
+    public static String INVALID_ASSET_ID = getError(51030, "invalid assetId");
+    public static String ASSET_ID_NOT_NULL = getError(51031, "assetId can not be empty");
+    public static String INVALID_DESCRIPTION = getError(51032, "description can not be chinese");
+    public static String DESCRIPTION_NOT_NULL = getError(51033, "description can not be empty");
+    public static String INVALID_NAME = getError(51034, "name can only be an english character");
+    public static String NAME_NOT_NULL = getError(51035, "name can not be empty");
+    public static String INVALID_PRECISION = getError(51036, "invalid precision");
+    public static String PRECISION_NOT_NULL = getError(51037, "precision can not be empty");
+    public static String INVALID_AMOUNT_STR = getError(51038, "amount can not be string");
 
     // java-config.json
     public static String HOST_NOT_NULL = getError(52001, "host can not be empty");

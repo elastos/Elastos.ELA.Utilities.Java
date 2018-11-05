@@ -6,6 +6,7 @@ import org.apache.commons.io.FileUtils;
 import org.elastos.common.ErrorCode;
 import org.elastos.common.SDKException;
 import org.elastos.api.Verify;
+import org.elastos.common.Util;
 import org.elastos.ela.payload.PayloadRecord;
 import org.elastos.ela.payload.PayloadTransferCrossChainAsset;
 import org.elastos.framework.rpc.Rpc;

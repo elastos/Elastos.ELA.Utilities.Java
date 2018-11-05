@@ -1,5 +1,6 @@
 package org.elastos.ela;
 
+import org.elastos.common.Util;
 import org.elastos.ela.bitcoinj.Utils;
 
 import javax.xml.bind.DatatypeConverter;

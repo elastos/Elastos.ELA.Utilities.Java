@@ -3,21 +3,20 @@ package org.elastos.api;
 import com.alibaba.fastjson.JSON;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
-import org.elastos.common.ErrorCode;
-import org.elastos.common.SDKException;
+import org.elastos.common.*;
 import org.elastos.ela.*;
 import org.elastos.ela.contract.ContractParameterType;
 import org.elastos.ela.contract.FunctionCode;
-import org.elastos.ela.payload.PayloadDeploy;
-import org.elastos.ela.payload.PayloadRecord;
-import org.elastos.ela.payload.PayloadRegisterAsset;
-import org.elastos.ela.payload.PayloadTransferCrossChainAsset;
+import org.elastos.ela.payload.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.xml.bind.DatatypeConverter;
+import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
 import java.util.*;
 
+import static org.elastos.common.Opcode.PACK;
 import static org.elastos.ela.Tx.SMART_CONTRACT;
 import static org.elastos.ela.payload.PayloadRegisterAsset.ElaPrecision;
 import static org.elastos.ela.payload.PayloadRegisterAsset.MaxPrecision;
@@ -29,6 +28,7 @@ import static org.elastos.ela.payload.PayloadRegisterAsset.MaxPrecision;
  */
 public class Basic {
 
+    private static final HashMap<String, Byte> parameterTypemap = ContractParameterType.ContractParameterTypemap();
     private static final Logger LOGGER = LoggerFactory.getLogger(Basic.class);
     /**
      * 生成私钥
@@ -254,13 +254,28 @@ public class Basic {
         //添加消费ELA
         final JSONObject output = json_transaction.getJSONObject("Outputs");
         Verify.verifyParameter(Verify.Type.AddressLower,output);
-        Verify.verifyParameter(Verify.Type.TokenAmountLower,output);
+        Verify.verifyParameter(Verify.Type.AmountStrLower,output);
 
         String amount = output.getString("amount");
         String address = output.getString("address");
-        outputList.add(new TxOutput(address, amount,Common.SystemAssetID,ElaPrecision));
+        outputList.add(new TxOutput(address, amount,Common.SYSTEM_ASSET_ID,ElaPrecision));
 
         return outputList.toArray(new TxOutput[outputList.size()]);
+    }
+
+    public static LinkedList<TxOutput> parseOutputsAmountStr(JSONArray outputs) throws SDKException {
+        LinkedList<TxOutput> outputList = new LinkedList<TxOutput>();
+        for (int t = 0; t < outputs.size(); t++) {
+            JSONObject output = (JSONObject) outputs.get(t);
+
+            Verify.verifyParameter(Verify.Type.AddressLower,output);
+            Verify.verifyParameter(Verify.Type.AmountStrLower,output);
+
+            String amount = output.getString("amount");
+            String address = output.getString("address");
+            outputList.add(new TxOutput(address, amount,Common.SYSTEM_ASSET_ID,ElaPrecision));
+        }
+        return outputList;
     }
 
     public static LinkedList<TxOutput>  parseOutputsByAsset(JSONArray outputs) throws SDKException {
@@ -270,13 +285,13 @@ public class Basic {
 
             Verify.verifyParameter(Verify.Type.AssetIdLower,output);
             Verify.verifyParameter(Verify.Type.AddressLower,output);
-            Verify.verifyParameter(Verify.Type.TokenAmountLower,output);
+            Verify.verifyParameter(Verify.Type.AmountStrLower,output);
 
             String  assetId = output.getString("assetId");
             String address = output.getString("address");
             String  amount = output.getString("amount");
             int precision = ElaPrecision;
-            if (!assetId.toLowerCase().equals(Common.SystemAssetID)){
+            if (!assetId.toLowerCase().equals(Common.SYSTEM_ASSET_ID)){
                 precision = MaxPrecision;
             }
             outputList.add(new TxOutput(address,amount,assetId,precision));
@@ -391,27 +406,11 @@ public class Basic {
         return CrossChainAssetList;
     }
 
-    public static utxoTxInput[] parseDeployInputs(JSONObject json_transaction) throws SDKException {
 
-        List<utxoTxInput> inputList = new LinkedList<utxoTxInput>();
-        JSONObject utxoInput = json_transaction.getJSONObject("UTXOInputs");
-
-        Verify.verifyParameter(Verify.Type.TxidLower,utxoInput);
-        Verify.verifyParameter(Verify.Type.IndexLower,utxoInput);
-        Verify.verifyParameter(Verify.Type.PrivateKeyLower,utxoInput);
-
-
-        String txid = utxoInput.getString("txid");
-        int index = utxoInput.getInt("index");
-        String privateKey = utxoInput.getString("privateKey");
-        String address = Ela.getAddressFromPrivate(privateKey);
-
-        inputList.add(new utxoTxInput(txid,index,privateKey,address));
-        return inputList.toArray(new utxoTxInput[inputList.size()]);
-    }
+    //=================================== Neo Contract =======================================================
 
     public static FunctionCode genfunctionCode(JSONObject json_transaction) throws SDKException {
-        HashMap<String, Byte> parameterTypemap = ContractParameterType.ContractParameterTypemap();
+
         byte returnTypeByte ;
         byte[] parameterTypes ;
         byte[] code ;
@@ -453,23 +452,9 @@ public class Basic {
         }else throw new SDKException(ErrorCode.ParamErr("ContractCode can not be empty"));
     }
 
-    public static TxOutput[] parseOutput(JSONObject json_transaction) throws SDKException {
-        LinkedList<TxOutput> outputList = new LinkedList<TxOutput>();
-        JSONObject output = json_transaction.getJSONObject("Outputs");
-
-        Verify.verifyParameter(Verify.Type.AddressLower,output);
-        Verify.verifyParameter(Verify.Type.AmountStrLower,output);
-
-        String address = output.getString("address");
-        String amount = output.getString("amount");
-
-        outputList.add(new TxOutput(address, amount,Common.SystemAssetID,ElaPrecision));
-        return outputList.toArray(new TxOutput[outputList.size()]);
-    }
-
     public static PayloadDeploy parsePayloadDeploy(JSONObject json_transaction) throws SDKException {
 
-        JSONObject utxoInput = json_transaction.getJSONObject("UTXOInputs");
+        JSONObject utxoInput = (JSONObject) json_transaction.getJSONArray("UTXOInputs").get(0);
         String privateKey = utxoInput.getString("privateKey");
         String publickey = Ela.getPublicFromPrivate(privateKey);
 
@@ -486,5 +471,84 @@ public class Basic {
 
             return new PayloadDeploy(name,codeVersion,address,email,description,publickey,gas);
         }throw new SDKException(ErrorCode.ParamErr("PayloadDeploy can not be empty"));
+    }
+
+
+    public static PayloadInvoke genPayloadInvoke(JSONObject json_transaction) throws SDKException {
+        String contractCode;
+        byte[] paramByte;
+
+        Object ParamTypes = json_transaction.get("ParamTypes");
+        if (ParamTypes != null) {
+            JSONArray paramTypes = json_transaction.getJSONArray("ParamTypes");
+
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            DataOutputStream o = new DataOutputStream(baos);
+
+            parseJsonToBytes(o,paramTypes);
+
+            paramByte = baos.toByteArray();
+        }else throw new SDKException(ErrorCode.ParamErr("ParamTypes can not be empty"));
+
+        Object ContractCode = json_transaction.get("ContractCode");
+        if (ContractCode != null) {
+            contractCode = json_transaction.getString("ContractCode");
+        }else throw new SDKException(ErrorCode.ParamErr("ContractCode can not be empty"));
+
+        JSONObject utxoInput = (JSONObject) json_transaction.getJSONArray("UTXOInputs").get(0);
+        String privateKey = utxoInput.getString("privateKey");
+        String publickey = Ela.getPublicFromPrivate(privateKey);
+
+        Object Gas = json_transaction.get("Gas");
+        if (Gas != null) {
+            long gas = json_transaction.getLong("Gas");
+            return new PayloadInvoke(contractCode,paramByte,publickey,gas);
+        }else throw new SDKException(ErrorCode.ParamErr("Gas can not be empty"));
+    }
+
+    public static void parseJsonToBytes(DataOutputStream o, JSONArray params) throws SDKException {
+        // 智能合约在虚拟机是基于堆栈数据结构的，先进后出
+        try {
+            for (int i = params.size() - 1; i >= 0 ; i--){
+                JSONObject param = params.getJSONObject(i);
+                Iterator iterator = param.keys();
+                while(iterator.hasNext()) {
+                    String  key = (String) iterator.next();
+                    switch (key){
+                        case "Boolean":
+                            Paramsbuilder.emitPushBool(o,param.getBoolean(key));
+                            break;
+                        case "Integer":
+                            Paramsbuilder.emitPushInteger(o,param.getLong(key));
+                            break;
+                        case "String":
+                            Paramsbuilder.emitPushByteArray(o,key.getBytes());
+                            break;
+                        case "Hash256":
+                        case "Hash168":
+                        case "ByteArray":
+                            Paramsbuilder.emitPushByteArray(o,DatatypeConverter.parseHexBinary(param.getString(key)));
+                            break;
+                        case "Hash160":
+                            byte[] paramByte = DatatypeConverter.parseHexBinary(param.getString(key));
+                            if (paramByte.length == 21){
+                                byte[] tmp = new byte[paramByte.length - 1];
+                                System.arraycopy(paramByte,1,tmp,0,tmp.length);
+                                paramByte = tmp;
+                            }
+                            Paramsbuilder.emitPushByteArray(o,paramByte);
+                            break;
+                        case "Array":
+                            JSONArray paramJSONArray = param.getJSONArray(key);
+                            parseJsonToBytes(o,paramJSONArray);
+                            Paramsbuilder.emitPushInteger(o,(long)paramJSONArray.size());
+                            Paramsbuilder.emit(o,PACK);
+                    }
+                }
+            }
+        }catch (Exception e){
+            throw new SDKException(ErrorCode.ParamErr("ParamTypes serialize err : " + e));
+        }
+
     }
 }

@@ -1,6 +1,7 @@
 package org.elastos.ela;
 
-import javax.xml.bind.DatatypeConverter;
+import org.elastos.common.Util;
+
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;

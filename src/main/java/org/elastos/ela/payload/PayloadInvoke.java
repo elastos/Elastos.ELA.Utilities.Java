@@ -2,7 +2,7 @@ package org.elastos.ela.payload;
 
 import org.elastos.common.ErrorCode;
 import org.elastos.common.SDKException;
-import org.elastos.ela.Util;
+import org.elastos.common.Util;
 
 import javax.xml.bind.DatatypeConverter;
 import java.io.DataOutputStream;

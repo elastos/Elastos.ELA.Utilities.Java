@@ -4,6 +4,8 @@ import org.elastos.api.ELATransaction;
 import org.junit.Test;
 
 import javax.xml.bind.DatatypeConverter;
+import java.util.Arrays;
+
 
 /**
  * Created by nan on 18/1/15.
@@ -29,7 +31,19 @@ public class  SignToolTest {
 
     @Test
     public void printhex(){
-        String s = "测试";
-        System.out.println(DatatypeConverter.printHexBinary(s.getBytes()));
+
+        String s = "Boolean";
+        switch (s){
+            case "Hash":
+                System.out.println("Hash");
+            case "Boolean":
+            case "String":
+                System.out.println("String");
+                break;
+            case "Integer":
+                System.out.println("Integer");
+
+        }
+
     }
 }

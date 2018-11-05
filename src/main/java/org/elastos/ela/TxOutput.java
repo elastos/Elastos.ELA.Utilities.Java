@@ -1,9 +1,9 @@
 package org.elastos.ela;
 
+import org.elastos.common.Util;
 import org.elastos.ela.bitcoinj.Utils;
 
 import javax.xml.bind.DatatypeConverter;
-import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -44,7 +44,7 @@ public class TxOutput {
     //Token链业务
     public TxOutput(String address,String amount,String assetId,int precision){
         this.Address = address;
-        if (assetId.toLowerCase().equals(Common.SystemAssetID)){
+        if (assetId.toLowerCase().equals(Common.SYSTEM_ASSET_ID)){
             this.SystemAssetID = Common.ELA_ASSETID;
             this.Value = Util.multiplyAmountELA(new BigDecimal(amount), precision).toBigInteger().longValue();
         }else {

@@ -3,6 +3,7 @@ package org.elastos.ela;
 
 
 import org.elastos.common.SDKException;
+import org.elastos.common.Util;
 import org.elastos.ela.contract.FunctionCode;
 import org.elastos.ela.payload.*;
 

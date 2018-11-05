@@ -2,7 +2,7 @@ package org.elastos.ela.contract;
 
 import org.elastos.common.ErrorCode;
 import org.elastos.common.SDKException;
-import org.elastos.ela.Util;
+import org.elastos.common.Util;
 
 import java.io.DataOutputStream;
 

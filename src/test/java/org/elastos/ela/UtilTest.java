@@ -1,14 +1,11 @@
 package org.elastos.ela;
 
+import org.elastos.common.Util;
 import org.junit.Test;
 
 import javax.xml.bind.DatatypeConverter;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
-import java.lang.reflect.Array;
-import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.util.ArrayList;
 
 import static org.junit.Assert.*;
 

@@ -1,5 +1,6 @@
 package org.elastos.ela;
 
+import org.elastos.common.Util;
 import org.elastos.ela.bitcoinj.Sha256Hash;
 import org.elastos.ela.contract.FunctionCode;
 import org.elastos.ela.payload.*;
@@ -46,6 +47,8 @@ public class Tx {
 
     // Address types
     public static byte SMART_CONTRACT =(byte)0xAB;
+    public static byte TAIL_CALL = 0x69;
+
     static byte STANDARD =(byte)0xAC;
     static byte REGISTER_ID =(byte)0xAD;
     static byte MULTI_SIG =(byte)0xAE;
@@ -254,6 +257,11 @@ public class Tx {
         //payloadDeploy
         if ( this.payloadDeploy != null) {
             this.payloadDeploy.Serialize(o);
+        }
+
+        //payloadDeploy
+        if ( this.payloadInvoke != null) {
+            this.payloadInvoke.Serialize(o);
         }
 
         //[]*txAttribute
