@@ -31,7 +31,7 @@ public class TokenTransaction {
             //解析PayloadRegisterAsset
             PayloadRegisterAsset payload   = Basic.payloadRegisterAsset(json_transaction);
             //解析outputs
-            TxOutput[] txOutputs = Basic.parseRegisterAsset(json_transaction);
+            TxOutput[] txOutputs = Basic.parseRegisterOutput(json_transaction);
 
             //创建rawTransaction
             LinkedHashMap<String, Object> resultMap = new LinkedHashMap<String, Object>();

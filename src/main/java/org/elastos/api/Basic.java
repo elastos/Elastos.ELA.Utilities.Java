@@ -243,23 +243,26 @@ public class Basic {
     }
 
 
-    public static TxOutput[] parseRegisterAsset(JSONObject json_transaction) throws SDKException {
+    public static TxOutput[] parseRegisterOutput(JSONObject json_transaction) throws SDKException {
         LinkedList<TxOutput> outputList = new LinkedList<TxOutput>();
+        final JSONArray outputs = json_transaction.getJSONArray("Outputs");
+
         //添加注册资产
         final JSONObject PayloadObject = json_transaction.getJSONObject("PayloadRegisterAsset");
         String tokenAddress = PayloadObject.getString("address");
         String tokenAmount = PayloadObject.getString("amount");
         outputList.add(new TxOutput(tokenAddress, tokenAmount,Asset.AssetId,MaxPrecision));
 
-        //添加消费ELA
-        final JSONObject output = json_transaction.getJSONObject("Outputs");
-        Verify.verifyParameter(Verify.Type.AddressLower,output);
-        Verify.verifyParameter(Verify.Type.AmountStrLower,output);
+        for (int t = 0; t < outputs.size(); t++) {
+            final JSONObject output = (JSONObject) outputs.get(t);
+            //添加消费ELA
+            Verify.verifyParameter(Verify.Type.AddressLower,output);
+            Verify.verifyParameter(Verify.Type.AmountStrLower,output);
 
-        String amount = output.getString("amount");
-        String address = output.getString("address");
-        outputList.add(new TxOutput(address, amount,Common.SYSTEM_ASSET_ID,ElaPrecision));
-
+            String amount = output.getString("amount");
+            String address = output.getString("address");
+            outputList.add(new TxOutput(address, amount,Common.SYSTEM_ASSET_ID,ElaPrecision));
+        }
         return outputList.toArray(new TxOutput[outputList.size()]);
     }
 
