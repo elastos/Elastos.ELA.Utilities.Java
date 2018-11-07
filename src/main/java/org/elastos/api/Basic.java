@@ -215,7 +215,7 @@ public class Basic {
             Verify.verifyParameter(Verify.Type.RecordDataLower,PayloadObject);
 
             return new PayloadRecord(PayloadObject.getString("recordType"),PayloadObject.getString("recordData"));
-        }else throw new SDKException(ErrorCode.ParamErr("Payload can not be empty"));
+        }else return null;
     }
 
     public static PayloadRegisterAsset payloadRegisterAsset(JSONObject json_transaction) throws SDKException {
