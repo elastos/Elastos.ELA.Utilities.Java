@@ -258,7 +258,7 @@ public class Util {
     public static boolean isAscii(String str){
         char[] chars = str.toCharArray();
         for (int i : chars){
-            if (33 <= i && 126 >= i){
+            if (32 <= i && 126 >= i){
             }else return false;
         }
         return true;
