@@ -255,6 +255,15 @@ public class Util {
         return bytes;
     }
 
+    public static boolean isAscii(String str){
+        char[] chars = str.toCharArray();
+        for (int i : chars){
+            if (33 <= i && 126 >= i){
+            }else return false;
+        }
+        return true;
+    }
+
 
     /**
      * 生成x地址

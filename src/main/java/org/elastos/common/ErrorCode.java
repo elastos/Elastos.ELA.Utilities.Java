@@ -49,9 +49,9 @@ public class ErrorCode {
 
     public static String INVALID_ASSET_ID = getError(51030, "invalid assetId");
     public static String ASSET_ID_NOT_NULL = getError(51031, "assetId can not be empty");
-    public static String INVALID_DESCRIPTION = getError(51032, "description can not be chinese");
+    public static String INVALID_DESCRIPTION = getError(51032, "description can only be ASCII");
     public static String DESCRIPTION_NOT_NULL = getError(51033, "description can not be empty");
-    public static String INVALID_NAME = getError(51034, "name can only be an english character");
+    public static String INVALID_NAME = getError(51034, "name can only be an english character and number");
     public static String NAME_NOT_NULL = getError(51035, "name can not be empty");
     public static String INVALID_PRECISION = getError(51036, "invalid precision");
     public static String PRECISION_NOT_NULL = getError(51037, "precision can not be empty");

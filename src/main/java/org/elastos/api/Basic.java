@@ -551,6 +551,5 @@ public class Basic {
         }catch (Exception e){
             throw new SDKException(ErrorCode.ParamErr("ParamTypes serialize err : " + e));
         }
-
     }
 }

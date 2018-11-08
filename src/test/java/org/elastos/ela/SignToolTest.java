@@ -28,22 +28,4 @@ public class  SignToolTest {
         String txid = ELATransaction.sendRawTransaction(rawTx, rpcUrl);
         System.out.println("Txid = " + txid);
     }
-
-    @Test
-    public void printhex(){
-
-        String s = "Boolean";
-        switch (s){
-            case "Hash":
-                System.out.println("Hash");
-            case "Boolean":
-            case "String":
-                System.out.println("String");
-                break;
-            case "Integer":
-                System.out.println("Integer");
-
-        }
-
-    }
 }

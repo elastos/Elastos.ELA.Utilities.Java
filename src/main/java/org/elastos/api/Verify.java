@@ -8,6 +8,8 @@ import org.elastos.common.Util;
 import javax.xml.bind.DatatypeConverter;
 
 import static org.elastos.common.Util.ToScriptHash;
+import static org.elastos.common.Util.isAscii;
+
 /**
  * @author: DongLei.Tan
  * @contact: tandonglei28@gmail.com
@@ -199,14 +201,14 @@ public class Verify {
             case NameLower:
                 Object NameLower = jsonObject.get(type.getValue());
                 if (NameLower != null) {
-                    boolean isWord=((String)NameLower).matches("[a-zA-Z]+");
+                    boolean isWord=((String)NameLower).matches("[a-zA-Z0-9]+");
                     if (!isWord)throw new SDKException(ErrorCode.INVALID_NAME);
                 }else throw new SDKException(ErrorCode.NAME_NOT_NULL);
                 break;
             case DescriptionLower:
                 Object DescriptionLower = jsonObject.get(type.getValue());
                 if (DescriptionLower != null) {
-                    if (Util.isChinese((String)DescriptionLower))throw new SDKException(ErrorCode.INVALID_DESCRIPTION);
+                    if (!isAscii((String)DescriptionLower))throw new SDKException(ErrorCode.INVALID_DESCRIPTION);
                 }else throw new SDKException(ErrorCode.DESCRIPTION_NOT_NULL);
                 break;
             case PrecisionLower:
