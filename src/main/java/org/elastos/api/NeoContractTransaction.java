@@ -7,7 +7,6 @@ import org.elastos.ela.RawTx;
 import org.elastos.ela.TxOutput;
 import org.elastos.ela.payload.PayloadInvoke;
 import org.elastos.ela.utxoTxInput;
-import org.elastos.ela.contract.FunctionCode;
 import org.elastos.ela.payload.PayloadDeploy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,12 +31,12 @@ public class NeoContractTransaction {
             // outputs
             TxOutput[] txOutputs = Basic.parseOutputsAmountStr(outputs).toArray(new TxOutput[outputs.size()]);
             //functionCode
-            FunctionCode functionCode = genfunctionCode(json_transaction);
+            genfunctionCode(json_transaction);
             //PayloadDeploy
             PayloadDeploy payloadDeploy = Basic.parsePayloadDeploy(json_transaction);
 
             LinkedHashMap<String, Object> resultMap = new LinkedHashMap<String, Object>();
-            RawTx rawTx = Ela.deployContractTransaction(utxoTxInputs,txOutputs,functionCode,payloadDeploy);
+            RawTx rawTx = Ela.deployContractTransaction(utxoTxInputs,txOutputs,payloadDeploy);
             resultMap.put("rawTx", rawTx.getRawTxString());
             resultMap.put("txHash", rawTx.getTxHash());
 

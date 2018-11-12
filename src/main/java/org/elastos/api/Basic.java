@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import javax.xml.bind.DatatypeConverter;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
+import java.math.BigDecimal;
 import java.util.*;
 
 import static org.elastos.common.Opcode.PACK;
@@ -411,7 +412,7 @@ public class Basic {
 
     //=================================== Neo Contract =======================================================
 
-    public static FunctionCode genfunctionCode(JSONObject json_transaction) throws SDKException {
+    public static void genfunctionCode(JSONObject json_transaction) throws SDKException {
 
         byte returnTypeByte ;
         byte[] parameterTypes ;
@@ -450,7 +451,6 @@ public class Basic {
             FunctionCode functionCode = new FunctionCode(returnTypeByte, parameterTypes, code_buf);
             PayloadDeploy.Code = functionCode;
 
-            return functionCode;
         }else throw new SDKException(ErrorCode.ParamErr("ContractCode can not be empty"));
     }
 
@@ -458,7 +458,8 @@ public class Basic {
 
         JSONObject utxoInput = (JSONObject) json_transaction.getJSONArray("UTXOInputs").get(0);
         String privateKey = utxoInput.getString("privateKey");
-        String publickey = Ela.getPublicFromPrivate(privateKey);
+        String address = Ela.getAddressFromPrivate(privateKey);
+        byte[] programHash = Util.ToScriptHash(address);
 
         Object PayloadDeploy = json_transaction.get("Payload");
         if (PayloadDeploy != null){
@@ -466,12 +467,14 @@ public class Basic {
 
             String name = PayloadObject.getString("name");
             String codeVersion = PayloadObject.getString("codeVersion");
-            String address = PayloadObject.getString("author");
+            String author = PayloadObject.getString("author");
             String email = PayloadObject.getString("email");
             String description = PayloadObject.getString("description");
-            long gas = PayloadObject.getLong("Gas");
+            String gas = PayloadObject.getString("Gas");
 
-            return new PayloadDeploy(name,codeVersion,address,email,description,publickey,gas);
+            long longValue = Util.multiplyAmountELA(new BigDecimal(gas), ElaPrecision).toBigInteger().longValue();
+
+            return new PayloadDeploy(name,codeVersion,author,email,description,programHash,longValue);
         }throw new SDKException(ErrorCode.ParamErr("Payload can not be empty"));
     }
 
@@ -499,12 +502,14 @@ public class Basic {
 
         JSONObject utxoInput = (JSONObject) json_transaction.getJSONArray("UTXOInputs").get(0);
         String privateKey = utxoInput.getString("privateKey");
-        String publickey = Ela.getPublicFromPrivate(privateKey);
+        String address = Ela.getAddressFromPrivate(privateKey);
+        byte[] programHash = Util.ToScriptHash(address);
 
         Object Gas = json_transaction.get("Gas");
         if (Gas != null) {
-            long gas = json_transaction.getLong("Gas");
-            return new PayloadInvoke(contractCode,paramByte,publickey,gas);
+            String gas = json_transaction.getString("Gas");
+            long longValue = Util.multiplyAmountELA(new BigDecimal(gas), ElaPrecision).toBigInteger().longValue();
+            return new PayloadInvoke(contractCode,paramByte,programHash,longValue);
         }else throw new SDKException(ErrorCode.ParamErr("Gas can not be empty"));
     }
 

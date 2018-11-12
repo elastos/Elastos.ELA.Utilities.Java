@@ -29,7 +29,6 @@ public class Tx {
     private PayloadRegisterAsset payloadRegisterAsset;
     private PayloadTransferCrossChainAsset[] CrossChainAsset;
     private PayloadDeploy payloadDeploy;
-    private FunctionCode functionCode;
     private PayloadInvoke payloadInvoke;
 
     //Transction types
@@ -126,9 +125,8 @@ public class Tx {
     }
 
     // DeployContract Transaction
-    public static Tx deployContractTransaction(byte TransactionType, utxoTxInput[] inputs, TxOutput[] outputs, FunctionCode functionCode , PayloadDeploy payloadDeploy) {
+    public static Tx deployContractTransaction(byte TransactionType, utxoTxInput[] inputs, TxOutput[] outputs,PayloadDeploy payloadDeploy) {
         Tx tx = new Tx();
-        tx.functionCode = functionCode;
         tx.payloadDeploy = payloadDeploy;
         commonalityTransaction(tx,TransactionType,inputs,outputs);
         return tx;
@@ -246,12 +244,6 @@ public class Tx {
         //payloadRegisterAsset
         if ( this.payloadRegisterAsset != null) {
             this.payloadRegisterAsset.Serialize(o);
-        }
-
-
-        //functionCode
-        if ( this.functionCode != null) {
-            this.functionCode.Serialize(o);
         }
 
         //payloadDeploy

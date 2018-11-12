@@ -50,8 +50,8 @@ public class Ela {
         return singleSignTx(tx);
     }
 
-    public static RawTx deployContractTransaction(utxoTxInput[] inputs, TxOutput[] outputs, FunctionCode functionCode , PayloadDeploy payloadDeploy) throws Exception {
-        Tx tx = Tx.deployContractTransaction(Deploy, inputs, outputs,functionCode,payloadDeploy);
+    public static RawTx deployContractTransaction(utxoTxInput[] inputs, TxOutput[] outputs, PayloadDeploy payloadDeploy) throws Exception {
+        Tx tx = Tx.deployContractTransaction(Deploy, inputs, outputs,payloadDeploy);
         return singleSignTx(tx);
     }
 

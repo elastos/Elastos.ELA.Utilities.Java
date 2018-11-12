@@ -2,9 +2,14 @@ package org.elastos.ela.payload;
 
 import org.elastos.common.ErrorCode;
 import org.elastos.common.SDKException;
+import org.elastos.common.Util;
 import org.elastos.ela.contract.FunctionCode;
 
+import javax.xml.bind.DatatypeConverter;
+import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 public class PayloadDeploy {
     public static FunctionCode Code;
@@ -13,10 +18,10 @@ public class PayloadDeploy {
     private String Author;
     private String Email;
     private String Description;
-    private String ProgramHash;
+    private byte[] ProgramHash;
     private long   Gas;
 
-    public PayloadDeploy(String name,String codeVersion,String author,String email,String description,String programHash,long gas){
+    public PayloadDeploy(String name,String codeVersion,String author,String email,String description,byte[] programHash,long gas){
         this.Name = name;
         this.CodeVersion = codeVersion;
         this.Author = author;
@@ -30,25 +35,19 @@ public class PayloadDeploy {
         try{
             PayloadDeploy.Code.Serialize(o);
 
-            o.write(this.Name.length());
-            o.writeBytes(this.Name);
+            Util.WriteVarBytes(o,this.Name.getBytes());
 
-            o.write(this.CodeVersion.length());
-            o.writeBytes(this.CodeVersion);
+            Util.WriteVarBytes(o,this.CodeVersion.getBytes());
 
-            o.write(this.Author.length());
-            o.writeBytes(Author);
+            Util.WriteVarBytes(o,this.Author.getBytes());
 
-            o.write(this.Email.length());
-            o.writeBytes(this.Email);
+            Util.WriteVarBytes(o,this.Email.getBytes());
 
-            o.write(this.Description.length());
-            o.writeBytes(this.Description);
+            Util.WriteVarBytes(o,this.Description.getBytes());
 
-            o.write(this.ProgramHash.length());
-            o.writeBytes(this.ProgramHash);
+            o.write(this.ProgramHash);
 
-            o.writeLong(Long.reverseBytes(this.Gas)); //TODO this is nesessary to reverse?
+            o.writeLong(Long.reverseBytes(this.Gas));
         }catch (Exception e){
             throw new SDKException(ErrorCode.ParamErr("PayloadDeploy serialize exception :" + e));
         }

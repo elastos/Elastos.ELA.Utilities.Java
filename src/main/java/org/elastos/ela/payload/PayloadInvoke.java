@@ -10,11 +10,11 @@ import java.io.DataOutputStream;
 public class PayloadInvoke {
     private String CodeHash; //Uint168
     private byte[] Code;
-    private String ProgramHash; //Uint168
+    private byte[] ProgramHash; //Uint168
     private long Gas;//Fixed64
 
 
-    public PayloadInvoke(String codeHash,byte[] code, String programHash, long gas){
+    public PayloadInvoke(String codeHash,byte[] code, byte[] programHash, long gas){
         this.CodeHash = codeHash;
         this.Code = code;
         this.ProgramHash = programHash;
@@ -25,10 +25,12 @@ public class PayloadInvoke {
         try {
             o.write(DatatypeConverter.parseBase64Binary(this.CodeHash));
             Util.WriteVarBytes(o,this.Code);
-            o.write(DatatypeConverter.parseBase64Binary(this.ProgramHash));
+            o.write(this.ProgramHash);
             o.writeLong(Long.reverseBytes(this.Gas));
         }catch (Exception e){
             throw new SDKException(ErrorCode.ParamErr("PayloadInvoke serialize exception :" + e));
         }
     }
 }
+
+

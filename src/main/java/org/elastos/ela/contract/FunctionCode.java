@@ -7,9 +7,9 @@ import org.elastos.common.Util;
 import java.io.DataOutputStream;
 
 public class FunctionCode {
-    private byte ReturnType;
-    private byte[] ParameterTypes;
     private byte[] Code;
+    private byte[] ParameterTypes;
+    private byte ReturnType;
     private String codeHash; //Uint168
 
 
@@ -21,9 +21,9 @@ public class FunctionCode {
 
     public void Serialize(DataOutputStream o) throws SDKException {
         try{
-            o.write(this.ReturnType);
-            Util.WriteVarBytes(o,this.ParameterTypes);
             Util.WriteVarBytes(o,this.Code);
+            Util.WriteVarBytes(o,this.ParameterTypes);
+            o.write(this.ReturnType);
         }catch (Exception e){
             throw new SDKException(ErrorCode.ParamErr("FunctionCode serialize exception :" + e));
         }
