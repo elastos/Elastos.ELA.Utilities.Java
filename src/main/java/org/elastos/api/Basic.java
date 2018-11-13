@@ -470,7 +470,7 @@ public class Basic {
             String author = PayloadObject.getString("author");
             String email = PayloadObject.getString("email");
             String description = PayloadObject.getString("description");
-            String gas = PayloadObject.getString("Gas");
+            String gas = PayloadObject.getString("gas");
 
             long longValue = Util.multiplyAmountELA(new BigDecimal(gas), ElaPrecision).toBigInteger().longValue();
 
@@ -480,7 +480,7 @@ public class Basic {
 
 
     public static PayloadInvoke genPayloadInvoke(JSONObject json_transaction) throws SDKException {
-        String contractCode;
+        String contractHash;
         byte[] paramByte;
 
         Object ParamTypes = json_transaction.get("ParamTypes");
@@ -495,10 +495,10 @@ public class Basic {
             paramByte = baos.toByteArray();
         }else throw new SDKException(ErrorCode.ParamErr("ParamTypes can not be empty"));
 
-        Object ContractCode = json_transaction.get("ContractCode");
-        if (ContractCode != null) {
-            contractCode = json_transaction.getString("ContractCode");
-        }else throw new SDKException(ErrorCode.ParamErr("ContractCode can not be empty"));
+        Object ContractHash = json_transaction.get("ContractHash");
+        if (ContractHash != null) {
+            contractHash = json_transaction.getString("ContractHash");
+        }else throw new SDKException(ErrorCode.ParamErr("contractHash can not be empty"));
 
         JSONObject utxoInput = (JSONObject) json_transaction.getJSONArray("UTXOInputs").get(0);
         String privateKey = utxoInput.getString("privateKey");
@@ -509,7 +509,7 @@ public class Basic {
         if (Gas != null) {
             String gas = json_transaction.getString("Gas");
             long longValue = Util.multiplyAmountELA(new BigDecimal(gas), ElaPrecision).toBigInteger().longValue();
-            return new PayloadInvoke(contractCode,paramByte,programHash,longValue);
+            return new PayloadInvoke(contractHash,paramByte,programHash,longValue);
         }else throw new SDKException(ErrorCode.ParamErr("Gas can not be empty"));
     }
 

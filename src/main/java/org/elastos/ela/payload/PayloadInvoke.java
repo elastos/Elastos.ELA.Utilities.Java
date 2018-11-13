@@ -5,7 +5,9 @@ import org.elastos.common.SDKException;
 import org.elastos.common.Util;
 
 import javax.xml.bind.DatatypeConverter;
+import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
+import java.util.Arrays;
 
 public class PayloadInvoke {
     private String CodeHash; //Uint168
@@ -23,7 +25,8 @@ public class PayloadInvoke {
 
     public void Serialize (DataOutputStream o) throws SDKException {
         try {
-            o.write(DatatypeConverter.parseBase64Binary(this.CodeHash));
+            o.write(DatatypeConverter.parseHexBinary(this.CodeHash));
+
             Util.WriteVarBytes(o,this.Code);
             o.write(this.ProgramHash);
             o.writeLong(Long.reverseBytes(this.Gas));
