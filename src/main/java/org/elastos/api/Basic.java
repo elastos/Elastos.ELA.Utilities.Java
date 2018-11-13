@@ -441,14 +441,17 @@ public class Basic {
             String contractCodeStr = json_transaction.getString("ContractCode");
             code = DatatypeConverter.parseHexBinary(contractCodeStr);
 
-            // byte[] + byte
-            byte[] smartContractArray = new byte[1];
-            smartContractArray[0] = SMART_CONTRACT;
-            byte[] code_buf = new byte[code.length + smartContractArray.length];
-            System.arraycopy(code,0,code_buf,0,code.length);
-            System.arraycopy(smartContractArray,0,code_buf,code.length,smartContractArray.length);
+            if (!(code[code.length -1] == SMART_CONTRACT)){
+                // byte[] + byte
+                byte[] smartContractArray = new byte[1];
+                smartContractArray[0] = SMART_CONTRACT;
+                byte[] code_buf = new byte[code.length + smartContractArray.length];
+                System.arraycopy(code,0,code_buf,0,code.length);
+                System.arraycopy(smartContractArray,0,code_buf,code.length,smartContractArray.length);
+                code = code_buf;
+            }
 
-            FunctionCode functionCode = new FunctionCode(returnTypeByte, parameterTypes, code_buf);
+            FunctionCode functionCode = new FunctionCode(returnTypeByte, parameterTypes, code);
             PayloadDeploy.Code = functionCode;
 
         }else throw new SDKException(ErrorCode.ParamErr("ContractCode can not be empty"));
