@@ -48,7 +48,7 @@ public class NeoContractTransaction {
         }
     }
 
-    public static String genInvoknContractTransaction(JSONObject inputsAddOutpus){
+    public static String genInvokeContractTransaction(JSONObject inputsAddOutpus){
         try {
             final JSONArray transaction = inputsAddOutpus.getJSONArray("Transactions");
             JSONObject json_transaction = (JSONObject) transaction.get(0);
@@ -67,8 +67,8 @@ public class NeoContractTransaction {
             resultMap.put("rawTx", rawTx.getRawTxString());
             resultMap.put("txHash", rawTx.getTxHash());
 
-            LOGGER.info(Basic.getSuccess("genInvoknContractTransaction" ,resultMap));
-            return Basic.getSuccess("genInvoknContractTransaction" , resultMap);
+            LOGGER.info(Basic.getSuccess("genInvokeContractTransaction" ,resultMap));
+            return Basic.getSuccess("genInvokeContractTransaction" , resultMap);
         } catch (Exception e) {
             LOGGER.error(e.toString());
             return e.toString();

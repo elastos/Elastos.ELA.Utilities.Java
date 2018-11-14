@@ -14,10 +14,12 @@ import org.slf4j.LoggerFactory;
 import javax.xml.bind.DatatypeConverter;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.*;
 
 import static org.elastos.common.Opcode.PACK;
+import static org.elastos.common.Opcode.TAILCALL;
 import static org.elastos.ela.Tx.SMART_CONTRACT;
 import static org.elastos.ela.payload.PayloadRegisterAsset.ElaPrecision;
 import static org.elastos.ela.payload.PayloadRegisterAsset.MaxPrecision;
@@ -418,6 +420,7 @@ public class Basic {
         byte[] parameterTypes ;
         byte[] code ;
 
+        //ParamTypes
         Object ParamTypes = json_transaction.get("ParamTypes");
         if (ParamTypes != null){
             final JSONArray paramTypes = json_transaction.getJSONArray("ParamTypes");
@@ -430,12 +433,14 @@ public class Basic {
             parameterTypes = Util.byteToByteArray(list);
         }else throw  new SDKException(ErrorCode.ParamErr("ParamTypes can not be empty"));
 
+        //ReturnType
         Object ReturnType = json_transaction.get("ReturnType");
         if (ReturnType != null){
             String returnTypeStr = json_transaction.getString("ReturnType");
             returnTypeByte = parameterTypemap.get(returnTypeStr);
         }else throw new SDKException(ErrorCode.ParamErr("ReturnType can not be empty"));
 
+        //ContractCode
         Object ContractCode = json_transaction.get("ContractCode");
         if (ContractCode != null){
             String contractCodeStr = json_transaction.getString("ContractCode");
@@ -459,11 +464,13 @@ public class Basic {
 
     public static PayloadDeploy parsePayloadDeploy(JSONObject json_transaction) throws SDKException {
 
+        //programHash
         JSONObject utxoInput = (JSONObject) json_transaction.getJSONArray("UTXOInputs").get(0);
         String privateKey = utxoInput.getString("privateKey");
         String address = Ela.getAddressFromPrivate(privateKey);
         byte[] programHash = Util.ToScriptHash(address);
 
+        //Payload
         Object PayloadDeploy = json_transaction.get("Payload");
         if (PayloadDeploy != null){
             final JSONObject PayloadObject = json_transaction.getJSONObject("Payload");
@@ -483,9 +490,10 @@ public class Basic {
 
 
     public static PayloadInvoke genPayloadInvoke(JSONObject json_transaction) throws SDKException {
-        String contractHash;
+        byte[] contractHash;
         byte[] paramByte;
 
+        //ParamTypes
         Object ParamTypes = json_transaction.get("ParamTypes");
         if (ParamTypes != null) {
             JSONArray paramTypes = json_transaction.getJSONArray("ParamTypes");
@@ -498,16 +506,30 @@ public class Basic {
             paramByte = baos.toByteArray();
         }else throw new SDKException(ErrorCode.ParamErr("ParamTypes can not be empty"));
 
+        //ContractHash
         Object ContractHash = json_transaction.get("ContractHash");
         if (ContractHash != null) {
-            contractHash = json_transaction.getString("ContractHash");
+            //上端传递contractHash已经去掉第一个字节
+            contractHash = DatatypeConverter.parseHexBinary(json_transaction.getString("ContractHash"));
         }else throw new SDKException(ErrorCode.ParamErr("contractHash can not be empty"));
 
+        // paramByte + TAILCALL + contractHash
+        byte[] tailCall = new byte[1];
+        tailCall[0] = TAILCALL;
+        byte[] code_buf = new byte[paramByte.length + tailCall.length + contractHash.length];
+
+        System.arraycopy(paramByte,0,code_buf,0,paramByte.length);
+        System.arraycopy(tailCall,0,code_buf,paramByte.length,tailCall.length);
+        System.arraycopy(contractHash,0,code_buf,paramByte.length  + tailCall.length,contractHash.length);
+        paramByte = code_buf;
+
+        //programHash
         JSONObject utxoInput = (JSONObject) json_transaction.getJSONArray("UTXOInputs").get(0);
         String privateKey = utxoInput.getString("privateKey");
         String address = Ela.getAddressFromPrivate(privateKey);
         byte[] programHash = Util.ToScriptHash(address);
 
+        // gas
         Object Gas = json_transaction.get("Gas");
         if (Gas != null) {
             String gas = json_transaction.getString("Gas");
@@ -532,7 +554,7 @@ public class Basic {
                             Paramsbuilder.emitPushInteger(o,param.getLong(key));
                             break;
                         case "String":
-                            Paramsbuilder.emitPushByteArray(o,key.getBytes());
+                            Paramsbuilder.emitPushByteArray(o,param.getString(key).getBytes());
                             break;
                         case "Hash256":
                         case "Hash168":

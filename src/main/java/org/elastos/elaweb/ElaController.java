@@ -114,8 +114,8 @@ public class ElaController {
             if (method.equals("genDeyplyContractTransaction")) {
                 return NeoContractTransaction.genDeyplyContractTransaction(param);
             }
-            if (method.equals("genInvoknContractTransaction")) {
-                return NeoContractTransaction.genInvoknContractTransaction(param);
+            if (method.equals("genInvokeContractTransaction")) {
+                return NeoContractTransaction.genInvokeContractTransaction(param);
             }
         }
         return null;
