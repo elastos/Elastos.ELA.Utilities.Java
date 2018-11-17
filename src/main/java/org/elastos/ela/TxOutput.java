@@ -2,7 +2,7 @@ package org.elastos.ela;
 
 import org.elastos.common.Util;
 import org.elastos.ela.bitcoinj.Utils;
-
+import static org.elastos.ela.payload.PayloadRegisterAsset.ElaPrecision;
 import javax.xml.bind.DatatypeConverter;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -25,33 +25,23 @@ public class TxOutput {
     private String Address;
     private final String DESTROY_ADDRESS = "0000000000000000000000000000000000";
 
-    /**
-     *
-     * @param address 地址
-     * @param amount 金额
-     */
-    public TxOutput(String address,long amount){
-        this.SystemAssetID = Common.ELA_ASSETID;
+
+    public TxOutput(String address,String amount,String assetId,int precision){
         this.Address = address;
-        this.Value = amount;
+        if (assetId.toLowerCase().equals(Common.SYSTEM_ASSET_ID)){
+            this.SystemAssetID = Common.ELA_ASSETID;
+            this.Value = Util.multiplyAmountELA(new BigDecimal(amount), ElaPrecision).toBigInteger().longValue();
+        }else {
+            this.TokenAssetID =  Utils.reverseBytes(DatatypeConverter.parseHexBinary(assetId));
+            this.TokenValue = Util.multiplyAmountETH(new BigDecimal(amount),precision).toBigIntegerExact();
+        }
+
+        //programHash
         if (address.equals(DESTROY_ADDRESS)){
             this.ProgramHash = new byte[21];
         }else {
             this.ProgramHash = Util.ToScriptHash(address);
         }
-    }
-
-    //Token链业务
-    public TxOutput(String address,String amount,String assetId,int precision){
-        this.Address = address;
-        if (assetId.toLowerCase().equals(Common.SYSTEM_ASSET_ID)){
-            this.SystemAssetID = Common.ELA_ASSETID;
-            this.Value = Util.multiplyAmountELA(new BigDecimal(amount), precision).toBigInteger().longValue();
-        }else {
-            this.TokenAssetID =  Utils.reverseBytes(DatatypeConverter.parseHexBinary(assetId));
-            this.TokenValue = Util.multiplyAmountETH(new BigDecimal(amount),precision).toBigIntegerExact();
-        }
-        this.ProgramHash = Util.ToScriptHash(address);
     }
 
     void Serialize(DataOutputStream o) throws IOException {
@@ -94,23 +84,23 @@ public class TxOutput {
         return outputMap;
     }
 
-    public byte[] getSystemAssetID() {
-        return SystemAssetID;
-    }
+    public byte[] getSystemAssetID() {return this.SystemAssetID; }
 
-    public long getValue() {
-        return Value;
-    }
+    public long getValue() {return this.Value;}
+
+    public BigInteger getTokenValue() {return this.TokenValue;}
+
+    public byte[] getTokenAssetID(){return this.TokenAssetID;}
 
     public long getOutputLock() {
-        return OutputLock;
+        return this.OutputLock;
     }
 
     public byte[] getProgramHash() {
-        return ProgramHash;
+        return this.ProgramHash;
     }
 
     public String getAddress() {
-        return Address;
+        return this.Address;
     }
 }

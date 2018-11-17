@@ -6,7 +6,7 @@ import org.elastos.api.Basic;
 import org.elastos.api.ELATransaction;
 import org.elastos.ela.bitcoinj.Utils;
 import org.junit.Test;
-
+import static org.elastos.ela.payload.PayloadRegisterAsset.ElaPrecision;
 import javax.xml.bind.DatatypeConverter;
 
 import java.io.*;
@@ -82,36 +82,7 @@ public class ElaTest {
 //                "Eazj14ifau5eH1SP5F8MJRuiSsPMiGbJV1"));
 
         List<TxOutput>  outputs = new LinkedList<TxOutput>();
-//        outputs.add(new TxOutput("Eazj14ifau5eH1SP5F8MJRuiSsPMiGbJV1",2999000000000000l));
-        outputs.add(new TxOutput("EXkNxfzanRVZumirTudiTBfvMyV2Rt6w95",100000));
-
-        RawTx rawTx = Ela.makeAndSignTx(inputs.toArray(new utxoTxInput[inputs.size()]),outputs.toArray(new TxOutput[outputs.size()]));
-        System.out.println("rawTx:"+rawTx.getRawTxString());
-        System.out.println("txHash:"+rawTx.getTxHash());
-    }
-
-    /**
-     * 创建多笔input和output
-     * @throws Exception
-     */
-    @Test
-    public void SignTx() throws Exception {
-        int account = 100;
-        List<utxoTxInput> inputs = new LinkedList<utxoTxInput>();
-        for (int i = 0 ; i < 1 ; i++){
-            inputs.add(new utxoTxInput(
-                    "4efe9c9edad6f54da11c290f30d9d978f999150fcc940249fb7a8dfdb7aee6fd",
-                    0,
-                    "5FA927E5664E563F019F50DCD4D7E2D9404F2D5D49E31F9482912E23D6D7B9EB",
-                    "EQSpUzE4XYJhBSx5j7Tf2cteaKdFdixfVB"));
-        }
-
-        List<TxOutput>  outputs = new LinkedList<TxOutput>();
-        for (int i = 0 ; i < account; i++){
-            int amount = (int)(100 +Math.random()*(10000000-100+1));
-            outputs.add(new TxOutput("Ed8ZSxSB98roeyuRZwwekrnRqcgnfiUDeQ",amount));
-//            outputs.add(new TxOutput("EKjeZEmLSXyyJ42xxjJP4QsKJYWwEXabuC",2));
-        }
+        outputs.add(new TxOutput("EXkNxfzanRVZumirTudiTBfvMyV2Rt6w95","0.00001",Common.SYSTEM_ASSET_ID,ElaPrecision));
 
         RawTx rawTx = Ela.makeAndSignTx(inputs.toArray(new utxoTxInput[inputs.size()]),outputs.toArray(new TxOutput[outputs.size()]));
         System.out.println("rawTx:"+rawTx.getRawTxString());

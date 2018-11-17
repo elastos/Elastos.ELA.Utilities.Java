@@ -4,11 +4,11 @@ public class UTXOInputSort implements Comparable<UTXOInputSort>{
 
     private String txid;
     private String address;
-    private long amount;
+    private String amount;
     private int vont;
 
 
-    public UTXOInputSort(String txid, String address , int vont , long amount){
+    public UTXOInputSort(String txid, String address , int vont , String amount){
         this.txid       = txid;
         this.address    = address;
         this.amount     = amount;
@@ -17,7 +17,7 @@ public class UTXOInputSort implements Comparable<UTXOInputSort>{
 
 
     public int compareTo(UTXOInputSort o) {
-        return new Long(this.amount).compareTo(o.amount);
+        return this.amount.compareTo(o.amount);
 
     }
 
@@ -29,7 +29,7 @@ public class UTXOInputSort implements Comparable<UTXOInputSort>{
         return this.address;
     }
 
-    public long getAmount(){
+    public String getAmount(){
         return  this.amount;
     }
 

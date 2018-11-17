@@ -170,7 +170,7 @@ public class Verify {
             case Fee:
                 Object fee = jsonObject.get(type.getValue());
                 if (fee != null) {
-                    if (fee instanceof Long || fee instanceof Integer && (int)fee >= 0){}else throw new SDKException(ErrorCode.INVAL_FEE);
+                    if (fee instanceof String){}else throw new SDKException(ErrorCode.INVAL_FEE);
                 }else throw new SDKException(ErrorCode.FEE_NOT_NULL) ;
                 break;
             case Confirmation:

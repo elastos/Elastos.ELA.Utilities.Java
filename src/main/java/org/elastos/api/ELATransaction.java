@@ -103,15 +103,15 @@ public class ELATransaction {
             if (payload != null && bool){
                 return ErrorCode.ParamErr("PayloadRecord And Memo can't be used at the same time");
             }else if (payload == null && !bool){
-                rawTx = FinishUtxo.makeAndSignTx(privateList, outputList, changeAddress);
+                rawTx = UsableUtxo.makeAndSignTx(privateList, outputList, changeAddress);
             }else if (bool){
                 String memo = json_transaction.getString("Memo");
-                rawTx = FinishUtxo.makeAndSignTx(privateList, outputList, changeAddress,memo);
+                rawTx = UsableUtxo.makeAndSignTx(privateList, outputList, changeAddress,memo);
             }else{
-                rawTx = FinishUtxo.makeAndSignTx(privateList, outputList, changeAddress,payload);
+                rawTx = UsableUtxo.makeAndSignTx(privateList, outputList, changeAddress,payload);
             }
             resultMap.put("rawTx", rawTx);
-            resultMap.put("txHash", FinishUtxo.txHash);
+            resultMap.put("txHash", UsableUtxo.txHash);
 
             LOGGER.info(Basic.getSuccess("genRawTransactionByPrivateKey" ,resultMap));
             return Basic.getSuccess("genRawTransactionByPrivateKey" ,resultMap);

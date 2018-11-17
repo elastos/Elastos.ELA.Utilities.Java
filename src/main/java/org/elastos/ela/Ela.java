@@ -2,6 +2,7 @@ package org.elastos.ela;
 
 
 
+import org.elastos.common.ErrorCode;
 import org.elastos.common.SDKException;
 import org.elastos.common.Util;
 import org.elastos.ela.contract.FunctionCode;
@@ -130,23 +131,26 @@ public class Ela {
      * @return  原始交易数据 可以使用rest接口api/v1/transaction发送给节点
      * @throws IOException
      */
-    public static RawTx crossChainSignTx(utxoTxInput[] inputs, TxOutput[] outputs , PayloadTransferCrossChainAsset[] CrossChainAsset , List<String> privateKeySign) throws Exception {
-        Tx tx = Tx.crossChainTransaction(TRANSFER_CROSS_CHAIN_ASSET, inputs, outputs ,CrossChainAsset);
-        System.out.println("CrossChainAsset : " + CrossChainAsset.length);
-        for(int i = 0 ; i < privateKeySign.size() ; i ++){
-            ECKey ec = ECKey.fromPrivate(DatatypeConverter.parseHexBinary(privateKeySign.get(i)));
-            byte[] code = Util.CreateSingleSignatureRedeemScript(ec.getPubBytes(),1);
-            tx.sign(privateKeySign.get(i), code);
+    public static RawTx crossChainSignTx(utxoTxInput[] inputs, TxOutput[] outputs , PayloadTransferCrossChainAsset[] CrossChainAsset , List<String> privateKeySign) throws SDKException {
+        try {
+            Tx tx = Tx.crossChainTransaction(TRANSFER_CROSS_CHAIN_ASSET, inputs, outputs ,CrossChainAsset);
+            for(int i = 0 ; i < privateKeySign.size() ; i ++){
+                ECKey ec = ECKey.fromPrivate(DatatypeConverter.parseHexBinary(privateKeySign.get(i)));
+                byte[] code = Util.CreateSingleSignatureRedeemScript(ec.getPubBytes(),1);
+                tx.sign(privateKeySign.get(i), code);
+            }
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            DataOutputStream dos = new DataOutputStream(baos);
+
+            tx.serialize(dos);
+
+            String rawTxString = DatatypeConverter.printHexBinary(baos.toByteArray());
+            String txHash = DatatypeConverter.printHexBinary(tx.getHash());
+
+            return new RawTx(txHash,rawTxString);
+        }catch (Exception e){
+            throw new SDKException(ErrorCode.ParamErr("crossChainSignTx err : " + e));
         }
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        DataOutputStream dos = new DataOutputStream(baos);
-
-        tx.serialize(dos);
-
-        String rawTxString = DatatypeConverter.printHexBinary(baos.toByteArray());
-        String txHash = DatatypeConverter.printHexBinary(tx.getHash());
-
-        return new RawTx(txHash,rawTxString);
     }
 
     /**

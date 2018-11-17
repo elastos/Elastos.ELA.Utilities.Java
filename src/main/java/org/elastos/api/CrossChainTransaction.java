@@ -79,7 +79,7 @@ public class CrossChainTransaction {
             String changeAddress = json_transaction.getString("ChangeAddress");
 
             LinkedHashMap<String, Object> resultMap = new LinkedHashMap<String, Object>();
-            RawTx rawTx = FinishUtxo.makeAndSignTxByCrossChain(privateList, txOutputs,payloadTransferCrossChainAssets,changeAddress);
+            RawTx rawTx = UsableUtxo.makeAndSignTxByCrossChain(privateList, txOutputs,payloadTransferCrossChainAssets,changeAddress);
             resultMap.put("rawTx", rawTx.getRawTxString());
             resultMap.put("txHash", rawTx.getTxHash());
 

@@ -4,7 +4,7 @@ import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.elastos.common.ErrorCode;
 import org.elastos.common.SDKException;
-import org.elastos.ela.FinishUtxo;
+import org.elastos.ela.UsableUtxo;
 import org.elastos.ela.payload.PayloadRecord;
 import org.elastos.ela.TxOutput;
 import org.elastos.wallet.KeystoreFile;
@@ -81,15 +81,15 @@ public class Account {
             if (payload != null && bool){
                 return ErrorCode.ParamErr("PayloadRecord And Memo can't be used at the same time");
             }else if (payload == null && !bool){
-                rawTx = FinishUtxo.makeAndSignTx(privateList, txOutputs, changeAddress);
+                rawTx = UsableUtxo.makeAndSignTx(privateList, txOutputs, changeAddress);
             }else if (bool){
                 String memo = json_transaction.getString("Memo");
-                rawTx = FinishUtxo.makeAndSignTx(privateList, txOutputs, changeAddress,memo);
+                rawTx = UsableUtxo.makeAndSignTx(privateList, txOutputs, changeAddress,memo);
             }else{
-                rawTx = FinishUtxo.makeAndSignTx(privateList, txOutputs, changeAddress,payload);
+                rawTx = UsableUtxo.makeAndSignTx(privateList, txOutputs, changeAddress,payload);
             }
             resultMap.put("rawTx", rawTx);
-            resultMap.put("txHash", FinishUtxo.txHash);
+            resultMap.put("txHash", UsableUtxo.txHash);
 
             LOGGER.info(Basic.getSuccess("genRawTransactionByAccount" ,resultMap));
             return Basic.getSuccess("genRawTransactionByAccount" ,resultMap);

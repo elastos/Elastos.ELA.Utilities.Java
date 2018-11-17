@@ -14,7 +14,6 @@ import org.slf4j.LoggerFactory;
 import javax.xml.bind.DatatypeConverter;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.*;
 
@@ -245,42 +244,25 @@ public class Basic {
     }
 
 
-    public static TxOutput[] parseRegisterOutput(JSONObject json_transaction) throws SDKException {
+    public static TxOutput[] parseRegisterOutput(PayloadRegisterAsset payload,JSONObject json_transaction) throws SDKException {
         LinkedList<TxOutput> outputList = new LinkedList<TxOutput>();
         final JSONArray outputs = json_transaction.getJSONArray("Outputs");
-
         //添加注册资产
-        final JSONObject PayloadObject = json_transaction.getJSONObject("Payload");
-        String tokenAddress = PayloadObject.getString("address");
-        String tokenAmount = PayloadObject.getString("amount");
-        outputList.add(new TxOutput(tokenAddress, tokenAmount,Asset.AssetId,MaxPrecision));
-
-        for (int t = 0; t < outputs.size(); t++) {
-            final JSONObject output = (JSONObject) outputs.get(t);
-            //添加消费ELA
-            Verify.verifyParameter(Verify.Type.AddressLower,output);
-            Verify.verifyParameter(Verify.Type.AmountStrLower,output);
-
-            String amount = output.getString("amount");
-            String address = output.getString("address");
-            outputList.add(new TxOutput(address, amount,Common.SYSTEM_ASSET_ID,ElaPrecision));
-        }
+        registerToOutput(payload,outputList);
+        //添加消费ELA
+        getOutputs(outputs, outputList);
         return outputList.toArray(new TxOutput[outputList.size()]);
     }
 
-    public static LinkedList<TxOutput> parseOutputsAmountStr(JSONArray outputs) throws SDKException {
-        LinkedList<TxOutput> outputList = new LinkedList<TxOutput>();
-        for (int t = 0; t < outputs.size(); t++) {
-            JSONObject output = (JSONObject) outputs.get(t);
+    public static void registerToOutput(PayloadRegisterAsset registerAsset,LinkedList<TxOutput> outputList){
 
-            Verify.verifyParameter(Verify.Type.AddressLower,output);
-            Verify.verifyParameter(Verify.Type.AmountStrLower,output);
+        Long amount = registerAsset.getAmount();
 
-            String amount = output.getString("amount");
-            String address = output.getString("address");
-            outputList.add(new TxOutput(address, amount,Common.SYSTEM_ASSET_ID,ElaPrecision));
-        }
-        return outputList;
+        String controller = registerAsset.getController();
+        byte[] programHash = DatatypeConverter.parseHexBinary(controller);
+        String address = Util.ToAddress(programHash);
+
+        outputList.add(new TxOutput(address,amount.toString(),Asset.AssetId,MaxPrecision));
     }
 
     public static LinkedList<TxOutput>  parseOutputsByAsset(JSONArray outputs) throws SDKException {
@@ -305,18 +287,21 @@ public class Basic {
         return outputList;
     }
 
-
     public static LinkedList<TxOutput> parseOutputs(JSONArray outputs) throws SDKException {
         LinkedList<TxOutput> outputList = new LinkedList<TxOutput>();
+        return getOutputs(outputs,outputList);
+    }
+
+    public static LinkedList<TxOutput> getOutputs(JSONArray outputs,LinkedList<TxOutput> outputList) throws SDKException {
         for (int t = 0; t < outputs.size(); t++) {
             JSONObject output = (JSONObject) outputs.get(t);
 
             Verify.verifyParameter(Verify.Type.AddressLower,output);
-            Verify.verifyParameter(Verify.Type.AmountLower,output);
+            Verify.verifyParameter(Verify.Type.AmountStrLower,output);
 
-            long amount = output.getLong("amount");
+            String amount = output.getString("amount");
             String address = output.getString("address");
-            outputList.add(new TxOutput(address, amount));
+            outputList.add(new TxOutput(address, amount,Common.SYSTEM_ASSET_ID,ElaPrecision));
         }
         return outputList;
     }
@@ -327,12 +312,12 @@ public class Basic {
         for (int t = 0; t < outputs.size(); t++) {
             JSONObject output = (JSONObject) outputs.get(t);
 
-            Verify.verifyParameter(Verify.Type.AmountLower,output);
+            Verify.verifyParameter(Verify.Type.AmountStrLower,output);
 
             //没有用到的blockhash是为了接口灵活，找零逻辑不用很麻烦
-            long amount = output.getLong("amount");
+            String amount = output.getString("amount");
             String address = output.getString("address");
-            outputList.add(new TxOutput(address, amount));
+            outputList.add(new TxOutput(address, amount,Common.SYSTEM_ASSET_ID,ElaPrecision));
         }
         return outputList;
     }
@@ -403,10 +388,11 @@ public class Basic {
         LinkedList<PayloadTransferCrossChainAsset> CrossChainAssetList = new LinkedList<PayloadTransferCrossChainAsset>();
         for (int n = 0; n < CrossChainAsset.size(); n++) {
             JSONObject output = (JSONObject) CrossChainAsset.get(n);
-            Verify.verifyParameter(Verify.Type.AmountLower,output);
+            Verify.verifyParameter(Verify.Type.AmountStrLower,output);
             String address = output.getString("address");
-            Long amount = output.getLong("amount");
-            CrossChainAssetList.add(new PayloadTransferCrossChainAsset(address, amount, n));
+            String  amount = output.getString("amount");
+            long longValue = Util.multiplyAmountELA(new BigDecimal(amount), ElaPrecision).longValue();
+            CrossChainAssetList.add(new PayloadTransferCrossChainAsset(address, longValue, n));
         }
         return CrossChainAssetList;
     }

@@ -29,7 +29,7 @@ public class NeoContractTransaction {
             //解析inputs
             utxoTxInput[] utxoTxInputs = Basic.parseInputs(utxoInputs).toArray(new utxoTxInput[utxoInputs.size()]);
             // outputs
-            TxOutput[] txOutputs = Basic.parseOutputsAmountStr(outputs).toArray(new TxOutput[outputs.size()]);
+            TxOutput[] txOutputs = Basic.parseOutputs(outputs).toArray(new TxOutput[outputs.size()]);
             //functionCode
             genfunctionCode(json_transaction);
             //PayloadDeploy
@@ -58,7 +58,7 @@ public class NeoContractTransaction {
             //解析inputs
             utxoTxInput[] utxoTxInputs = Basic.parseInputs(utxoInputs).toArray(new utxoTxInput[utxoInputs.size()]);
             // outputs
-            TxOutput[] txOutputs = Basic.parseOutputsAmountStr(outputs).toArray(new TxOutput[outputs.size()]);
+            TxOutput[] txOutputs = Basic.parseOutputs(outputs).toArray(new TxOutput[outputs.size()]);
             // invoke
             PayloadInvoke payloadInvoke = Basic.genPayloadInvoke(json_transaction);
 
@@ -74,5 +74,4 @@ public class NeoContractTransaction {
             return e.toString();
         }
     }
-
 }

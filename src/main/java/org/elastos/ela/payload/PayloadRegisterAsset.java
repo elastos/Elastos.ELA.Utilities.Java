@@ -32,4 +32,12 @@ public class PayloadRegisterAsset {
             throw new SDKException(ErrorCode.ParamErr("payloadRegisterAsset serialize exception :" + e));
         }
     }
+
+    public long getAmount() {
+        return Amount;
+    }
+
+    public String getController() {
+        return Controller;
+    }
 }
