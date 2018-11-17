@@ -18,7 +18,7 @@ public class TokenTransaction {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TokenTransaction.class);
 
-    public static String genRegisterTransaction(JSONObject inputsAddOutpus){
+    public static String genRegisterTx(JSONObject inputsAddOutpus){
         try {
             final JSONArray transaction = inputsAddOutpus.getJSONArray("Transactions");
             JSONObject json_transaction = (JSONObject) transaction.get(0);
@@ -37,15 +37,15 @@ public class TokenTransaction {
             resultMap.put("rawTx",rawTx.getRawTxString());
             resultMap.put("txHash",rawTx.getTxHash());
 
-            LOGGER.info(Basic.getSuccess("genRegisterTransaction",resultMap));
-            return Basic.getSuccess("genRegisterTransaction",resultMap);
+            LOGGER.info(Basic.getSuccess("genRegisterTx",resultMap));
+            return Basic.getSuccess("genRegisterTx",resultMap);
         } catch (Exception e) {
             LOGGER.error(e.toString());
             return e.toString();
         }
     }
 
-    public static String genRegisterTransactionByPrivateKey(JSONObject inputsAddOutpus){
+    public static String genRegisterTxByPrivateKey(JSONObject inputsAddOutpus){
         try {
             final JSONArray transaction = inputsAddOutpus.getJSONArray("Transactions");
             JSONObject json_transaction = (JSONObject) transaction.get(0);
@@ -65,15 +65,15 @@ public class TokenTransaction {
             resultMap.put("rawTx",rawTx);
             resultMap.put("txHash",UsableUtxo.txHash);
 
-            LOGGER.info(Basic.getSuccess("genRegisterTransactionByPrivateKey",resultMap));
-            return Basic.getSuccess("genRegisterTransactionByPrivateKey",resultMap);
+            LOGGER.info(Basic.getSuccess("genRegisterTxByPrivateKey",resultMap));
+            return Basic.getSuccess("genRegisterTxByPrivateKey",resultMap);
         } catch (Exception e) {
             LOGGER.error(e.toString());
             return e.toString();
         }
     }
 
-    public static String genRawTransactionByTokenAndPrivateKey(JSONObject inputsAddOutpus){
+    public static String genTokenTxByPrivateKey(JSONObject inputsAddOutpus){
         try {
             final JSONArray transaction = inputsAddOutpus.getJSONArray("Transactions");
             JSONObject json_transaction = (JSONObject) transaction.get(0);
@@ -94,15 +94,15 @@ public class TokenTransaction {
             resultMap.put("rawTx",rawTx);
             resultMap.put("txHash",UsableUtxo.txHash);
 
-            LOGGER.info(Basic.getSuccess("genRawTransactionByTokenAndPrivateKey",resultMap));
-            return Basic.getSuccess("genRawTransactionByTokenAndPrivateKey",resultMap);
+            LOGGER.info(Basic.getSuccess("genTokenTxByPrivateKey",resultMap));
+            return Basic.getSuccess("genTokenTxByPrivateKey",resultMap);
         } catch (Exception e) {
             LOGGER.error(e.toString());
             return e.toString();
         }
     }
 
-    public static String genRawTransactionByToken(JSONObject inputsAddOutpus){
+    public static String genTokenTx(JSONObject inputsAddOutpus){
         try {
             final JSONArray transaction = inputsAddOutpus.getJSONArray("Transactions");
             JSONObject json_transaction = (JSONObject) transaction.get(0);
@@ -121,15 +121,15 @@ public class TokenTransaction {
             resultMap.put("rawTx",rawTx.getRawTxString());
             resultMap.put("txHash",rawTx.getTxHash());
 
-            LOGGER.info(Basic.getSuccess("genRawTransactionByToken",resultMap));
-            return Basic.getSuccess("genRawTransactionByToken",resultMap);
+            LOGGER.info(Basic.getSuccess("genTokenTx",resultMap));
+            return Basic.getSuccess("genTokenTx",resultMap);
         } catch (Exception e) {
             LOGGER.error(e.toString());
             return e.toString();
         }
     }
 
-    public static String genMultiSignRawTransactionByToken(JSONObject inputsAddOutpus){
+    public static String genTokenMultiSignTx(JSONObject inputsAddOutpus){
 
         final JSONArray transaction = inputsAddOutpus.getJSONArray("Transactions");
         JSONObject json_transaction = (JSONObject) transaction.get(0);
@@ -173,7 +173,7 @@ public class TokenTransaction {
             resultMap.put("txHash", rawTx.getTxHash());
 
 
-            return Basic.getSuccess("genMultiSignRawTransactionByToken", resultMap);
+            return Basic.getSuccess("genTokenMultiSignTx", resultMap);
         } catch (Exception e) {
             LOGGER.error(e.toString());
             return e.toString();

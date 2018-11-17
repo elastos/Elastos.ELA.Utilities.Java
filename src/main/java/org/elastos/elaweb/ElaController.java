@@ -53,20 +53,20 @@ public class ElaController {
             if (method.equals("genRawTransaction")){
                 return ELATransaction.genRawTransaction(param);
             }
-            if (method.equals("genRegisterTransaction")){
-                return TokenTransaction.genRegisterTransaction(param);
+            if (method.equals("genRegisterTx")){
+                return TokenTransaction.genRegisterTx(param);
             }
-            if (method.equals("genRawTransactionByToken")){
-                return TokenTransaction.genRawTransactionByToken(param);
+            if (method.equals("genTokenTx")){
+                return TokenTransaction.genTokenTx(param);
             }
-            if (method.equals("genMultiSignRawTransactionByToken")){
-                return TokenTransaction.genMultiSignRawTransactionByToken(param);
+            if (method.equals("genTokenMultiSignTx")){
+                return TokenTransaction.genTokenMultiSignTx(param);
             }
-            if (method.equals("genRegisterTransactionByPrivateKey")) {
-                return TokenTransaction.genRegisterTransactionByPrivateKey(param);
+            if (method.equals("genRegisterTxByPrivateKey")) {
+                return TokenTransaction.genRegisterTxByPrivateKey(param);
             }
-            if (method.equals("genRawTransactionByTokenAndPrivateKey")) {
-                return TokenTransaction.genRawTransactionByTokenAndPrivateKey(param);
+            if (method.equals("genTokenTxByPrivateKey")) {
+                return TokenTransaction.genTokenTxByPrivateKey(param);
             }
             if (method.equals("decodeRawTransaction")){
                 String rawTransaction = param.getString("RawTransaction");
@@ -78,8 +78,8 @@ public class ElaController {
             if (method.equals("checkAddress")) {
                 return Basic.checkAddress(param);
             }
-            if (method.equals("genRawTransactionByAccount")) {
-                return Account.genRawTransactionByAccount(param);
+            if (method.equals("genTxByAccount")) {
+                return Account.genTxByAccount(param);
             }
             if (method.equals("importAccount")) {
                 return Account.importAccount(param);
@@ -108,20 +108,20 @@ public class ElaController {
             if (method.equals("genGenesisAddress")) {
                 return Basic.genGenesisAddress(param);
             }
-            if (method.equals("genCrossChainRawTransaction")) {
-                return CrossChainTransaction.genCrossChainRawTransaction(param);
+            if (method.equals("genCrossChainTx")) {
+                return CrossChainTransaction.genCrossChainTx(param);
             }
-            if (method.equals("genCrossChainMultiSignRawTransaction")) {
-                return CrossChainTransaction.genCrossChainMultiSignRawTransaction(param);
+            if (method.equals("genCrossChainMultiSignTx")) {
+                return CrossChainTransaction.genCrossChainMultiSignTx(param);
             }
-            if (method.equals("genCrossChainRawTransactionByPrivateKey")) {
-                return CrossChainTransaction.genCrossChainRawTransactionByPrivateKey(param);
+            if (method.equals("genCrossChainTxByPrivateKey")) {
+                return CrossChainTransaction.genCrossChainTxByPrivateKey(param);
             }
-            if (method.equals("genDeyplyContractTransaction")) {
-                return NeoContractTransaction.genDeyplyContractTransaction(param);
+            if (method.equals("genDeyplyContractTx")) {
+                return NeoContractTransaction.genDeyplyContractTx(param);
             }
-            if (method.equals("genInvokeContractTransaction")) {
-                return NeoContractTransaction.genInvokeContractTransaction(param);
+            if (method.equals("genInvokeContractTx")) {
+                return NeoContractTransaction.genInvokeContractTx(param);
             }
         }
         return null;

@@ -30,7 +30,7 @@ public class CrossChainTransaction {
      * @throws Exception
      */
 
-    public static String genCrossChainRawTransaction(JSONObject inputsAddOutpus){
+    public static String genCrossChainTx(JSONObject inputsAddOutpus){
         try {
             final JSONArray transaction = inputsAddOutpus.getJSONArray("Transactions");
             JSONObject json_transaction = (JSONObject) transaction.get(0);
@@ -53,15 +53,15 @@ public class CrossChainTransaction {
             resultMap.put("rawTx", rawTx.getRawTxString());
             resultMap.put("txHash", rawTx.getTxHash());
 
-            LOGGER.info(Basic.getSuccess("genCrossChainRawTransaction" ,resultMap));
-            return Basic.getSuccess("genCrossChainRawTransaction" , resultMap);
+            LOGGER.info(Basic.getSuccess("genCrossChainTx" ,resultMap));
+            return Basic.getSuccess("genCrossChainTx" , resultMap);
         } catch (Exception e) {
             LOGGER.error(e.toString());
             return e.toString();
         }
     }
 
-    public static String genCrossChainRawTransactionByPrivateKey(JSONObject inputsAddOutpus){
+    public static String genCrossChainTxByPrivateKey(JSONObject inputsAddOutpus){
         try {
             final JSONArray transaction = inputsAddOutpus.getJSONArray("Transactions");
             JSONObject json_transaction = (JSONObject) transaction.get(0);
@@ -83,8 +83,8 @@ public class CrossChainTransaction {
             resultMap.put("rawTx", rawTx.getRawTxString());
             resultMap.put("txHash", rawTx.getTxHash());
 
-            LOGGER.info(Basic.getSuccess("genCrossChainRawTransactionByPrivateKey" ,resultMap));
-            return Basic.getSuccess("genCrossChainRawTransactionByPrivateKey" , resultMap);
+            LOGGER.info(Basic.getSuccess("genCrossChainTxByPrivateKey" ,resultMap));
+            return Basic.getSuccess("genCrossChainTxByPrivateKey" , resultMap);
         } catch (Exception e) {
             LOGGER.error(e.toString());
             return e.toString();
@@ -99,7 +99,7 @@ public class CrossChainTransaction {
      * @throws Exception
      */
 
-    public static String genCrossChainMultiSignRawTransaction(JSONObject inputsAddOutpus){
+    public static String genCrossChainMultiSignTx(JSONObject inputsAddOutpus){
 
         final JSONArray transaction = inputsAddOutpus.getJSONArray("Transactions");
         JSONObject json_transaction = (JSONObject) transaction.get(0);
@@ -130,8 +130,8 @@ public class CrossChainTransaction {
                 resultMap.put("rawTx", rawTx.getRawTxString());
                 resultMap.put("txHash", rawTx.getTxHash());
 
-                LOGGER.info(Basic.getSuccess("genCrossChainRawTransaction" ,resultMap));
-                return Basic.getSuccess("genCrossChainRawTransaction" , resultMap);
+                LOGGER.info(Basic.getSuccess("genCrossChainMultiSignTx" ,resultMap));
+                return Basic.getSuccess("genCrossChainMultiSignTx" , resultMap);
             } catch (Exception e) {
                 LOGGER.error(e.toString());
                 return e.toString();

@@ -29,7 +29,7 @@ public class Account {
      * @return
      * @throws Exception
      */
-    public static String genRawTransactionByAccount(JSONObject outpus){
+    public static String genTxByAccount(JSONObject outpus){
         try {
             final JSONArray transaction = outpus.getJSONArray("Transactions");
             JSONObject json_transaction = (JSONObject) transaction.get(0);
@@ -91,8 +91,8 @@ public class Account {
             resultMap.put("rawTx", rawTx);
             resultMap.put("txHash", UsableUtxo.txHash);
 
-            LOGGER.info(Basic.getSuccess("genRawTransactionByAccount" ,resultMap));
-            return Basic.getSuccess("genRawTransactionByAccount" ,resultMap);
+            LOGGER.info(Basic.getSuccess("genTxByAccount" ,resultMap));
+            return Basic.getSuccess("genTxByAccount" ,resultMap);
         } catch (Exception e) {
             LOGGER.error(e.toString());
             return e.toString();

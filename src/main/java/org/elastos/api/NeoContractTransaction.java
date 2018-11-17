@@ -19,7 +19,7 @@ public class NeoContractTransaction {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(NeoContractTransaction.class);
 
-    public static String genDeyplyContractTransaction(JSONObject inputsAddOutpus){
+    public static String genDeyplyContractTx(JSONObject inputsAddOutpus){
         try {
             final JSONArray transaction = inputsAddOutpus.getJSONArray("Transactions");
             JSONObject json_transaction = (JSONObject) transaction.get(0);
@@ -40,15 +40,15 @@ public class NeoContractTransaction {
             resultMap.put("rawTx", rawTx.getRawTxString());
             resultMap.put("txHash", rawTx.getTxHash());
 
-            LOGGER.info(Basic.getSuccess("genDeyplyContractTransaction" ,resultMap));
-            return Basic.getSuccess("genDeyplyContractTransaction" , resultMap);
+            LOGGER.info(Basic.getSuccess("genDeyplyContractTx" ,resultMap));
+            return Basic.getSuccess("genDeyplyContractTx" , resultMap);
         } catch (Exception e) {
             LOGGER.error(e.toString());
             return e.toString();
         }
     }
 
-    public static String genInvokeContractTransaction(JSONObject inputsAddOutpus){
+    public static String genInvokeContractTx(JSONObject inputsAddOutpus){
         try {
             final JSONArray transaction = inputsAddOutpus.getJSONArray("Transactions");
             JSONObject json_transaction = (JSONObject) transaction.get(0);
@@ -67,8 +67,8 @@ public class NeoContractTransaction {
             resultMap.put("rawTx", rawTx.getRawTxString());
             resultMap.put("txHash", rawTx.getTxHash());
 
-            LOGGER.info(Basic.getSuccess("genInvokeContractTransaction" ,resultMap));
-            return Basic.getSuccess("genInvokeContractTransaction" , resultMap);
+            LOGGER.info(Basic.getSuccess("genInvokeContractTx" ,resultMap));
+            return Basic.getSuccess("genInvokeContractTx" , resultMap);
         } catch (Exception e) {
             LOGGER.error(e.toString());
             return e.toString();
