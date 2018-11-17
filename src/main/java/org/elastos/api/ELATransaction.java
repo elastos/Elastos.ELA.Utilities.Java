@@ -129,7 +129,7 @@ public class ELATransaction {
      * @throws Exception
      */
 
-    public static String genMultiSignRawTransaction(JSONObject inputsAddOutpus){
+    public static String genMultiSignTx(JSONObject inputsAddOutpus){
 
         final JSONArray transaction = inputsAddOutpus.getJSONArray("Transactions");
         JSONObject json_transaction = (JSONObject) transaction.get(0);
@@ -174,7 +174,7 @@ public class ELATransaction {
                 resultMap.put("txHash", rawTx.getTxHash());
 
 
-                return Basic.getSuccess("genMultiSignRawTransaction", resultMap);
+                return Basic.getSuccess("genMultiSignTx", resultMap);
             } catch (Exception e) {
                 LOGGER.error(e.toString());
                 return e.toString();

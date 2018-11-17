@@ -526,12 +526,12 @@ Create account to generate keystore.dat file under Java program directory
 ```
 
 
- - #### genRawTransactionByAccount
+ - #### genTxByAccount
 
 ##### Request
 ```
 {
-    "method":"genRawTransactionByAccount",
+    "method":"genTxByAccount",
     "id":0,
     "params":[
         {
@@ -563,7 +563,7 @@ Create account to generate keystore.dat file under Java program directory
 or
 Transaction type is 3,use the payload.recordType cannot be Chinese
 {
-    "method":"genRawTransactionByAccount",
+    "method":"genTxByAccount",
     "id":0,
     "params":[
         {
@@ -593,7 +593,7 @@ Transaction type is 3,use the payload.recordType cannot be Chinese
 ##### Response
 ```
 {
-    "Action": "genRawTransactionByAccount",
+    "Action": "genTxByAccount",
     "Desc": "SUCCESS",
     "Result": {
         "rawTx": "0200010013363731323032A214F6036D8221E7F1C010000000000B67901062723993D9FBADC32C33807EE7B9FCB370D777C5A955A3056DF3B9CB40100000000002B20EB60E4191B374DFC69503E1ED6888E7456FDE2554E77E1D9A1AB3360562F1D6FF4BAC",
@@ -881,13 +881,13 @@ Transaction type is 3,use the payload.recordType cannot be Chinese
 
 
 
- - #### genMultiSignRawTransaction
+ - #### genMultiSignTx
 
 ##### Request
 ```
       
 {
-    "method":"genMultiSignRawTransaction",
+    "method":"genMultiSignTx",
     "id":0,
     "params":[
         {
@@ -932,7 +932,7 @@ Transaction type is 3,use the payload.recordType cannot be Chinese
 ```
 {
     "Desc": "SUCCESS",
-    "Action": "genMultiSignRawTransaction",
+    "Action": "genMultiSignTx",
     "Result": {
         "rawTx": "02000100132D39353032333632323639300001B037DB964A033990D77CBFD9E9BE08651456BB7C2A0854AE",
         "txHash": "0605EE84FA7C28B353806E00CC40477487586A9A03AAAD7154DBE0AD4197E15F"
@@ -942,12 +942,12 @@ Transaction type is 3,use the payload.recordType cannot be Chinese
 
 
 
- - #### genCrossChainRawTransaction
+ - #### genCrossChainTx
 
 ##### Request
 ```
   {
-      "method":"genCrossChainRawTransaction",
+      "method":"genCrossChainTx",
       "id":0,
       "params":[
           {
@@ -993,7 +993,7 @@ Transaction type is 3,use the payload.recordType cannot be Chinese
 ```
 {
     "Desc": "SUCCESS",
-    "Action": "genCrossChainRawTransaction",
+    "Action": "genCrossChainTx",
     "Result": {
         "rawTx": "02000100132D39353032333632323639300001B037DB964A033990D77CBFD9E9BE08651456BB7C2A0854AE",
         "txHash": "0605EE84FA7C28B353806E00CC40477487586A9A03AAAD7154DBE0AD4197E15F"
@@ -1002,13 +1002,13 @@ Transaction type is 3,use the payload.recordType cannot be Chinese
 ```
 
 
- - #### genCrossChainMultiSignRawTransaction
+ - #### genCrossChainMultiSignTx
 
 ##### Request
 ```
       
 {
-    "method":"genCrossChainMultiSignRawTransaction",
+    "method":"genCrossChainMultiSignTx",
     "id":0,
     "params":[
         {
@@ -1060,7 +1060,7 @@ Transaction type is 3,use the payload.recordType cannot be Chinese
 ```
 {
     "Desc": "SUCCESS",
-    "Action": "genCrossChainMultiSignRawTransaction",
+    "Action": "genCrossChainMultiSignTx",
     "Result": {
         "rawTx": "02000100132D39353032333632323639300001B037DB964A033990D77CBFD9E9BE08651456BB7C2A0854AE",
         "txHash": "0605EE84FA7C28B353806E00CC40477487586A9A03AAAD7154DBE0AD4197E15F"
@@ -1068,13 +1068,13 @@ Transaction type is 3,use the payload.recordType cannot be Chinese
 }
 ```
 
- - #### genCrossChainRawTransactionByPrivateKey
+ - #### genCrossChainTxByPrivateKey
 
 ##### Request
 ```
         
 {
-    "method":"genCrossChainRawTransactionByPrivateKey",
+    "method":"genCrossChainTxByPrivateKey",
     "id":0,
     "params":[
         {
@@ -1111,7 +1111,7 @@ Transaction type is 3,use the payload.recordType cannot be Chinese
 ```
 {
     "Desc": "SUCCESS",
-    "Action": "genCrossChainRawTransactionByPrivateKey",
+    "Action": "genCrossChainTxByPrivateKey",
     "Result": {
         "rawTx": "02000100132D39353032333632323639300001B037DB964A033990D77CBFD9E9BE08651456BB7C2A0854AE",
         "txHash": "0605EE84FA7C28B353806E00CC40477487586A9A03AAAD7154DBE0AD4197E15F"

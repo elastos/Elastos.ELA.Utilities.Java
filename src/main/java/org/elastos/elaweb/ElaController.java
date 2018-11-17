@@ -102,8 +102,8 @@ public class ElaController {
             if (method.equals("genMultiSignAddress")) {
                 return Basic.genMultiSignAddress(param);
             }
-            if (method.equals("genMultiSignRawTransaction")) {
-                return ELATransaction.genMultiSignRawTransaction(param);
+            if (method.equals("genMultiSignTx")) {
+                return ELATransaction.genMultiSignTx(param);
             }
             if (method.equals("genGenesisAddress")) {
                 return Basic.genGenesisAddress(param);
