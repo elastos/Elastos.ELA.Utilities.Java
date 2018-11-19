@@ -27,6 +27,7 @@ public class Verify {
         MUpper("M"),
         Host("Host"),
         Fee("Fee"),
+        RegisterAssetFee("RegisterAssetFee"),
         Confirmation("Confirmation"),
         TxidLower("txid"),
         IndexLower("index"),
@@ -79,7 +80,7 @@ public class Verify {
             case AmountStrLower:
                 Object AmountStrLower = jsonObject.get(type.getValue());
                 if (AmountStrLower != null) {
-                    if (AmountStrLower instanceof String ){}else throw new SDKException(ErrorCode.INVALID_AMOUNT);
+                    if (AmountStrLower instanceof String ){}else throw new SDKException(ErrorCode.INVALID_AMOUNT_STR);
                 }else throw new SDKException(ErrorCode.AMOUNT_NOT_NULL) ;
                 break;
 
@@ -170,13 +171,19 @@ public class Verify {
             case Fee:
                 Object fee = jsonObject.get(type.getValue());
                 if (fee != null) {
-                    if (fee instanceof String){}else throw new SDKException(ErrorCode.INVAL_FEE);
+                    if (fee instanceof String){}else throw new SDKException(ErrorCode.INVALID_FEE);
                 }else throw new SDKException(ErrorCode.FEE_NOT_NULL) ;
+                break;
+            case RegisterAssetFee:
+                Object RegisterAssetFee = jsonObject.get(type.getValue());
+                if (RegisterAssetFee != null) {
+                    if (RegisterAssetFee instanceof String){}else throw new SDKException(ErrorCode.INVALID_REGISTERASSETFEE);
+                }else throw new SDKException(ErrorCode.REGISTERASSETFEE_NOT_NULL) ;
                 break;
             case Confirmation:
                 Object Confirmation = jsonObject.get(type.getValue());
                 if (Confirmation != null) {
-                    if (Confirmation instanceof Integer && (int)Confirmation >= 0){}else throw new SDKException(ErrorCode.INVAL_CONFIRMATION);
+                    if (Confirmation instanceof Integer && (int)Confirmation >= 0){}else throw new SDKException(ErrorCode.INVALID_CONFIRMATION);
                 }else throw new SDKException(ErrorCode.CONFIRMATION_NOT_NULL);
                 break;
             case IndexLower:

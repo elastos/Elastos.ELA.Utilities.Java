@@ -428,6 +428,7 @@ public class UsableUtxo {
             Verify.verifyParameter(Verify.Type.Host,jsonObject);
             Verify.verifyParameter(Verify.Type.Confirmation,jsonObject);
             Verify.verifyParameter(Verify.Type.Fee,jsonObject);
+            Verify.verifyParameter(Verify.Type.RegisterAssetFee,jsonObject);
 
             String host = jsonObject.getString("Host");
 
