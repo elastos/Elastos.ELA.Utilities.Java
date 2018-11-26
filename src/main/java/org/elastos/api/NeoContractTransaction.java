@@ -19,7 +19,7 @@ public class NeoContractTransaction {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(NeoContractTransaction.class);
 
-    public static String genDeyplyContractTx(JSONObject inputsAddOutpus){
+    public static String genDeployContractTx(JSONObject inputsAddOutpus){
         try {
             final JSONArray transaction = inputsAddOutpus.getJSONArray("Transactions");
             JSONObject json_transaction = (JSONObject) transaction.get(0);
@@ -40,8 +40,8 @@ public class NeoContractTransaction {
             resultMap.put("rawTx", rawTx.getRawTxString());
             resultMap.put("txHash", rawTx.getTxHash());
 
-            LOGGER.info(Basic.getSuccess("genDeyplyContractTx" ,resultMap));
-            return Basic.getSuccess("genDeyplyContractTx" , resultMap);
+            LOGGER.info(Basic.getSuccess("genDeployContractTx" ,resultMap));
+            return Basic.getSuccess("genDeployContractTx" , resultMap);
         } catch (Exception e) {
             LOGGER.error(e.toString());
             return e.toString();

@@ -117,8 +117,8 @@ public class ElaController {
             if (method.equals("genCrossChainTxByPrivateKey")) {
                 return CrossChainTransaction.genCrossChainTxByPrivateKey(param);
             }
-            if (method.equals("genDeyplyContractTx")) {
-                return NeoContractTransaction.genDeyplyContractTx(param);
+            if (method.equals("genDeployContractTx")) {
+                return NeoContractTransaction.genDeployContractTx(param);
             }
             if (method.equals("genInvokeContractTx")) {
                 return NeoContractTransaction.genInvokeContractTx(param);
