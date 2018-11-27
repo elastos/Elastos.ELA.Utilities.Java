@@ -169,7 +169,7 @@ public class Ela {
     }
 
     /**
-     * 生成私钥
+     * generate privateKey
      * @return
      */
     public static String getPrivateKey(){
@@ -178,7 +178,7 @@ public class Ela {
     }
 
     /**
-     * 根据私钥获得公钥
+     * generate publicKey
      * @param privateKey
      * @return
      */
@@ -188,7 +188,7 @@ public class Ela {
     }
 
     /**
-     * 根据私钥获得地址
+     * generate address
      * @param privateKey
      * @return
      */
@@ -198,7 +198,7 @@ public class Ela {
     }
 
     /**
-     * 根据私钥获得身份id
+     * generate identity id
      * @param privateKey
      * @return
      */
@@ -208,7 +208,7 @@ public class Ela {
     }
 
     /**
-     *  生成多签地址
+     * generate multi sian address
      * @throws Exception
      * @return
      */
@@ -220,5 +220,26 @@ public class Ela {
         }
         ECKey ec = new ECKey();
         return  ec.toMultiSignAddress(privateKeyList , M);
+    }
+
+    /**
+     * generate contract hash and contract address
+     * @param contract
+     * @return
+     */
+    public static String genNeoContractHash(String contract){
+        byte[] codeByte = DatatypeConverter.parseHexBinary(contract);
+        byte[] codeHash = Util.ToCodeHash(codeByte,5);
+        return DatatypeConverter.printHexBinary(codeHash);
+    }
+
+    /**
+     * generate contractAddress
+     * @param contractHash
+     * @return
+     * @throws SDKException
+     */
+    public static String genNeoContractAddress(String contractHash) throws SDKException {
+        return ECKey.toNeoContranctAddress(contractHash);
     }
 }

@@ -18,6 +18,7 @@ import org.spongycastle.math.ec.FixedPointCombMultiplier;
 import org.spongycastle.math.ec.FixedPointUtil;
 
 import javax.annotation.Nullable;
+import javax.xml.bind.DatatypeConverter;
 import java.math.BigInteger;
 import java.security.SecureRandom;
 import java.util.List;
@@ -168,26 +169,38 @@ public class ECKey {
     }
 
     //生成X地址
-    public static byte[] getGenesisSignatureProgram(String GenesisBlockHash) throws SDKException {
-        return Util.GenGenesisAddressRedeemScript(GenesisBlockHash);
+    public static String toGenesisSignAddress(String GenesisBlockHash) throws SDKException {
+        return Util.ToAddress(getGenesisSignProgramHash(GenesisBlockHash));
     }
     public static byte[] getGenesisSignProgramHash(String GenesisBlockHash) throws SDKException {
         return Util.ToCodeHash(getGenesisSignatureProgram(GenesisBlockHash),4);
     }
-    public static String toGenesisSignAddress(String GenesisBlockHash) throws SDKException {
-        return Util.ToAddress(getGenesisSignProgramHash(GenesisBlockHash));
+    public static byte[] getGenesisSignatureProgram(String GenesisBlockHash) throws SDKException {
+        return Util.GenGenesisAddressRedeemScript(GenesisBlockHash);
     }
 
     //生成多签地址
-    public static byte[] getMultiSignatureProgram(List<PublicX> privateKeyList, int M) throws SDKException {
-        return Util.CreatemultiSignatureRedeemScript(privateKeyList,M);
+    public String toMultiSignAddress(List<PublicX> privateKeyList , int M) throws SDKException {
+        return Util.ToAddress(getMultiSignProgramHash(privateKeyList , M));
     }
     public byte[] getMultiSignProgramHash(List<PublicX> privateKeyList , int M) throws SDKException {
         return Util.ToCodeHash(getMultiSignatureProgram(privateKeyList , M),2);
     }
 
-    public String toMultiSignAddress(List<PublicX> privateKeyList , int M) throws SDKException {
-        return Util.ToAddress(getMultiSignProgramHash(privateKeyList , M));
+    public static byte[] getMultiSignatureProgram(List<PublicX> privateKeyList, int M) throws SDKException {
+        return Util.CreatemultiSignatureRedeemScript(privateKeyList,M);
+    }
+
+    //生成NEO合约地址
+    public static String toNeoContranctAddress(String contranctHash) throws SDKException {
+        byte[] hash = DatatypeConverter.parseHexBinary(contranctHash);
+        return Util.ToAddress(getNeoContranctProgramHash(hash));
+    }
+    public static byte[] getNeoContranctProgramHash(byte[] contranctHash) throws SDKException {
+        return getNeoContranctProgram(contranctHash);
+    }
+    public static byte[] getNeoContranctProgram(byte[] contranctHash) throws SDKException {
+        return Util.createNeoContranctRedeemScript(contranctHash);
     }
 
 }

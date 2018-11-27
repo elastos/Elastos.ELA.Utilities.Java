@@ -33,7 +33,7 @@ public class Basic {
     private static final HashMap<String, Byte> parameterTypemap = ContractParameterType.ContractParameterTypemap();
     private static final Logger LOGGER = LoggerFactory.getLogger(Basic.class);
     /**
-     * 生成私钥
+     * generate privateKey
      * @return 返回json字符串
      */
     public static String genPrivateKey(){
@@ -44,7 +44,7 @@ public class Basic {
     }
 
     /**
-     * 生成公钥
+     * generate publicKey
      * @param jsonObject  私钥
      * @return 返回json字符串
      */
@@ -64,7 +64,7 @@ public class Basic {
     }
 
     /**
-     * 生成地址
+     * generate address
      * @param jsonObject  私钥
      * @return  返回Json字符串
      */
@@ -84,7 +84,7 @@ public class Basic {
     }
 
     /**
-     * 生成身份id
+     * generate identity id
      * @param jsonObject  私钥
      * @return  返回Json字符串
      */
@@ -104,7 +104,7 @@ public class Basic {
     }
 
     /**
-     * 生成私钥、公钥、地址
+     * generate privateKey and publicKey and address
      * @return  返回json字符串
      */
     public static String gen_priv_pub_addr(){
@@ -121,7 +121,7 @@ public class Basic {
     }
 
     /**
-     * 校验地址是否为ela合法地址
+     * Verify that the address is ela legal
      * @param addresses 字典格式或者数组格式的地址
      * @return
      */
@@ -147,6 +147,12 @@ public class Basic {
         return getSuccess("checkAddress",resultMap) ;
     }
 
+    /**
+     * json return format
+     * @param action
+     * @param resultMap
+     * @return
+     */
     public static String getSuccess(String action, Object resultMap){
         HashMap map = new HashMap();
         map.put("Action",action);
@@ -157,7 +163,7 @@ public class Basic {
     }
 
     /**
-     * 根据blockHash 生成地址
+     * generates the address based on blockHash
      *
      * @param jsonObject
      * @return 返回Json字符串
@@ -179,7 +185,7 @@ public class Basic {
 
 
     /**
-     * 生成多签地址
+     * generate multi sign address
      *
      * @return 返回json字符串
      */
@@ -207,7 +213,43 @@ public class Basic {
         return getSuccess("genMultiSignAddress" , address);
     }
 
+    public static String genNeoContractHashAndAddress(JSONObject jsonObject){
+        try {
+            String contract = jsonObject.getString("Contract");
+            String contractHash = Ela.genNeoContractHash(contract);
+            String contractAddress = Ela.genNeoContractAddress(contractHash);
+            LinkedHashMap<String, Object> resultMap = new LinkedHashMap<String, Object>();
+            resultMap.put("ContractHash",contractHash);
+            resultMap.put("ContractAddress",contractAddress);
 
+            LOGGER.info(getSuccess("genNeoContractHashAndAddress",resultMap));
+            return getSuccess("genNeoContractHashAndAddress",resultMap);
+        }catch (Exception e) {
+            LOGGER.error(e.toString());
+            return e.toString();
+        }
+    }
+
+    public static String genNeoContractAddress(JSONObject jsonObject){
+        try {
+            String contractHash = jsonObject.getString("ContractHash");
+            String contractAddress = Ela.genNeoContractAddress(contractHash);
+
+            LOGGER.info(getSuccess("genNeoContractAddress",contractAddress));
+            return getSuccess("genNeoContractAddress",contractAddress);
+        }catch (Exception e) {
+            LOGGER.error(e.toString());
+            return e.toString();
+        }
+    }
+
+    //==========================================================================================
+    /**
+     * parse payload recode
+     * @param json_transaction
+     * @return
+     * @throws SDKException
+     */
     public static PayloadRecord parsePayloadRecord(JSONObject json_transaction) throws SDKException {
         Object payload = json_transaction.get("Payload");
         if (payload != null){
@@ -220,73 +262,12 @@ public class Basic {
         }else return null;
     }
 
-    public static PayloadRegisterAsset payloadRegisterAsset(JSONObject json_transaction) throws SDKException {
-        Object payload = json_transaction.get("Payload");
-        if (payload != null){
-            final JSONObject PayloadObject = json_transaction.getJSONObject("Payload");
-
-            Verify.verifyParameter(Verify.Type.NameLower,PayloadObject);
-            Verify.verifyParameter(Verify.Type.DescriptionLower,PayloadObject);
-            Verify.verifyParameter(Verify.Type.PrecisionLower,PayloadObject);
-            Verify.verifyParameter(Verify.Type.AddressLower,PayloadObject);
-            Verify.verifyParameter(Verify.Type.AmountLower,PayloadObject);
-
-            String assetname = PayloadObject.getString("name");
-            String description = PayloadObject.getString("description");
-            int precision = PayloadObject.getInt("precision");
-            String address = PayloadObject.getString("address");
-            long amount = PayloadObject.getLong("amount");
-
-            //生成assetId
-            Asset asset = new Asset(assetname, description, (byte) precision, (byte) 0x00);
-            return new PayloadRegisterAsset(asset,amount,address);
-        }throw new SDKException(ErrorCode.ParamErr("Payload can not be empty"));
-    }
-
-
-    public static TxOutput[] parseRegisterOutput(PayloadRegisterAsset payload,JSONObject json_transaction) throws SDKException {
-        LinkedList<TxOutput> outputList = new LinkedList<TxOutput>();
-        final JSONArray outputs = json_transaction.getJSONArray("Outputs");
-        //添加注册资产
-        registerToOutput(payload,outputList);
-        //添加消费ELA
-        getOutputs(outputs, outputList);
-        return outputList.toArray(new TxOutput[outputList.size()]);
-    }
-
-    public static void registerToOutput(PayloadRegisterAsset registerAsset,LinkedList<TxOutput> outputList){
-
-        Long amount = registerAsset.getAmount();
-
-        String controller = registerAsset.getController();
-        byte[] programHash = DatatypeConverter.parseHexBinary(controller);
-        String address = Util.ToAddress(programHash);
-
-        outputList.add(new TxOutput(address,amount.toString(),Asset.AssetId,MaxPrecision));
-    }
-
-    public static LinkedList<TxOutput>  parseOutputsByAsset(JSONArray outputs) throws SDKException {
-        LinkedList<TxOutput> outputList = new LinkedList<TxOutput>();
-        for (int t = 0; t < outputs.size(); t++) {
-            JSONObject output = (JSONObject) outputs.get(t);
-
-            Verify.verifyParameter(Verify.Type.AssetIdLower,output);
-            Verify.verifyParameter(Verify.Type.AddressLower,output);
-            Verify.verifyParameter(Verify.Type.AmountStrLower,output);
-
-            String  assetId = output.getString("assetId");
-            String address = output.getString("address");
-            String  amount = output.getString("amount");
-            int precision = ElaPrecision;
-            if (!assetId.toLowerCase().equals(Common.SYSTEM_ASSET_ID)){
-                precision = MaxPrecision;
-            }
-            outputList.add(new TxOutput(address,amount,assetId,precision));
-
-        }
-        return outputList;
-    }
-
+    /**
+     * parse output
+     * @param outputs
+     * @return
+     * @throws SDKException
+     */
     public static LinkedList<TxOutput> parseOutputs(JSONArray outputs) throws SDKException {
         LinkedList<TxOutput> outputList = new LinkedList<TxOutput>();
         return getOutputs(outputs,outputList);
@@ -299,22 +280,6 @@ public class Basic {
             Verify.verifyParameter(Verify.Type.AddressLower,output);
             Verify.verifyParameter(Verify.Type.AmountStrLower,output);
 
-            String amount = output.getString("amount");
-            String address = output.getString("address");
-            outputList.add(new TxOutput(address, amount,Common.SYSTEM_ASSET_ID,ElaPrecision));
-        }
-        return outputList;
-    }
-
-
-    public static LinkedList<TxOutput> parseCrossChainOutputs(JSONArray outputs) throws SDKException {
-        LinkedList<TxOutput> outputList = new LinkedList<TxOutput>();
-        for (int t = 0; t < outputs.size(); t++) {
-            JSONObject output = (JSONObject) outputs.get(t);
-
-            Verify.verifyParameter(Verify.Type.AmountStrLower,output);
-
-            //没有用到的blockhash是为了接口灵活，找零逻辑不用很麻烦
             String amount = output.getString("amount");
             String address = output.getString("address");
             outputList.add(new TxOutput(address, amount,Common.SYSTEM_ASSET_ID,ElaPrecision));
@@ -384,6 +349,8 @@ public class Basic {
         return privateKeySignList;
     }
 
+    //=================================== crossChain =======================================================
+
     public static LinkedList<PayloadTransferCrossChainAsset> parseCrossChainAsset(JSONArray CrossChainAsset) throws SDKException {
         LinkedList<PayloadTransferCrossChainAsset> CrossChainAssetList = new LinkedList<PayloadTransferCrossChainAsset>();
         for (int n = 0; n < CrossChainAsset.size(); n++) {
@@ -395,6 +362,113 @@ public class Basic {
             CrossChainAssetList.add(new PayloadTransferCrossChainAsset(address, longValue, n));
         }
         return CrossChainAssetList;
+    }
+
+    /**
+     * crossChain parse output
+     * @param outputs
+     * @return
+     * @throws SDKException
+     */
+    public static LinkedList<TxOutput> parseCrossChainOutputs(JSONArray outputs) throws SDKException {
+        LinkedList<TxOutput> outputList = new LinkedList<TxOutput>();
+        for (int t = 0; t < outputs.size(); t++) {
+            JSONObject output = (JSONObject) outputs.get(t);
+
+            Verify.verifyParameter(Verify.Type.AmountStrLower,output);
+
+            //没有用到的blockhash是为了接口灵活，找零逻辑不用很麻烦
+            String amount = output.getString("amount");
+            String address = output.getString("address");
+            outputList.add(new TxOutput(address, amount,Common.SYSTEM_ASSET_ID,ElaPrecision));
+        }
+        return outputList;
+    }
+
+    //=================================== token =======================================================
+    /**
+     * token parse output
+     * @param outputs
+     * @return
+     * @throws SDKException
+     */
+    public static LinkedList<TxOutput>  parseOutputsByAsset(JSONArray outputs) throws SDKException {
+        LinkedList<TxOutput> outputList = new LinkedList<TxOutput>();
+        for (int t = 0; t < outputs.size(); t++) {
+            JSONObject output = (JSONObject) outputs.get(t);
+
+            Verify.verifyParameter(Verify.Type.AssetIdLower,output);
+            Verify.verifyParameter(Verify.Type.AddressLower,output);
+            Verify.verifyParameter(Verify.Type.AmountStrLower,output);
+
+            String  assetId = output.getString("assetId");
+            String address = output.getString("address");
+            String  amount = output.getString("amount");
+            int precision = ElaPrecision;
+            if (!assetId.toLowerCase().equals(Common.SYSTEM_ASSET_ID)){
+                precision = MaxPrecision;
+            }
+            outputList.add(new TxOutput(address,amount,assetId,precision));
+
+        }
+        return outputList;
+    }
+
+    /**
+     * parse register output
+     * @param payload
+     * @param json_transaction
+     * @return
+     * @throws SDKException
+     */
+    public static TxOutput[] parseRegisterOutput(PayloadRegisterAsset payload,JSONObject json_transaction) throws SDKException {
+        LinkedList<TxOutput> outputList = new LinkedList<TxOutput>();
+        final JSONArray outputs = json_transaction.getJSONArray("Outputs");
+        //添加注册资产
+        registerToOutput(payload,outputList);
+        //添加消费ELA
+        getOutputs(outputs, outputList);
+        return outputList.toArray(new TxOutput[outputList.size()]);
+    }
+
+    public static void registerToOutput(PayloadRegisterAsset registerAsset,LinkedList<TxOutput> outputList){
+
+        Long amount = registerAsset.getAmount();
+
+        String controller = registerAsset.getController();
+        byte[] programHash = DatatypeConverter.parseHexBinary(controller);
+        String address = Util.ToAddress(programHash);
+
+        outputList.add(new TxOutput(address,amount.toString(),Asset.AssetId,MaxPrecision));
+    }
+
+    /**
+     * get payload register Asset
+     * @param json_transaction
+     * @return
+     * @throws SDKException
+     */
+    public static PayloadRegisterAsset payloadRegisterAsset(JSONObject json_transaction) throws SDKException {
+        Object payload = json_transaction.get("Payload");
+        if (payload != null){
+            final JSONObject PayloadObject = json_transaction.getJSONObject("Payload");
+
+            Verify.verifyParameter(Verify.Type.NameLower,PayloadObject);
+            Verify.verifyParameter(Verify.Type.DescriptionLower,PayloadObject);
+            Verify.verifyParameter(Verify.Type.PrecisionLower,PayloadObject);
+            Verify.verifyParameter(Verify.Type.AddressLower,PayloadObject);
+            Verify.verifyParameter(Verify.Type.AmountLower,PayloadObject);
+
+            String assetname = PayloadObject.getString("name");
+            String description = PayloadObject.getString("description");
+            int precision = PayloadObject.getInt("precision");
+            String address = PayloadObject.getString("address");
+            long amount = PayloadObject.getLong("amount");
+
+            //生成assetId
+            Asset asset = new Asset(assetname, description, (byte) precision, (byte) 0x00);
+            return new PayloadRegisterAsset(asset,amount,address);
+        }throw new SDKException(ErrorCode.ParamErr("Payload can not be empty"));
     }
 
 

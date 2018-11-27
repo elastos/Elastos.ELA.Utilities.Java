@@ -99,7 +99,7 @@ public class ElaTest {
      * 生成私钥、公钥、地址 
      */
     @Test
-    public void generateBasic() throws Exception{
+    public void generateBasic(){
 
         //生成私钥
         String privateKey = Ela.getPrivateKey();

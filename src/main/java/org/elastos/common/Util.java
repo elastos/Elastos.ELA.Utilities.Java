@@ -123,11 +123,21 @@ public class Util {
         // 4 是生成X开头
         }else if (signType == 4){
             g[0] = (byte)0x4B;
+        // 5 合约地址C开头
+        }else if (signType == 5){
+            g[0] = 28;
+            f = Utils.reverseBytes(f);
         }else return null;
         System.arraycopy(f,0,g,1,f.length);
         return g;
 
     }
+
+    public static byte[] ToCodeHash(byte[] code) {
+        byte[] codeHash = Utils.sha256hash160(code);
+        return Utils.reverseBytes(codeHash);
+    }
+
 
     /**
      * 公钥/脚本 哈希 到地址转换 可逆（ToScriptHash)
@@ -158,6 +168,13 @@ public class Util {
         }
         return script;
     }
+
+    public static byte[] createNeoContranctRedeemScript(byte[] hash){
+        byte[] script = new byte[21];
+        System.arraycopy(hash,0,script,0,21);
+        return script;
+    }
+
     public static void sortByteArrayArrayUseRevertBytesSequence(byte[][] hashes) {
         Arrays.sort(hashes,new Comparator(){
 

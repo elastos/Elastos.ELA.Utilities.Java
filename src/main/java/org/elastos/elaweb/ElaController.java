@@ -50,8 +50,11 @@ public class ElaController {
             if (method.equals("genAddress")){
                 return Basic.genAddress(param);
             }
-            if (method.equals("genRawTransaction")){
-                return ELATransaction.genRawTransaction(param);
+            if (method.equals("genNeoContractHashAndAddress")) {
+                return Basic.genNeoContractHashAndAddress(param);
+            }
+            if (method.equals("genNeoContractAddress")) {
+                return Basic.genNeoContractAddress(param);
             }
             if (method.equals("genRegisterTx")){
                 return TokenTransaction.genRegisterTx(param);
@@ -68,6 +71,9 @@ public class ElaController {
             if (method.equals("genTokenTxByPrivateKey")) {
                 return TokenTransaction.genTokenTxByPrivateKey(param);
             }
+            if (method.equals("genRawTransaction")){
+                return ELATransaction.genRawTransaction(param);
+            }
             if (method.equals("decodeRawTransaction")){
                 String rawTransaction = param.getString("RawTransaction");
                 return ELATransaction.decodeRawTransaction(rawTransaction);
@@ -75,8 +81,8 @@ public class ElaController {
             if (method.equals("genRawTransactionByPrivateKey")) {
                 return ELATransaction.genRawTransactionByPrivateKey(param);
             }
-            if (method.equals("checkAddress")) {
-                return Basic.checkAddress(param);
+            if (method.equals("genMultiSignTx")) {
+                return ELATransaction.genMultiSignTx(param);
             }
             if (method.equals("genTxByAccount")) {
                 return Account.genTxByAccount(param);
@@ -99,14 +105,11 @@ public class ElaController {
             if (method.equals("genGenesisAddress")) {
                 return Basic.genGenesisAddress(param);
             }
-            if (method.equals("genMultiSignAddress")) {
-                return Basic.genMultiSignAddress(param);
-            }
-            if (method.equals("genMultiSignTx")) {
-                return ELATransaction.genMultiSignTx(param);
-            }
             if (method.equals("genGenesisAddress")) {
                 return Basic.genGenesisAddress(param);
+            }
+            if (method.equals("genMultiSignAddress")) {
+                return Basic.genMultiSignAddress(param);
             }
             if (method.equals("genCrossChainTx")) {
                 return CrossChainTransaction.genCrossChainTx(param);

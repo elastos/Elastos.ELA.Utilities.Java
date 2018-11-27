@@ -1,5 +1,6 @@
 package org.elastos.ela;
 
+import org.elastos.common.SDKException;
 import org.elastos.common.Util;
 import org.junit.Test;
 
@@ -67,6 +68,22 @@ public class UtilTest {
         System.out.println(address);
         assertEquals("ENWzVcjJWuHT5HzVMQ7aBUurHAg3iybynF",address);
 
+    }
+
+    @Test
+    public void genNeoContranctAddress() throws SDKException {
+        String hash = "0cd62e6350845a0db648785e56c0496a43435cff";
+        System.out.println(ECKey.toNeoContranctAddress(hash));
+    }
+
+    @Test
+    public void genNeoContranctHash() throws SDKException {
+        String code = "00c56b6161012b61047465737452c168124e656f2e52756e74696d652e4e6f7469667961616c7566";
+        byte[] codeByte = DatatypeConverter.parseHexBinary(code);
+        byte[] codeHash = Util.ToCodeHash(codeByte,5);
+        String hashStr = DatatypeConverter.printHexBinary(codeHash);
+        System.out.println("contractHash : " + hashStr);
+        System.out.println("contractAddress : " + ECKey.toNeoContranctAddress(hashStr));
     }
 //    @Test
 //    public void checkAddress() {
