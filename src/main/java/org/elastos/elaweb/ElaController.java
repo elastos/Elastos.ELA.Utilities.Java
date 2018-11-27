@@ -3,6 +3,8 @@ package org.elastos.elaweb;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.elastos.api.*;
+import org.elastos.common.ErrorCode;
+import org.elastos.common.SDKException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,104 +31,105 @@ public class ElaController {
         JSONArray jsonArray = jsonObject.getJSONArray("params");
         String method = jsonObject.getString("method");
         if (jsonArray.size() == 0) {
-            if (method.equals("genPrivateKey") ) {
-                return Basic.genPrivateKey();
-            }
-            if (method.equals("gen_priv_pub_addr")) {
-                return Basic.gen_priv_pub_addr();
-            }
-            if (method.equals("getAccounts")) {
-                return Account.getAccounts();
-            }
-            if (method.equals("getAccountAddresses")) {
-                return Account.getAccountAddresses();
+            switch (method) {
+                case "genPrivateKey":
+                    return Basic.genPrivateKey();
+
+                case "gen_priv_pub_addr":
+                    return Basic.gen_priv_pub_addr();
+
+                case "getAccounts":
+                    return Account.getAccounts();
+
+                case "getAccountAddresses":
+                    return Account.getAccountAddresses();
+                default:
+                    return ErrorCode.ParamErr(method + " method does not exist");
             }
         }
-        if (jsonArray.size() != 0){
-            JSONObject param = (JSONObject)jsonArray.get(0);
-            if (method.equals("genPublicKey")){
+        JSONObject param = (JSONObject)jsonArray.get(0);
+        switch (method) {
+            case "genPublicKey":
                 return Basic.genPublicKey(param);
-            }
-            if (method.equals("genAddress")){
+
+            case "genAddress":
                 return Basic.genAddress(param);
-            }
-            if (method.equals("genNeoContractHashAndAddress")) {
+
+            case "genNeoContractHashAndAddress":
                 return Basic.genNeoContractHashAndAddress(param);
-            }
-            if (method.equals("genNeoContractAddress")) {
+
+            case "genNeoContractAddress":
                 return Basic.genNeoContractAddress(param);
-            }
-            if (method.equals("genRegisterTx")){
+
+            case "genRegisterTx":
                 return TokenTransaction.genRegisterTx(param);
-            }
-            if (method.equals("genTokenTx")){
+
+            case "genTokenTx":
                 return TokenTransaction.genTokenTx(param);
-            }
-            if (method.equals("genTokenMultiSignTx")){
+
+            case "genTokenMultiSignTx":
                 return TokenTransaction.genTokenMultiSignTx(param);
-            }
-            if (method.equals("genRegisterTxByPrivateKey")) {
+
+            case "genRegisterTxByPrivateKey":
                 return TokenTransaction.genRegisterTxByPrivateKey(param);
-            }
-            if (method.equals("genTokenTxByPrivateKey")) {
+
+            case "genTokenTxByPrivateKey":
                 return TokenTransaction.genTokenTxByPrivateKey(param);
-            }
-            if (method.equals("genRawTransaction")){
+
+            case "genRawTransaction":
                 return ELATransaction.genRawTransaction(param);
-            }
-            if (method.equals("decodeRawTransaction")){
+
+            case "decodeRawTransaction":
                 String rawTransaction = param.getString("RawTransaction");
                 return ELATransaction.decodeRawTransaction(rawTransaction);
-            }
-            if (method.equals("genRawTransactionByPrivateKey")) {
+
+            case "genRawTransactionByPrivateKey":
                 return ELATransaction.genRawTransactionByPrivateKey(param);
-            }
-            if (method.equals("genMultiSignTx")) {
+
+            case "genMultiSignTx":
                 return ELATransaction.genMultiSignTx(param);
-            }
-            if (method.equals("genTxByAccount")) {
+
+            case "genTxByAccount":
                 return Account.genTxByAccount(param);
-            }
-            if (method.equals("importAccount")) {
+
+            case "importAccount":
                 return Account.importAccount(param);
-            }
-            if (method.equals("removeAccount")) {
+
+            case "removeAccount":
                 return Account.removeAccount(param);
-            }
-            if (method.equals("createAccount")) {
+
+            case "createAccount":
                 return Account.createAccount(param);
-            }
-            if (method.equals("exportPrivateKey")) {
+
+            case "exportPrivateKey":
                 return Account.exportPrivateKey(param);
-            }
-            if (method.equals("genIdentityID")){
+
+            case "genIdentityID":
                 return Basic.genIdentityID(param);
-            }
-            if (method.equals("genGenesisAddress")) {
+
+            case "genGenesisAddress":
                 return Basic.genGenesisAddress(param);
-            }
-            if (method.equals("genGenesisAddress")) {
-                return Basic.genGenesisAddress(param);
-            }
-            if (method.equals("genMultiSignAddress")) {
+
+            case "genMultiSignAddress":
                 return Basic.genMultiSignAddress(param);
-            }
-            if (method.equals("genCrossChainTx")) {
+
+            case "genCrossChainTx":
                 return CrossChainTransaction.genCrossChainTx(param);
-            }
-            if (method.equals("genCrossChainMultiSignTx")) {
+
+            case "genCrossChainMultiSignTx":
                 return CrossChainTransaction.genCrossChainMultiSignTx(param);
-            }
-            if (method.equals("genCrossChainTxByPrivateKey")) {
+
+            case "genCrossChainTxByPrivateKey":
                 return CrossChainTransaction.genCrossChainTxByPrivateKey(param);
-            }
-            if (method.equals("genDeployContractTx")) {
+
+            case "genDeployContractTx":
                 return NeoContractTransaction.genDeployContractTx(param);
-            }
-            if (method.equals("genInvokeContractTx")) {
+
+            case "genInvokeContractTx":
                 return NeoContractTransaction.genInvokeContractTx(param);
-            }
+
+            default:
+                return ErrorCode.ParamErr(method + " method does not exist");
         }
-        return null;
     }
 }
