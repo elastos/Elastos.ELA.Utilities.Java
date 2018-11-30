@@ -5,6 +5,7 @@ import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.elastos.common.*;
 import org.elastos.ela.*;
+import org.elastos.ela.bitcoinj.Utils;
 import org.elastos.ela.contract.ContractParameterType;
 import org.elastos.ela.contract.FunctionCode;
 import org.elastos.ela.payload.*;
@@ -506,15 +507,15 @@ public class Basic {
             String contractCodeStr = json_transaction.getString("ContractCode");
             code = DatatypeConverter.parseHexBinary(contractCodeStr);
 
-            if (!(code[code.length -1] == SMART_CONTRACT)){
-                // byte[] + byte
-                byte[] smartContractArray = new byte[1];
-                smartContractArray[0] = SMART_CONTRACT;
-                byte[] code_buf = new byte[code.length + smartContractArray.length];
-                System.arraycopy(code,0,code_buf,0,code.length);
-                System.arraycopy(smartContractArray,0,code_buf,code.length,smartContractArray.length);
-                code = code_buf;
-            }
+//            if (!(code[code.length -1] == SMART_CONTRACT)){
+//                // byte[] + byte
+//                byte[] smartContractArray = new byte[1];
+//                smartContractArray[0] = SMART_CONTRACT;
+//                byte[] code_buf = new byte[code.length + smartContractArray.length];
+//                System.arraycopy(code,0,code_buf,0,code.length);
+//                System.arraycopy(smartContractArray,0,code_buf,code.length,smartContractArray.length);
+//                code = code_buf;
+//            }
 
             FunctionCode functionCode = new FunctionCode(returnTypeByte, parameterTypes, code);
             PayloadDeploy.Code = functionCode;
@@ -551,6 +552,7 @@ public class Basic {
 
     public static PayloadInvoke genPayloadInvoke(JSONObject json_transaction) throws SDKException {
         byte[] contractHash;
+        byte[] reverseContractHash;
         byte[] paramByte;
 
         //ParamTypes
@@ -569,18 +571,24 @@ public class Basic {
         //ContractHash
         Object ContractHash = json_transaction.get("ContractHash");
         if (ContractHash != null) {
-            //上端传递contractHash已经去掉第一个字节
+            //合约hash不需要反转
             contractHash = DatatypeConverter.parseHexBinary(json_transaction.getString("ContractHash"));
+            //去掉1c 一个字节
+            byte[] tmp = new byte[contractHash.length - 1];
+            System.arraycopy(contractHash,1,tmp,0,tmp.length);
+            contractHash = tmp;
+            //合约hash反转是需要和编译器一致
+            reverseContractHash = Utils.reverseBytes(contractHash);
         }else throw new SDKException(ErrorCode.ParamErr("contractHash can not be empty"));
 
         // paramByte + TAILCALL + contractHash
         byte[] tailCall = new byte[1];
         tailCall[0] = TAILCALL;
-        byte[] code_buf = new byte[paramByte.length + tailCall.length + contractHash.length];
+        byte[] code_buf = new byte[paramByte.length + tailCall.length + reverseContractHash.length];
 
         System.arraycopy(paramByte,0,code_buf,0,paramByte.length);
         System.arraycopy(tailCall,0,code_buf,paramByte.length,tailCall.length);
-        System.arraycopy(contractHash,0,code_buf,paramByte.length  + tailCall.length,contractHash.length);
+        System.arraycopy(reverseContractHash,0,code_buf,paramByte.length  + tailCall.length,reverseContractHash.length);
         paramByte = code_buf;
 
         //programHash
