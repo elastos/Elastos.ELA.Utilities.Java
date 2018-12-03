@@ -2,7 +2,6 @@ package org.elastos.ela;
 
 import org.elastos.common.Util;
 import org.elastos.ela.bitcoinj.Sha256Hash;
-import org.elastos.ela.contract.FunctionCode;
 import org.elastos.ela.payload.*;
 
 import javax.xml.bind.DatatypeConverter;
@@ -19,7 +18,7 @@ public class Tx {
     private byte TxType;
     private byte PayloadVersion;
     private TxAttribute[] Attributes;
-    private utxoTxInput[] UTXOInputs;
+    private UTXOTxInput[] UTXOInputs;
     private TxOutput[] Outputs;
     private int LockTime; //uint32
     private List<Program> Programs;
@@ -87,21 +86,21 @@ public class Tx {
     }
 
     //Ordinary transaction
-    public static Tx newTransferAssetTransaction(byte TransactionType, utxoTxInput[] inputs, TxOutput[] outputs) {
+    public static Tx newTransferAssetTransaction(byte TransactionType, UTXOTxInput[] inputs, TxOutput[] outputs) {
         Tx tx = new Tx();
         commonalityTransaction(tx,TransactionType,inputs,outputs);
         return tx;
     }
 
     //Ordinary transaction memo
-    public static Tx newTransferAssetTransaction(byte TransactionType, utxoTxInput[] inputs, TxOutput[] outputs , String memo) {
+    public static Tx newTransferAssetTransaction(byte TransactionType, UTXOTxInput[] inputs, TxOutput[] outputs , String memo) {
         Tx tx = new Tx();
         commonalityTransaction(tx,TransactionType,inputs,outputs,memo);
         return tx;
     }
 
     // RECORD Transaction
-    public static Tx recordTransaction(byte TransactionType, utxoTxInput[] inputs, TxOutput[] outputs, PayloadRecord parloadRecord) {
+    public static Tx recordTransaction(byte TransactionType, UTXOTxInput[] inputs, TxOutput[] outputs, PayloadRecord parloadRecord) {
         Tx tx = new Tx();
         tx.parloadRecord = parloadRecord;
         commonalityTransaction(tx,TransactionType,inputs,outputs);
@@ -109,7 +108,7 @@ public class Tx {
     }
 
     // Register Aseet
-    public static Tx registerAssetTransaction(byte TransactionType, utxoTxInput[] inputs, TxOutput[] outputs, PayloadRegisterAsset payloadRegisterAsset) {
+    public static Tx registerAssetTransaction(byte TransactionType, UTXOTxInput[] inputs, TxOutput[] outputs, PayloadRegisterAsset payloadRegisterAsset) {
         Tx tx = new Tx();
         tx.payloadRegisterAsset = payloadRegisterAsset;
         commonalityTransaction(tx,TransactionType,inputs,outputs);
@@ -117,7 +116,7 @@ public class Tx {
     }
 
     // CROSS_CHAIN Transaction
-    public static Tx crossChainTransaction(byte TransactionType, utxoTxInput[] inputs, TxOutput[] outputs , PayloadTransferCrossChainAsset[] CrossChainAsset) {
+    public static Tx crossChainTransaction(byte TransactionType, UTXOTxInput[] inputs, TxOutput[] outputs , PayloadTransferCrossChainAsset[] CrossChainAsset) {
         Tx tx = new Tx();
         tx.CrossChainAsset = CrossChainAsset;
         commonalityTransaction(tx,TransactionType,inputs,outputs);
@@ -125,7 +124,7 @@ public class Tx {
     }
 
     // DeployContract Transaction
-    public static Tx deployContractTransaction(byte TransactionType, utxoTxInput[] inputs, TxOutput[] outputs,PayloadDeploy payloadDeploy) {
+    public static Tx deployContractTransaction(byte TransactionType, UTXOTxInput[] inputs, TxOutput[] outputs, PayloadDeploy payloadDeploy) {
         Tx tx = new Tx();
         tx.payloadDeploy = payloadDeploy;
         commonalityTransaction(tx,TransactionType,inputs,outputs);
@@ -133,7 +132,7 @@ public class Tx {
     }
 
     // InvokeContract Transaction
-    public static Tx invokeContractTransaction(byte TransactionType, utxoTxInput[] inputs, TxOutput[] outputs, PayloadInvoke payloadInvoke) {
+    public static Tx invokeContractTransaction(byte TransactionType, UTXOTxInput[] inputs, TxOutput[] outputs, PayloadInvoke payloadInvoke) {
         Tx tx = new Tx();
         tx.payloadInvoke = payloadInvoke;
         commonalityTransaction(tx,TransactionType,inputs,outputs);
@@ -141,7 +140,7 @@ public class Tx {
     }
 
     // commonality transaction parameter
-    private static void commonalityTransaction(Tx tx, byte TransactionType, utxoTxInput[] inputs, TxOutput[] outputs){
+    private static void commonalityTransaction(Tx tx, byte TransactionType, UTXOTxInput[] inputs, TxOutput[] outputs){
         tx.UTXOInputs = inputs;
         tx.Outputs = outputs;
         tx.TxType = TransactionType;
@@ -151,14 +150,14 @@ public class Tx {
         TxAttribute ta = TxAttribute.NewTxNonceAttribute();
         tx.Attributes[0] = ta;
 
-        for(utxoTxInput txin : tx.UTXOInputs){
+        for(UTXOTxInput txin : tx.UTXOInputs){
 
             tx.hashMapPriv.put(txin.getProgramHash(),txin.getPrivateKey());
         }
         //使用私钥构造出公钥,通过公钥构造出contract,通过contract构造出programhash,写入到 UTXOInputs
     }
 
-    private static void commonalityTransaction(Tx tx, byte TransactionType, utxoTxInput[] inputs, TxOutput[] outputs, String memo){
+    private static void commonalityTransaction(Tx tx, byte TransactionType, UTXOTxInput[] inputs, TxOutput[] outputs, String memo){
         tx.UTXOInputs = inputs;
         tx.Outputs = outputs;
         tx.TxType = TransactionType;
@@ -168,7 +167,7 @@ public class Tx {
         TxAttribute ta = TxAttribute.NewTxNonceAttribute(memo);
         tx.Attributes[0] = ta;
 
-        for(utxoTxInput txin : tx.UTXOInputs){
+        for(UTXOTxInput txin : tx.UTXOInputs){
 
             tx.hashMapPriv.put(txin.getProgramHash(),txin.getPrivateKey());
         }
@@ -266,7 +265,7 @@ public class Tx {
         //[]*UTXOInputs
         Util.WriteVarUint(o,this.UTXOInputs.length);
         if (this.UTXOInputs.length > 0) {
-            for  (utxoTxInput utxo : this.UTXOInputs) {
+            for  (UTXOTxInput utxo : this.UTXOInputs) {
                 utxo.serialize(o);
             }
         }
@@ -298,7 +297,7 @@ public class Tx {
         len =  Util.ReadVarUint(o);
         List<Map>  inputList = new LinkedList<Map>();
         for (int i = 0 ; i < len ; i++){
-            Map inputMap = utxoTxInput.deSerialize(o);
+            Map inputMap = UTXOTxInput.deSerialize(o);
             inputList.add(inputMap);
         }
 

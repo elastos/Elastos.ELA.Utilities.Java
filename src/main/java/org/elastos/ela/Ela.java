@@ -5,7 +5,6 @@ package org.elastos.ela;
 import org.elastos.common.ErrorCode;
 import org.elastos.common.SDKException;
 import org.elastos.common.Util;
-import org.elastos.ela.contract.FunctionCode;
 import org.elastos.ela.payload.*;
 
 import javax.xml.bind.DatatypeConverter;
@@ -30,33 +29,33 @@ public class Ela {
      * @return  原始交易数据 可以使用rest接口api/v1/transaction发送给节点
      * @throws IOException
      */
-    public static RawTx makeAndSignTx(utxoTxInput[] inputs, TxOutput[] outputs) throws Exception {
+    public static RawTx makeAndSignTx(UTXOTxInput[] inputs, TxOutput[] outputs) throws Exception {
         Tx tx = Tx.newTransferAssetTransaction(TRANSFER_ASSET,inputs, outputs);
         return singleSignTx(tx);
     }
 
 
-    public static RawTx makeAndSignTx(utxoTxInput[] inputs, TxOutput[] outputs, PayloadRecord payloadRecord) throws Exception {
+    public static RawTx makeAndSignTx(UTXOTxInput[] inputs, TxOutput[] outputs, PayloadRecord payloadRecord) throws Exception {
         Tx tx = Tx.recordTransaction(RECORD, inputs, outputs, payloadRecord);
         return singleSignTx(tx);
     }
 
-    public static RawTx makeAndSignTx(utxoTxInput[] inputs, TxOutput[] outputs, PayloadRegisterAsset payloadRegisterAsset) throws Exception {
+    public static RawTx makeAndSignTx(UTXOTxInput[] inputs, TxOutput[] outputs, PayloadRegisterAsset payloadRegisterAsset) throws Exception {
         Tx tx = Tx.registerAssetTransaction(REGISTER_ASSET, inputs, outputs, payloadRegisterAsset);
         return singleSignTx(tx);
     }
 
-    public static RawTx makeAndSignTx(utxoTxInput[] inputs, TxOutput[] outputs, String memo) throws Exception {
+    public static RawTx makeAndSignTx(UTXOTxInput[] inputs, TxOutput[] outputs, String memo) throws Exception {
         Tx tx = Tx.newTransferAssetTransaction(TRANSFER_ASSET, inputs, outputs, memo);
         return singleSignTx(tx);
     }
 
-    public static RawTx deployContractTransaction(utxoTxInput[] inputs, TxOutput[] outputs, PayloadDeploy payloadDeploy) throws Exception {
+    public static RawTx deployContractTransaction(UTXOTxInput[] inputs, TxOutput[] outputs, PayloadDeploy payloadDeploy) throws Exception {
         Tx tx = Tx.deployContractTransaction(Deploy, inputs, outputs,payloadDeploy);
         return singleSignTx(tx);
     }
 
-    public static RawTx invokenContractTransaction(utxoTxInput[] inputs, TxOutput[] outputs, PayloadInvoke payloadInvoke) throws Exception {
+    public static RawTx invokenContractTransaction(UTXOTxInput[] inputs, TxOutput[] outputs, PayloadInvoke payloadInvoke) throws Exception {
         Tx tx = Tx.invokeContractTransaction(INVOKE, inputs, outputs, payloadInvoke);
         return singleSignTx(tx);
     }
@@ -82,20 +81,20 @@ public class Ela {
         return new RawTx(txHash,rawTxString);
     }
 
-    public static RawTx multiSignTransaction(utxoTxInput[] inputs, TxOutput[] outputs , List<String> privateKeyScript , List<String> privateKeySign , int M) throws Exception {
+    public static RawTx multiSignTransaction(UTXOTxInput[] inputs, TxOutput[] outputs , List<String> privateKeyScript , List<String> privateKeySign , int M) throws Exception {
         //创建交易
         Tx tx = Tx.newTransferAssetTransaction(TRANSFER_ASSET,inputs, outputs);
 
         return multiSignTx(tx, privateKeyScript, privateKeySign , M);
     }
 
-    public static RawTx multiSignTransaction(utxoTxInput[] inputs, TxOutput[] outputs , List<String> privateKeyScript , List<String> privateKeySign , int M , String memo) throws Exception {
+    public static RawTx multiSignTransaction(UTXOTxInput[] inputs, TxOutput[] outputs , List<String> privateKeyScript , List<String> privateKeySign , int M , String memo) throws Exception {
         //创建交易
         Tx tx = Tx.newTransferAssetTransaction(TRANSFER_ASSET,inputs, outputs,memo);
         return multiSignTx(tx, privateKeyScript, privateKeySign , M);
     }
 
-    public static RawTx multiSignTransaction(utxoTxInput[] inputs, TxOutput[] outputs , List<String> privateKeyScript , List<String> privateKeySign , int M , PayloadRecord payloadRecord) throws Exception {
+    public static RawTx multiSignTransaction(UTXOTxInput[] inputs, TxOutput[] outputs , List<String> privateKeyScript , List<String> privateKeySign , int M , PayloadRecord payloadRecord) throws Exception {
         //创建交易
         Tx tx = Tx.recordTransaction(RECORD,inputs, outputs,payloadRecord);
         return multiSignTx(tx, privateKeyScript, privateKeySign , M);
@@ -131,7 +130,7 @@ public class Ela {
      * @return  原始交易数据 可以使用rest接口api/v1/transaction发送给节点
      * @throws IOException
      */
-    public static RawTx crossChainSignTx(utxoTxInput[] inputs, TxOutput[] outputs , PayloadTransferCrossChainAsset[] CrossChainAsset , List<String> privateKeySign) throws SDKException {
+    public static RawTx crossChainSignTx(UTXOTxInput[] inputs, TxOutput[] outputs , PayloadTransferCrossChainAsset[] CrossChainAsset , List<String> privateKeySign) throws SDKException {
         try {
             Tx tx = Tx.crossChainTransaction(TRANSFER_CROSS_CHAIN_ASSET, inputs, outputs ,CrossChainAsset);
             for(int i = 0 ; i < privateKeySign.size() ; i ++){
@@ -162,7 +161,7 @@ public class Ela {
      * @return  原始交易数据 可以使用rest接口api/v1/transaction发送给节点
      * @throws IOException
      */
-    public static RawTx crossChainMultiSignTx(utxoTxInput[] inputs, TxOutput[] outputs , PayloadTransferCrossChainAsset[] CrossChainAsset , List<String> privateKeyScript , List<String> privateKeySign , int M) throws Exception {
+    public static RawTx crossChainMultiSignTx(UTXOTxInput[] inputs, TxOutput[] outputs , PayloadTransferCrossChainAsset[] CrossChainAsset , List<String> privateKeyScript , List<String> privateKeySign , int M) throws Exception {
         Tx tx = Tx.crossChainTransaction(TRANSFER_CROSS_CHAIN_ASSET, inputs, outputs ,CrossChainAsset);
 
         return multiSignTx(tx, privateKeyScript, privateKeySign , M);

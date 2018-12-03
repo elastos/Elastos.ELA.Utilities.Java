@@ -25,7 +25,7 @@ public class TokenTransaction {
             final JSONArray utxoInputs = json_transaction.getJSONArray("UTXOInputs");
 
             //解析inputs
-            utxoTxInput[] utxoTxInputs = Basic.parseInputs(utxoInputs).toArray(new utxoTxInput[utxoInputs.size()]);
+            UTXOTxInput[] UTXOTxInputs = Basic.parseInputs(utxoInputs).toArray(new UTXOTxInput[utxoInputs.size()]);
             //解析PayloadRegisterAsset
             PayloadRegisterAsset payload   = Basic.payloadRegisterAsset(json_transaction);
             //解析outputs
@@ -33,7 +33,7 @@ public class TokenTransaction {
 
             //创建rawTransaction
             LinkedHashMap<String, Object> resultMap = new LinkedHashMap<String, Object>();
-            RawTx rawTx = Ela.makeAndSignTx(utxoTxInputs,txOutputs,payload);
+            RawTx rawTx = Ela.makeAndSignTx(UTXOTxInputs,txOutputs,payload);
             resultMap.put("rawTx",rawTx.getRawTxString());
             resultMap.put("txHash",rawTx.getTxHash());
 
@@ -110,13 +110,13 @@ public class TokenTransaction {
             final JSONArray outputs = json_transaction.getJSONArray("Outputs");
 
             //解析inputs
-            utxoTxInput[] utxoTxInputs = Basic.parseInputs(utxoInputs).toArray(new utxoTxInput[utxoInputs.size()]);
+            UTXOTxInput[] UTXOTxInputs = Basic.parseInputs(utxoInputs).toArray(new UTXOTxInput[utxoInputs.size()]);
             //解析outputs
             TxOutput[] txOutputs = Basic.parseOutputsByAsset(outputs).toArray(new TxOutput[outputs.size()]);
 
             //创建rawTransaction
             LinkedHashMap<String, Object> resultMap = new LinkedHashMap<String, Object>();
-            RawTx rawTx  = Ela.makeAndSignTx(utxoTxInputs,txOutputs);
+            RawTx rawTx  = Ela.makeAndSignTx(UTXOTxInputs,txOutputs);
 
             resultMap.put("rawTx",rawTx.getRawTxString());
             resultMap.put("txHash",rawTx.getTxHash());
@@ -140,7 +140,7 @@ public class TokenTransaction {
 
         try {
             //解析inputs
-            utxoTxInput[] utxoTxInputs = Basic.parseInputsAddress(utxoInputs).toArray(new utxoTxInput[utxoInputs.size()]);
+            UTXOTxInput[] UTXOTxInputs = Basic.parseInputsAddress(utxoInputs).toArray(new UTXOTxInput[utxoInputs.size()]);
             //解析outputs
             TxOutput[] txOutputs = Basic.parseOutputsByAsset(outputs).toArray(new TxOutput[outputs.size()]);
             //解析payloadRecord
@@ -162,12 +162,12 @@ public class TokenTransaction {
             if (payload != null && bool){
                 return ErrorCode.ParamErr("PayloadRecord And Memo can't be used at the same time");
             }else if (payload == null && !bool){
-                rawTx = Ela.multiSignTransaction(utxoTxInputs, txOutputs, privateKeyScripteList, privateKeySignList, M);
+                rawTx = Ela.multiSignTransaction(UTXOTxInputs, txOutputs, privateKeyScripteList, privateKeySignList, M);
             }else if (bool){
                 String memo = json_transaction.getString("Memo");
-                rawTx = Ela.multiSignTransaction(utxoTxInputs, txOutputs, privateKeyScripteList, privateKeySignList, M, memo);
+                rawTx = Ela.multiSignTransaction(UTXOTxInputs, txOutputs, privateKeyScripteList, privateKeySignList, M, memo);
             }else{
-                rawTx = Ela.multiSignTransaction(utxoTxInputs, txOutputs, privateKeyScripteList, privateKeySignList, M,payload);
+                rawTx = Ela.multiSignTransaction(UTXOTxInputs, txOutputs, privateKeyScripteList, privateKeySignList, M,payload);
             }
             resultMap.put("rawTx", rawTx.getRawTxString());
             resultMap.put("txHash", rawTx.getTxHash());

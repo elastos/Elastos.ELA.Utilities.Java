@@ -20,7 +20,6 @@ import java.util.*;
 
 import static org.elastos.common.Opcode.PACK;
 import static org.elastos.common.Opcode.TAILCALL;
-import static org.elastos.ela.Tx.SMART_CONTRACT;
 import static org.elastos.ela.payload.PayloadRegisterAsset.ElaPrecision;
 import static org.elastos.ela.payload.PayloadRegisterAsset.MaxPrecision;
 
@@ -288,9 +287,9 @@ public class Basic {
         return outputList;
     }
 
-    public static List<utxoTxInput> parseInputs(JSONArray utxoInputs) throws SDKException {
+    public static List<UTXOTxInput> parseInputs(JSONArray utxoInputs) throws SDKException {
 
-        List<utxoTxInput> inputList = new LinkedList<utxoTxInput>();
+        List<UTXOTxInput> inputList = new LinkedList<UTXOTxInput>();
         for (int i = 0 ; i < utxoInputs.size() ; i++){
             JSONObject utxoInput = (JSONObject)utxoInputs.get(i);
 
@@ -304,14 +303,14 @@ public class Basic {
             String privateKey = utxoInput.getString("privateKey");
             String address = Ela.getAddressFromPrivate(privateKey);
 
-            inputList.add(new utxoTxInput(txid,index,privateKey,address));
+            inputList.add(new UTXOTxInput(txid,index,privateKey,address));
         }
         return inputList;
     }
 
-    public static List<utxoTxInput> parseInputsAddress(JSONArray utxoInputs) throws SDKException {
+    public static List<UTXOTxInput> parseInputsAddress(JSONArray utxoInputs) throws SDKException {
 
-        List<utxoTxInput> inputList = new LinkedList<utxoTxInput>();
+        List<UTXOTxInput> inputList = new LinkedList<UTXOTxInput>();
         for (int i = 0 ; i < utxoInputs.size() ; i++){
             JSONObject utxoInput = (JSONObject)utxoInputs.get(i);
 
@@ -322,7 +321,7 @@ public class Basic {
             String txid = utxoInput.getString("txid");
             int index = utxoInput.getInt("index");
             String address = utxoInput.getString("address");
-            inputList.add(new utxoTxInput(txid,index,"",address));
+            inputList.add(new UTXOTxInput(txid,index,"",address));
         }
         return inputList;
     }

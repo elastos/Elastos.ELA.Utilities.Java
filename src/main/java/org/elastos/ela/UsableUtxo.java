@@ -37,7 +37,7 @@ public class UsableUtxo {
     private static int CONFIRMATION ;
 
     private static String utxoAmount;
-    private static List<utxoTxInput> inputList ;
+    private static List<UTXOTxInput> inputList ;
 
     public static String txHash;
 
@@ -47,21 +47,21 @@ public class UsableUtxo {
     // ELA
     public static String makeAndSignTx(List<String> privates , LinkedList<TxOutput> outputs , String changeAddress) throws SDKException {
         List<String> availablePrivates = getChangeAmountAndUsableUtxo(privates, outputs, changeAddress);
-        RawTx rawTx = SignTxAbnormal.makeSingleSignTx(inputList.toArray(new utxoTxInput[inputList.size()]), outputs.toArray(new TxOutput[outputs.size()]), availablePrivates);
+        RawTx rawTx = SignTxAbnormal.makeSingleSignTx(inputList.toArray(new UTXOTxInput[inputList.size()]), outputs.toArray(new TxOutput[outputs.size()]), availablePrivates);
         txHash = rawTx.getTxHash();
         return rawTx.getRawTxString();
     }
     // ELA
     public static String makeAndSignTx(List<String> privates , LinkedList<TxOutput> outputs , String changeAddress,PayloadRecord payloadRecord) throws SDKException {
         List<String> availablePrivates = getChangeAmountAndUsableUtxo(privates,outputs,changeAddress);
-        RawTx rawTx = SignTxAbnormal.makeSingleSignTx(inputList.toArray(new utxoTxInput[inputList.size()]), outputs.toArray(new TxOutput[outputs.size()]), availablePrivates,payloadRecord);
+        RawTx rawTx = SignTxAbnormal.makeSingleSignTx(inputList.toArray(new UTXOTxInput[inputList.size()]), outputs.toArray(new TxOutput[outputs.size()]), availablePrivates,payloadRecord);
         txHash = rawTx.getTxHash();
         return rawTx.getRawTxString();
     }
     // ELA
     public static String makeAndSignTx(List<String> privates , LinkedList<TxOutput> outputs , String changeAddress,String memo) throws SDKException {
         List<String> availablePrivates = getChangeAmountAndUsableUtxo(privates,outputs,changeAddress);
-        RawTx rawTx = SignTxAbnormal.makeSingleSignTx(inputList.toArray(new utxoTxInput[inputList.size()]), outputs.toArray(new TxOutput[outputs.size()]), availablePrivates,memo);
+        RawTx rawTx = SignTxAbnormal.makeSingleSignTx(inputList.toArray(new UTXOTxInput[inputList.size()]), outputs.toArray(new TxOutput[outputs.size()]), availablePrivates,memo);
         txHash = rawTx.getTxHash();
         return rawTx.getRawTxString();
     }
@@ -69,7 +69,7 @@ public class UsableUtxo {
     // crossChain
     public static RawTx makeAndSignTxByCrossChain(List<String> privates , LinkedList<TxOutput> txOutputs , PayloadTransferCrossChainAsset[] payloadTransferCrossChainAssets, String changeAddress) throws SDKException {
         List<String> availablePrivates = getChangeAmountAndUsableUtxo(privates,txOutputs,changeAddress);
-        RawTx rawTx = Ela.crossChainSignTx(inputList.toArray(new utxoTxInput[inputList.size()]),txOutputs.toArray(new TxOutput[txOutputs.size()]),payloadTransferCrossChainAssets, availablePrivates);
+        RawTx rawTx = Ela.crossChainSignTx(inputList.toArray(new UTXOTxInput[inputList.size()]),txOutputs.toArray(new TxOutput[txOutputs.size()]),payloadTransferCrossChainAssets, availablePrivates);
         return rawTx;
     }
 
@@ -80,7 +80,7 @@ public class UsableUtxo {
         // register asset
         // add payload to output
         Basic.registerToOutput(payload, outputs);
-        RawTx rawTx = SignTxAbnormal.makeSingleSignTxByToken(inputList.toArray(new utxoTxInput[inputList.size()]), outputs.toArray(new TxOutput[outputs.size()]), availablePrivates ,payload);
+        RawTx rawTx = SignTxAbnormal.makeSingleSignTxByToken(inputList.toArray(new UTXOTxInput[inputList.size()]), outputs.toArray(new TxOutput[outputs.size()]), availablePrivates ,payload);
         txHash = rawTx.getTxHash();
         return rawTx.getRawTxString();
     }
@@ -119,19 +119,19 @@ public class UsableUtxo {
             // Token Transfer
             if (outputs.get(0).getTokenAssetID() != null){
                 BigInteger tokenOutputValue = getTokenOutputValue(outputs);
-                inputList = new LinkedList<utxoTxInput>();
+                inputList = new LinkedList<UTXOTxInput>();
                 addTokenOutputs(privates,outputs,changeAddress,tokenOutputValue);
                 // transaction fee
                 addElaOutputs(privates,outputs,changeAddress,0);
             }else {
                 //ELA Transfer
                 long outputValue = getOutputValue(outputs);
-                inputList = new LinkedList<utxoTxInput>();
+                inputList = new LinkedList<UTXOTxInput>();
                 addElaOutputs(privates,outputs,changeAddress,outputValue);
             }
         }else {
             // register asset
-            inputList = new LinkedList<utxoTxInput>();
+            inputList = new LinkedList<UTXOTxInput>();
             addElaOutputs(privates,outputs,changeAddress,0);
         }
     }
@@ -188,7 +188,7 @@ public class UsableUtxo {
             int inputVont = input.getVont();
 
             inputValue += Util.multiplyAmountELA(new BigDecimal(input.getAmount()),ElaPrecision).longValue();
-            inputList.add(new utxoTxInput(inputTxid,inputVont,"",inputAddress));
+            inputList.add(new UTXOTxInput(inputTxid,inputVont,"",inputAddress));
             addrList.add(inputAddress);
             if (inputValue >= REGISTERASSETFEE){
                 break;
@@ -211,7 +211,7 @@ public class UsableUtxo {
             int inputVont = input.getVont();
 
             inputValue += Util.multiplyAmountELA(new BigDecimal(input.getAmount()),ElaPrecision).longValue();
-            inputList.add(new utxoTxInput(inputTxid,inputVont,"",inputAddress));
+            inputList.add(new UTXOTxInput(inputTxid,inputVont,"",inputAddress));
             addrList.add(inputAddress);
 
             if (inputValue >= outputValue + FEE){
@@ -236,7 +236,7 @@ public class UsableUtxo {
             int inputVont = input.getVont();
 
             inputValue = Util.multiplyAmountELA(new BigDecimal(input.getAmount()),MaxPrecision).toBigIntegerExact().add(inputValue);
-            inputList.add(new utxoTxInput(inputTxid,inputVont,"",inputAddress));
+            inputList.add(new UTXOTxInput(inputTxid,inputVont,"",inputAddress));
             addrList.add(inputAddress);
 
             i = inputValue.compareTo(tokenOutputValue);

@@ -64,18 +64,18 @@ public class ElaTest {
      */
     @Test
     public void makeAndSignTx() throws Exception {
-        List<utxoTxInput> inputs = new LinkedList<utxoTxInput>();
-        inputs.add(new utxoTxInput(
+        List<UTXOTxInput> inputs = new LinkedList<UTXOTxInput>();
+        inputs.add(new UTXOTxInput(
                 "cd96ca8f7bf76b25dbb90e2edd33bb6f7df95fa804f4af89d177ff72d8fabf0e",
                 1,      //矿工为1，转账为0
                 "5FA927E5664E563F019F50DCD4D7E2D9404F2D5D49E31F9482912E23D6D7B9EB",
                 "EQSpUzE4XYJhBSx5j7Tf2cteaKdFdixfVB"));
-//        inputs.add(new utxoTxInput(
+//        inputs.add(new UTXOTxInput(
 //                "cd96ca8f7bf76b25dbb90e2edd33bb6f7df95fa804f4af89d177ff72d8fabf0e",
 //                1,
 //                "A65E9FB6735C5FD33F839036B15D2DA373E15AED38054B69386E322C6BE52994",
 //                "EgSph8GNaNSMwpv6UseAihsAc5sqSrA7ga"));
-//        inputs.add(new utxoTxInput(
+//        inputs.add(new UTXOTxInput(
 //                "22bade15481f1af8240993207e1df61144a7776e6087994d240917a887f72052",
 //                0,
 //                "4C573939323F11BCDB57B61CCE095D4B1E55E986F9944F88072141F3DFA883A3",
@@ -84,14 +84,14 @@ public class ElaTest {
         List<TxOutput>  outputs = new LinkedList<TxOutput>();
         outputs.add(new TxOutput("EXkNxfzanRVZumirTudiTBfvMyV2Rt6w95","0.00001",Common.SYSTEM_ASSET_ID,ElaPrecision));
 
-        RawTx rawTx = Ela.makeAndSignTx(inputs.toArray(new utxoTxInput[inputs.size()]),outputs.toArray(new TxOutput[outputs.size()]));
+        RawTx rawTx = Ela.makeAndSignTx(inputs.toArray(new UTXOTxInput[inputs.size()]),outputs.toArray(new TxOutput[outputs.size()]));
         System.out.println("rawTx:"+rawTx.getRawTxString());
         System.out.println("txHash:"+rawTx.getTxHash());
     }
 
     @Test
     public void revers(){
-        byte[] hex = DatatypeConverter.parseHexBinary("b037db964a231458d2d6ffd5ea18944c4f90e63d547c5d3b9874df66a4ead0a3");
+        byte[] hex = DatatypeConverter.parseHexBinary("972e8ee63b6054ff923f6b68480fb82d10a8907a231e68941348d9e789b39dc9");
         System.out.println(DatatypeConverter.printHexBinary(Utils.reverseBytes(hex)).toLowerCase());
     }
 

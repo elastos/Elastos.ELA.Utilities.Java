@@ -37,7 +37,7 @@ public class ELATransaction {
             final JSONArray outputs = json_transaction.getJSONArray("Outputs");
 
             //解析inputs
-            utxoTxInput[] utxoTxInputs = Basic.parseInputs(utxoInputs).toArray(new utxoTxInput[utxoInputs.size()]);
+            UTXOTxInput[] UTXOTxInputs = Basic.parseInputs(utxoInputs).toArray(new UTXOTxInput[utxoInputs.size()]);
             //解析outputs
             TxOutput[] txOutputs = Basic.parseOutputs(outputs).toArray(new TxOutput[outputs.size()]);
             //解析payloadRecord
@@ -52,12 +52,12 @@ public class ELATransaction {
             if (payload != null && bool){
                 return ErrorCode.ParamErr("PayloadRecord And Memo can't be used at the same time");
             }else if (payload == null && !bool){
-                rawTx = Ela.makeAndSignTx(utxoTxInputs,txOutputs);
+                rawTx = Ela.makeAndSignTx(UTXOTxInputs,txOutputs);
             }else if (bool){
                 String memo = json_transaction.getString("Memo");
-                rawTx = Ela.makeAndSignTx(utxoTxInputs,txOutputs,memo);
+                rawTx = Ela.makeAndSignTx(UTXOTxInputs,txOutputs,memo);
             }else{
-                rawTx = Ela.makeAndSignTx(utxoTxInputs,txOutputs,payload);
+                rawTx = Ela.makeAndSignTx(UTXOTxInputs,txOutputs,payload);
             }
             resultMap.put("rawTx",rawTx.getRawTxString());
             resultMap.put("txHash",rawTx.getTxHash());
@@ -141,7 +141,7 @@ public class ELATransaction {
 
             try {
                 //解析inputs
-                utxoTxInput[] utxoTxInputs = Basic.parseInputsAddress(utxoInputs).toArray(new utxoTxInput[utxoInputs.size()]);
+                UTXOTxInput[] UTXOTxInputs = Basic.parseInputsAddress(utxoInputs).toArray(new UTXOTxInput[utxoInputs.size()]);
                 //解析outputs
                 TxOutput[] txOutputs = Basic.parseOutputs(outputs).toArray(new TxOutput[outputs.size()]);
                 //解析payloadRecord
@@ -163,12 +163,12 @@ public class ELATransaction {
                 if (payload != null && bool){
                     return ErrorCode.ParamErr("PayloadRecord And Memo can't be used at the same time");
                 }else if (payload == null && !bool){
-                    rawTx = Ela.multiSignTransaction(utxoTxInputs, txOutputs, privateKeyScripteList, privateKeySignList, M);
+                    rawTx = Ela.multiSignTransaction(UTXOTxInputs, txOutputs, privateKeyScripteList, privateKeySignList, M);
                 }else if (bool){
                     String memo = json_transaction.getString("Memo");
-                    rawTx = Ela.multiSignTransaction(utxoTxInputs, txOutputs, privateKeyScripteList, privateKeySignList, M, memo);
+                    rawTx = Ela.multiSignTransaction(UTXOTxInputs, txOutputs, privateKeyScripteList, privateKeySignList, M, memo);
                 }else{
-                    rawTx = Ela.multiSignTransaction(utxoTxInputs, txOutputs, privateKeyScripteList, privateKeySignList, M,payload);
+                    rawTx = Ela.multiSignTransaction(UTXOTxInputs, txOutputs, privateKeyScripteList, privateKeySignList, M,payload);
                 }
                 resultMap.put("rawTx", rawTx.getRawTxString());
                 resultMap.put("txHash", rawTx.getTxHash());

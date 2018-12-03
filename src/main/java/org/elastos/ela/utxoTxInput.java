@@ -13,7 +13,7 @@ import java.util.Map;
 /**
  * Created by nan on 18/1/10.
  */
-public class utxoTxInput {
+public class UTXOTxInput {
     public byte[] getReferTxID() {
         return ReferTxID;
     }
@@ -58,7 +58,7 @@ public class utxoTxInput {
      * @param privateKey utxo所属账户的私钥
      * @param address utxo所属账户的地址
      */
-    public utxoTxInput(String txid, int index, String privateKey, String address){
+    public UTXOTxInput(String txid, int index, String privateKey, String address){
         this.ReferTxID = Utils.reverseBytes(DatatypeConverter.parseHexBinary(txid));
         this.privateKey = privateKey;
         this.ReferTxOutputIndex = index;

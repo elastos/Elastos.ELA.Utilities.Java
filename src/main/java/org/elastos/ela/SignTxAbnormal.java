@@ -28,22 +28,22 @@ public class SignTxAbnormal {
      * @return  原始交易数据 可以使用rest接口api/v1/transaction发送给节点
      * @throws IOException
      */
-    public static RawTx makeSingleSignTx(utxoTxInput[] inputs, TxOutput[] outputs , List<String> privateKeySign) throws SDKException {
+    public static RawTx makeSingleSignTx(UTXOTxInput[] inputs, TxOutput[] outputs , List<String> privateKeySign) throws SDKException {
         Tx tx = Tx.newTransferAssetTransaction(Tx.TRANSFER_ASSET,inputs, outputs);
         return SingleSignTx(tx,privateKeySign);
     }
 
-    public static RawTx makeSingleSignTx(utxoTxInput[] inputs, TxOutput[] outputs , List<String> privateKeySign, PayloadRecord payloadRecord) throws SDKException {
+    public static RawTx makeSingleSignTx(UTXOTxInput[] inputs, TxOutput[] outputs , List<String> privateKeySign, PayloadRecord payloadRecord) throws SDKException {
         Tx tx = Tx.recordTransaction(RECORD,inputs, outputs,payloadRecord);
         return SingleSignTx(tx,privateKeySign);
     }
 
-    public static RawTx makeSingleSignTx(utxoTxInput[] inputs, TxOutput[] outputs , List<String> privateKeySign, String memo) throws SDKException {
+    public static RawTx makeSingleSignTx(UTXOTxInput[] inputs, TxOutput[] outputs , List<String> privateKeySign, String memo) throws SDKException {
         Tx tx = Tx.newTransferAssetTransaction(TRANSFER_ASSET,inputs, outputs,memo);
         return SingleSignTx(tx,privateKeySign);
     }
 
-    public static RawTx makeSingleSignTxByToken(utxoTxInput[] inputs, TxOutput[] outputs , List<String> privateKeySign,PayloadRegisterAsset payload) throws SDKException {
+    public static RawTx makeSingleSignTxByToken(UTXOTxInput[] inputs, TxOutput[] outputs , List<String> privateKeySign, PayloadRegisterAsset payload) throws SDKException {
         Tx tx = Tx.registerAssetTransaction(REGISTER_ASSET,inputs, outputs,payload);
         return SingleSignTx(tx,privateKeySign);
     }
