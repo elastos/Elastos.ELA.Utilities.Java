@@ -131,7 +131,7 @@ public class Verify {
                 if (AddressLower != null) {
                     try {
                         byte[] sh = ToScriptHash((String) AddressLower);
-                        if(sh[0]!=33&&sh[0]!=18){
+                        if(sh[0]!=33 && sh[0]!=18 && sh[0]!=28){
                             throw new SDKException(ErrorCode.INVALID_ADDRESS);
                         }
                     }catch (Exception e) {

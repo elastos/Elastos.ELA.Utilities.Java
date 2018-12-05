@@ -192,15 +192,8 @@ public class ECKey {
     }
 
     //生成NEO合约地址
-    public static String toNeoContranctAddress(String contranctHash) throws SDKException {
+    public static String toNeoContranctAddress(String contranctHash){
         byte[] hash = DatatypeConverter.parseHexBinary(contranctHash);
-        return Util.ToAddress(getNeoContranctProgramHash(hash));
+        return Util.ToAddress(hash);
     }
-    public static byte[] getNeoContranctProgramHash(byte[] contranctHash) throws SDKException {
-        return getNeoContranctProgram(contranctHash);
-    }
-    public static byte[] getNeoContranctProgram(byte[] contranctHash) throws SDKException {
-        return Util.createNeoContranctRedeemScript(contranctHash);
-    }
-
 }
