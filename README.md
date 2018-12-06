@@ -4,10 +4,16 @@
 
 ## Interface documentation
 
- - Path:Elastos.ELA.Utilities.Java/src/main/java/docs
+ - Path:Elastos.ELA.Utilities.Java/src/main/java/[docs](https://github.com/elastos/Elastos.ELA.Utilities.Java/tree/master/src/main/java/docs)
 
-## JAR package
+## JAR package 
  
+  - start command : java -cp Elastos.ELA.Utilities.Java.jar  org.elastos.elaweb.HttpServer
+  - suggestion：java version "1.8.0_161"
+  - local IP : http://127.0.0.1:8989/
+ 
+### generate jar package
+
  ```
 File -> Project Structure -> Artifacts -> + -> JAR -> From modules with 
 1、-> Main Class
