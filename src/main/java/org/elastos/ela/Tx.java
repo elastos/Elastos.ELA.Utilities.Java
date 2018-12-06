@@ -40,8 +40,7 @@ public class Tx {
     static byte RECHARGE_TO_SIDE_CHAIN = 0x06;
     static byte WITHDRAW_FROM_SIDE_CHAIN = 0x07;
     static byte TRANSFER_CROSS_CHAIN_ASSET = 0x08;
-    static byte REGISTER_IDENTI_FICATION = 0x09;
-    static byte INVOKE = 0x0A;
+    static byte INVOKE = 0x09;
 
     // Address types
     public static byte SMART_CONTRACT =(byte)0xAB;

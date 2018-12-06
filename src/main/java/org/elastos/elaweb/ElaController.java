@@ -61,6 +61,18 @@ public class ElaController {
             case "genNeoContractAddress":
                 return Basic.genNeoContractAddress(param);
 
+            case "genIdentityID":
+                return Basic.genIdentityID(param);
+
+            case "genGenesisAddress":
+                return Basic.genGenesisAddress(param);
+
+            case "genMultiSignAddress":
+                return Basic.genMultiSignAddress(param);
+
+            case "checkAddress":
+                return Basic.checkAddress(param);
+
             case "genRegisterTx":
                 return TokenTransaction.genRegisterTx(param);
 
@@ -103,15 +115,6 @@ public class ElaController {
 
             case "exportPrivateKey":
                 return Account.exportPrivateKey(param);
-
-            case "genIdentityID":
-                return Basic.genIdentityID(param);
-
-            case "genGenesisAddress":
-                return Basic.genGenesisAddress(param);
-
-            case "genMultiSignAddress":
-                return Basic.genMultiSignAddress(param);
 
             case "genCrossChainTx":
                 return CrossChainTransaction.genCrossChainTx(param);
