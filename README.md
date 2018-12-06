@@ -2,7 +2,12 @@
 
  -  Elastos.ELA.Utilities.Java is a tool for generating transaction signature,there are two forms of signature,one is to call the API，the other one is the web request
 
-### JAR package
+## Interface documentation
+
+ - Path:Elastos.ELA.Utilities.Java/src/main/java/docs
+
+## JAR package
+ 
  ```
 File -> Project Structure -> Artifacts -> + -> JAR -> From modules with 
 1、-> Main Class
@@ -13,7 +18,7 @@ File -> Project Structure -> Artifacts -> + -> JAR -> From modules with
 run : java -cp Elastos.ELA.Utilities.Java.jar  org.elastos.elaweb.HttpServer
  ```
 
-### notice
+## notice
 ```
  - Execute the following command in the JAR directory to avoid invalid signature file exception information.
  - Execute ： zip -d Elastos.ELA.Utilities.Java.jar 'META-INF/*.SF' 'META-INF/*.RSA' 'META-INF/*SF'
