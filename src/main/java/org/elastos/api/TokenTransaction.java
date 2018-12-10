@@ -36,6 +36,7 @@ public class TokenTransaction {
             RawTx rawTx = Ela.makeAndSignTx(UTXOTxInputs,txOutputs,payload);
             resultMap.put("rawTx",rawTx.getRawTxString());
             resultMap.put("txHash",rawTx.getTxHash());
+            resultMap.put("assetId",Asset.AssetId);
 
             LOGGER.info(Basic.getSuccess("genRegisterTx",resultMap));
             return Basic.getSuccess("genRegisterTx",resultMap);
