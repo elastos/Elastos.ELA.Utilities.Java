@@ -65,6 +65,7 @@ public class TokenTransaction {
             String rawTx = UsableUtxo.makeAndSignTxByToken(privateList, outputList, changeAddress ,payload);
             resultMap.put("rawTx",rawTx);
             resultMap.put("txHash",UsableUtxo.txHash);
+            resultMap.put("assetId",Asset.AssetId);
 
             LOGGER.info(Basic.getSuccess("genRegisterTxByPrivateKey",resultMap));
             return Basic.getSuccess("genRegisterTxByPrivateKey",resultMap);
