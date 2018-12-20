@@ -89,8 +89,8 @@ description:constructing single sign transaction
 ```
 {
   "Host": "127.0.0.1:11336",
-  "Fee":"5000",
-  "Confirmation":"16"
+  "Fee":"0.0005",
+  "Confirmation":16
 }
 
 ```
