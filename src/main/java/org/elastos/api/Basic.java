@@ -39,8 +39,8 @@ public class Basic {
     public static String genPrivateKey(){
         String privateKey = Ela.getPrivateKey();
 
-        LOGGER.info(getSuccess("genPrivateKey",privateKey));
-        return getSuccess("genPrivateKey",privateKey);
+        LOGGER.info(getSuccess(privateKey));
+        return getSuccess(privateKey);
     }
 
     /**
@@ -50,17 +50,17 @@ public class Basic {
      */
     public static String genPublicKey(JSONObject jsonObject){
         try {
-            Verify.verifyParameter(Verify.Type.PrivateKeyUpper,jsonObject);
+            Verify.verifyParameter(Verify.Type.PrivateKey,jsonObject);
         }catch (Exception e){
             LOGGER.error(e.toString());
             return e.toString();
         }
 
-        String privateKey = jsonObject.getString("PrivateKey");
+        String privateKey = jsonObject.getString("privateKey");
         String publicKey = Ela.getPublicFromPrivate(privateKey);
 
-        LOGGER.info(getSuccess("genPublicKey",publicKey));
-        return getSuccess("genPublicKey",publicKey);
+        LOGGER.info(getSuccess(publicKey));
+        return getSuccess(publicKey);
     }
 
     /**
@@ -71,16 +71,16 @@ public class Basic {
     public static String genAddress(JSONObject jsonObject){
 
         try {
-            Verify.verifyParameter(Verify.Type.PrivateKeyUpper,jsonObject);
+            Verify.verifyParameter(Verify.Type.PrivateKey,jsonObject);
         }catch (Exception e){
             LOGGER.error(e.toString());
             return e.toString();
         }
-        String privateKey = jsonObject.getString("PrivateKey");
+        String privateKey = jsonObject.getString("privateKey");
         String address    = Ela.getAddressFromPrivate(privateKey);
 
-        LOGGER.info(getSuccess("genAddress",address));
-        return getSuccess("genAddress",address);
+        LOGGER.info(getSuccess(address));
+        return getSuccess(address);
     }
 
     /**
@@ -91,16 +91,16 @@ public class Basic {
     public static String genIdentityID(JSONObject jsonObject){
 
         try {
-            Verify.verifyParameter(Verify.Type.PrivateKeyUpper,jsonObject);
+            Verify.verifyParameter(Verify.Type.PrivateKey,jsonObject);
         }catch (Exception e){
             LOGGER.error(e.toString());
             return e.toString();
         }
-        String privateKey = jsonObject.getString("PrivateKey");
+        String privateKey = jsonObject.getString("privateKey");
         String address    = Ela.getIdentityIDFromPrivate(privateKey);
 
-        LOGGER.info(getSuccess("genIdentityID",address));
-        return getSuccess("genIdentityID",address);
+        LOGGER.info(getSuccess(address));
+        return getSuccess(address);
     }
 
     /**
@@ -116,8 +116,8 @@ public class Basic {
         resultMap.put("PublicKey",publicKey);
         resultMap.put("Address",address);
 
-        LOGGER.info(getSuccess("gen_priv_pub_addr",resultMap));
-        return getSuccess("gen_priv_pub_addr",resultMap);
+        LOGGER.info(getSuccess(resultMap));
+        return getSuccess(resultMap);
     }
 
     /**
@@ -127,7 +127,7 @@ public class Basic {
      */
     public static String checkAddress(JSONObject addresses){
         LinkedHashMap<String, Object> resultMap = new LinkedHashMap<String, Object>();
-        JSONArray addressesJSONArray = addresses.getJSONArray("Addresses");
+        JSONArray addressesJSONArray = addresses.getJSONArray("addresses");
         Object addressesObject = addressesJSONArray.get(0);
         if (addressesObject instanceof String){
             for (int i = 0 ; i < addressesJSONArray.size() ; i ++){
@@ -143,21 +143,21 @@ public class Basic {
             }
         }
 
-        LOGGER.info(getSuccess("checkAddress",resultMap));
-        return getSuccess("checkAddress",resultMap) ;
+        LOGGER.info(getSuccess(resultMap));
+        return getSuccess(resultMap) ;
     }
 
     /**
      * json return format
-     * @param action
      * @param resultMap
      * @return
      */
-    public static String getSuccess(String action, Object resultMap){
+    public static String getSuccess(Object resultMap){
         HashMap map = new HashMap();
-        map.put("Action",action);
-        map.put("Desc","SUCCESS");
-        map.put("Result",resultMap);
+        map.put("id","");
+        map.put("jsonrpc","2.0");
+        map.put("error","");
+        map.put("result",resultMap);
 
         return JSON.toJSONString(map);
     }
@@ -172,15 +172,15 @@ public class Basic {
 
         String address ;
         try {
-            Verify.verifyParameter(Verify.Type.BlockHashUpper,jsonObject);
-            String blockHash = jsonObject.getString("BlockHash");
+            Verify.verifyParameter(Verify.Type.BlockHash,jsonObject);
+            String blockHash = jsonObject.getString("blockHash");
             address = ECKey.toGenesisSignAddress(blockHash);
         } catch (SDKException e) {
             LOGGER.error(e.toString());
             return e.toString();
         }
-        LOGGER.info(getSuccess("genGenesisAddress",address));
-        return getSuccess("genGenesisAddress",address);
+        LOGGER.info(getSuccess(address));
+        return getSuccess(address);
     }
 
 
@@ -193,37 +193,37 @@ public class Basic {
 
         String address ;
         try {
-            final JSONArray PrivateKeys = jsonObject.getJSONArray("PrivateKeys");
+            final JSONArray PrivateKeys = jsonObject.getJSONArray("privateKeys");
             List<String> privateKeyList = new ArrayList<String>();
             for (int a = 0; a < PrivateKeys.size(); a++) {
-                Verify.verifyParameter(Verify.Type.PrivateKeyLower,(JSONObject) PrivateKeys.get(a));
+                Verify.verifyParameter(Verify.Type.PrivateKey,(JSONObject) PrivateKeys.get(a));
 
                 JSONObject privateKeyJson = (JSONObject) PrivateKeys.get(a);
                 String privatekey = privateKeyJson.getString("privateKey");
                 privateKeyList.add(privatekey);
             }
 
-            final int M = jsonObject.getInt("M");
+            final int M = jsonObject.getInt("m");
             address = Ela.getMultiSignAddress(privateKeyList, M);
         } catch (SDKException e) {
             LOGGER.error(e.toString());
             return e.toString();
         }
 
-        return getSuccess("genMultiSignAddress" , address);
+        return getSuccess(address);
     }
 
     public static String genNeoContractHashAndAddress(JSONObject jsonObject){
         try {
-            String contract = jsonObject.getString("Contract");
+            String contract = jsonObject.getString("contract");
             String contractHash = Ela.genNeoContractHash(contract);
             String contractAddress = Ela.genNeoContractAddress(contractHash);
             LinkedHashMap<String, Object> resultMap = new LinkedHashMap<String, Object>();
             resultMap.put("ContractHash",contractHash);
             resultMap.put("ContractAddress",contractAddress);
 
-            LOGGER.info(getSuccess("genNeoContractHashAndAddress",resultMap));
-            return getSuccess("genNeoContractHashAndAddress",resultMap);
+            LOGGER.info(getSuccess(resultMap));
+            return getSuccess(resultMap);
         }catch (Exception e) {
             LOGGER.error(e.toString());
             return e.toString();
@@ -232,11 +232,11 @@ public class Basic {
 
     public static String genNeoContractAddress(JSONObject jsonObject){
         try {
-            String contractHash = jsonObject.getString("ContractHash");
+            String contractHash = jsonObject.getString("contractHash");
             String contractAddress = Ela.genNeoContractAddress(contractHash);
 
-            LOGGER.info(getSuccess("genNeoContractAddress",contractAddress));
-            return getSuccess("genNeoContractAddress",contractAddress);
+            LOGGER.info(getSuccess(contractAddress));
+            return getSuccess(contractAddress);
         }catch (Exception e) {
             LOGGER.error(e.toString());
             return e.toString();
@@ -251,12 +251,12 @@ public class Basic {
      * @throws SDKException
      */
     public static PayloadRecord parsePayloadRecord(JSONObject json_transaction) throws SDKException {
-        Object payload = json_transaction.get("Payload");
+        Object payload = json_transaction.get("payload");
         if (payload != null){
-            final JSONObject PayloadObject = json_transaction.getJSONObject("Payload");
+            final JSONObject PayloadObject = json_transaction.getJSONObject("payload");
 
-            Verify.verifyParameter(Verify.Type.RecordTypeLower,PayloadObject);
-            Verify.verifyParameter(Verify.Type.RecordDataLower,PayloadObject);
+            Verify.verifyParameter(Verify.Type.RecordType,PayloadObject);
+            Verify.verifyParameter(Verify.Type.RecordData,PayloadObject);
 
             return new PayloadRecord(PayloadObject.getString("recordType"),PayloadObject.getString("recordData"));
         }else return null;
@@ -277,8 +277,8 @@ public class Basic {
         for (int t = 0; t < outputs.size(); t++) {
             JSONObject output = (JSONObject) outputs.get(t);
 
-            Verify.verifyParameter(Verify.Type.AddressLower,output);
-            Verify.verifyParameter(Verify.Type.AmountStrLower,output);
+            Verify.verifyParameter(Verify.Type.Address,output);
+            Verify.verifyParameter(Verify.Type.AmountStr,output);
 
             String amount = output.getString("amount");
             String address = output.getString("address");
@@ -293,9 +293,9 @@ public class Basic {
         for (int i = 0 ; i < utxoInputs.size() ; i++){
             JSONObject utxoInput = (JSONObject)utxoInputs.get(i);
 
-            Verify.verifyParameter(Verify.Type.TxidLower,utxoInput);
-            Verify.verifyParameter(Verify.Type.IndexLower,utxoInput);
-            Verify.verifyParameter(Verify.Type.PrivateKeyLower,utxoInput);
+            Verify.verifyParameter(Verify.Type.Txid,utxoInput);
+            Verify.verifyParameter(Verify.Type.Index,utxoInput);
+            Verify.verifyParameter(Verify.Type.PrivateKey,utxoInput);
 
 
             String txid = utxoInput.getString("txid");
@@ -314,9 +314,9 @@ public class Basic {
         for (int i = 0 ; i < utxoInputs.size() ; i++){
             JSONObject utxoInput = (JSONObject)utxoInputs.get(i);
 
-            Verify.verifyParameter(Verify.Type.TxidLower,utxoInput);
-            Verify.verifyParameter(Verify.Type.IndexLower,utxoInput);
-            Verify.verifyParameter(Verify.Type.AddressLower,utxoInput);
+            Verify.verifyParameter(Verify.Type.Txid,utxoInput);
+            Verify.verifyParameter(Verify.Type.Index,utxoInput);
+            Verify.verifyParameter(Verify.Type.Address,utxoInput);
 
             String txid = utxoInput.getString("txid");
             int index = utxoInput.getInt("index");
@@ -330,7 +330,7 @@ public class Basic {
         List<String> privateList = new LinkedList<String>();
         for (int i = 0; i < PrivateKeys.size(); i++) {
             JSONObject utxoInput = (JSONObject) PrivateKeys.get(i);
-            Verify.verifyParameter(Verify.Type.PrivateKeyLower,utxoInput);
+            Verify.verifyParameter(Verify.Type.PrivateKey,utxoInput);
             privateList.add(utxoInput.getString("privateKey"));
         }
         //去重
@@ -355,7 +355,7 @@ public class Basic {
         LinkedList<PayloadTransferCrossChainAsset> CrossChainAssetList = new LinkedList<PayloadTransferCrossChainAsset>();
         for (int n = 0; n < CrossChainAsset.size(); n++) {
             JSONObject output = (JSONObject) CrossChainAsset.get(n);
-            Verify.verifyParameter(Verify.Type.AmountStrLower,output);
+            Verify.verifyParameter(Verify.Type.AmountStr,output);
             String address = output.getString("address");
             String  amount = output.getString("amount");
             long longValue = Util.multiplyAmountELA(new BigDecimal(amount), ElaPrecision).longValue();
@@ -375,7 +375,7 @@ public class Basic {
         for (int t = 0; t < outputs.size(); t++) {
             JSONObject output = (JSONObject) outputs.get(t);
 
-            Verify.verifyParameter(Verify.Type.AmountStrLower,output);
+            Verify.verifyParameter(Verify.Type.AmountStr,output);
 
             //没有用到的blockhash是为了接口灵活，找零逻辑不用很麻烦
             String amount = output.getString("amount");
@@ -397,9 +397,9 @@ public class Basic {
         for (int t = 0; t < outputs.size(); t++) {
             JSONObject output = (JSONObject) outputs.get(t);
 
-            Verify.verifyParameter(Verify.Type.AssetIdLower,output);
-            Verify.verifyParameter(Verify.Type.AddressLower,output);
-            Verify.verifyParameter(Verify.Type.AmountStrLower,output);
+            Verify.verifyParameter(Verify.Type.AssetId,output);
+            Verify.verifyParameter(Verify.Type.Address,output);
+            Verify.verifyParameter(Verify.Type.AmountStr,output);
 
             String  assetId = output.getString("assetId");
             String address = output.getString("address");
@@ -423,7 +423,7 @@ public class Basic {
      */
     public static TxOutput[] parseRegisterOutput(PayloadRegisterAsset payload,JSONObject json_transaction) throws SDKException {
         LinkedList<TxOutput> outputList = new LinkedList<TxOutput>();
-        final JSONArray outputs = json_transaction.getJSONArray("Outputs");
+        final JSONArray outputs = json_transaction.getJSONArray("outputs");
         //添加注册资产
         registerToOutput(payload,outputList);
         //添加消费ELA
@@ -449,15 +449,15 @@ public class Basic {
      * @throws SDKException
      */
     public static PayloadRegisterAsset payloadRegisterAsset(JSONObject json_transaction) throws SDKException {
-        Object payload = json_transaction.get("Payload");
+        Object payload = json_transaction.get("payload");
         if (payload != null){
-            final JSONObject PayloadObject = json_transaction.getJSONObject("Payload");
+            final JSONObject PayloadObject = json_transaction.getJSONObject("payload");
 
-            Verify.verifyParameter(Verify.Type.NameLower,PayloadObject);
-            Verify.verifyParameter(Verify.Type.DescriptionLower,PayloadObject);
-            Verify.verifyParameter(Verify.Type.PrecisionLower,PayloadObject);
-            Verify.verifyParameter(Verify.Type.AddressLower,PayloadObject);
-            Verify.verifyParameter(Verify.Type.AmountLower,PayloadObject);
+            Verify.verifyParameter(Verify.Type.Name,PayloadObject);
+            Verify.verifyParameter(Verify.Type.Description,PayloadObject);
+            Verify.verifyParameter(Verify.Type.Precision,PayloadObject);
+            Verify.verifyParameter(Verify.Type.Address,PayloadObject);
+            Verify.verifyParameter(Verify.Type.Amount,PayloadObject);
 
             String assetname = PayloadObject.getString("name");
             String description = PayloadObject.getString("description");
@@ -481,9 +481,9 @@ public class Basic {
         byte[] code ;
 
         //ParamTypes
-        Object ParamTypes = json_transaction.get("ParamTypes");
+        Object ParamTypes = json_transaction.get("params");
         if (ParamTypes != null){
-            final JSONArray paramTypes = json_transaction.getJSONArray("ParamTypes");
+            final JSONArray paramTypes = json_transaction.getJSONArray("params");
             List<Byte> list = new ArrayList<>();
             for (int i = 0; i<paramTypes.size();i++){
                 String paramType = paramTypes.getString(i);
@@ -494,16 +494,16 @@ public class Basic {
         }else throw  new SDKException(ErrorCode.ParamErr("ParamTypes can not be empty"));
 
         //ReturnType
-        Object ReturnType = json_transaction.get("ReturnType");
+        Object ReturnType = json_transaction.get("returnType");
         if (ReturnType != null){
-            String returnTypeStr = json_transaction.getString("ReturnType");
+            String returnTypeStr = json_transaction.getString("returnType");
             returnTypeByte = parameterTypemap.get(returnTypeStr);
         }else throw new SDKException(ErrorCode.ParamErr("ReturnType can not be empty"));
 
         //ContractCode
-        Object ContractCode = json_transaction.get("ContractCode");
+        Object ContractCode = json_transaction.get("contractCode");
         if (ContractCode != null){
-            String contractCodeStr = json_transaction.getString("ContractCode");
+            String contractCodeStr = json_transaction.getString("contractCode");
             code = DatatypeConverter.parseHexBinary(contractCodeStr);
 
 //            if (!(code[code.length -1] == SMART_CONTRACT)){
@@ -525,15 +525,15 @@ public class Basic {
     public static PayloadDeploy parsePayloadDeploy(JSONObject json_transaction) throws SDKException {
 
         //programHash
-        JSONObject utxoInput = (JSONObject) json_transaction.getJSONArray("UTXOInputs").get(0);
+        JSONObject utxoInput = (JSONObject) json_transaction.getJSONArray("inputs").get(0);
         String privateKey = utxoInput.getString("privateKey");
         String address = Ela.getAddressFromPrivate(privateKey);
         byte[] programHash = Util.ToScriptHash(address);
 
         //Payload
-        Object PayloadDeploy = json_transaction.get("Payload");
+        Object PayloadDeploy = json_transaction.get("payload");
         if (PayloadDeploy != null){
-            final JSONObject PayloadObject = json_transaction.getJSONObject("Payload");
+            final JSONObject PayloadObject = json_transaction.getJSONObject("payload");
 
             String name = PayloadObject.getString("name");
             String codeVersion = PayloadObject.getString("codeVersion");
@@ -555,9 +555,9 @@ public class Basic {
         byte[] paramByte;
 
         //ParamTypes
-        Object ParamTypes = json_transaction.get("ParamTypes");
+        Object ParamTypes = json_transaction.get("params");
         if (ParamTypes != null) {
-            JSONArray paramTypes = json_transaction.getJSONArray("ParamTypes");
+            JSONArray paramTypes = json_transaction.getJSONArray("params");
 
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             DataOutputStream o = new DataOutputStream(baos);
@@ -568,7 +568,7 @@ public class Basic {
         }else throw new SDKException(ErrorCode.ParamErr("ParamTypes can not be empty"));
 
         //ContractHash
-        Object ContractHash = json_transaction.get("ContractHash");
+        Object ContractHash = json_transaction.get("contractHash");
         if (ContractHash != null) {
             //合约hash不需要反转
             contractHash = DatatypeConverter.parseHexBinary(json_transaction.getString("ContractHash"));
@@ -597,9 +597,9 @@ public class Basic {
         byte[] programHash = Util.ToScriptHash(address);
 
         // gas
-        Object Gas = json_transaction.get("Gas");
+        Object Gas = json_transaction.get("gas");
         if (Gas != null) {
-            String gas = json_transaction.getString("Gas");
+            String gas = json_transaction.getString("gas");
             long longValue = Util.multiplyAmountELA(new BigDecimal(gas), ElaPrecision).toBigInteger().longValue();
             return new PayloadInvoke(contractHash,paramByte,programHash,longValue);
         }else throw new SDKException(ErrorCode.ParamErr("Gas can not be empty"));

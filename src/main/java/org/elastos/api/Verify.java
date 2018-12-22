@@ -17,28 +17,27 @@ import static org.elastos.common.Util.isAscii;
  */
 public class Verify {
     public enum Type{
-        PrivateKeyLower("privateKey"),
-        PrivateKeyUpper("PrivateKey"),
-        AddressLower("address"),
-        ChangeAddress("ChangeAddress"),
-        AmountLower("amount"),
-        AmountStrLower("amount"),
-        AssetIdLower("assetId"),
-        MUpper("M"),
+        PrivateKey("privateKey"),
+        Address("address"),
+        ChangeAddress("changeAddress"),
+        Amount("amount"),
+        AmountStr("amount"),
+        AssetId("assetId"),
+        M("m"),
         Host("Host"),
         Fee("Fee"),
         RegisterAssetFee("RegisterAssetFee"),
         Confirmation("Confirmation"),
-        TxidLower("txid"),
-        IndexLower("index"),
-        PasswordLower("password"),
-        RecordTypeLower("recordType"),
-        RecordDataLower("recordData"),
-        BlockHashUpper("BlockHash"),
+        Txid("txid"),
+        Index("index"),
+        Password("password"),
+        RecordType("recordType"),
+        RecordData("recordData"),
+        BlockHash("blockHash"),
 
-        NameLower("name"),
-        DescriptionLower("description"),
-        PrecisionLower("precision");
+        Name("name"),
+        Description("description"),
+        Precision("precision");
         private String type;
         private Type(String t) {
             this.type = t;
@@ -51,20 +50,7 @@ public class Verify {
 
     public static void verifyParameter(Type type , JSONObject jsonObject) throws SDKException {
         switch (type){
-            case PrivateKeyUpper:
-                Object PrivateKeyUpper = jsonObject.get(type.getValue());
-                if (PrivateKeyUpper != null) {
-                    if (((String)PrivateKeyUpper).length() != 64){
-                        throw new SDKException(ErrorCode.INVALID_PRPVATE_KEY);
-                    }
-                    try {
-                        DatatypeConverter.parseHexBinary((String)PrivateKeyUpper);
-                    }catch (Exception e){
-                        throw new SDKException(ErrorCode.INVALID_PRPVATE_KEY);
-                    }
-                }else throw new SDKException(ErrorCode.PRIVATE_KEY_NOT_NULL);
-                break;
-            case BlockHashUpper:
+            case BlockHash:
                 Object BlockHashUpper = jsonObject.get(type.getValue());
                 if (BlockHashUpper != null) {
                     if (((String)BlockHashUpper).length() != 64){
@@ -77,14 +63,14 @@ public class Verify {
                     }
                 }else throw new SDKException(ErrorCode.BLOCK_HASH_NOT_NULL);
                 break;
-            case AmountStrLower:
+            case AmountStr:
                 Object AmountStrLower = jsonObject.get(type.getValue());
                 if (AmountStrLower != null) {
                     if (AmountStrLower instanceof String ){}else throw new SDKException(ErrorCode.INVALID_AMOUNT_STR);
                 }else throw new SDKException(ErrorCode.AMOUNT_NOT_NULL) ;
                 break;
 
-            case AssetIdLower:
+            case AssetId:
                 Object AssetIdLower = jsonObject.get(type.getValue());
                 if (AssetIdLower != null) {
                     if (((String)AssetIdLower).length() != 64){
@@ -97,7 +83,7 @@ public class Verify {
                     }
                 }else throw new SDKException(ErrorCode.ASSET_ID_NOT_NULL);
                 break;
-            case PrivateKeyLower:
+            case PrivateKey:
                 Object PrivateKeyLower = jsonObject.get(type.getValue());
                 if (PrivateKeyLower != null) {
                     if (((String)PrivateKeyLower).length() != 64){
@@ -110,7 +96,7 @@ public class Verify {
                     }
                 }else throw new SDKException(ErrorCode.PRIVATE_KEY_NOT_NULL);
                 break;
-            case TxidLower:
+            case Txid:
                 Object TxidLower = jsonObject.get(type.getValue());
                 if (TxidLower != null) {
                     if (((String)TxidLower).length() != 64){
@@ -118,7 +104,7 @@ public class Verify {
                     }
                 }else throw new SDKException(ErrorCode.TX_ID_NOT_NULL);
                 break;
-            case PasswordLower:
+            case Password:
                 Object PasswordLower = jsonObject.get(type.getValue());
                 if (PasswordLower != null) {
                     if (!(PasswordLower instanceof String)){
@@ -126,7 +112,7 @@ public class Verify {
                     }
                 }else throw new SDKException(ErrorCode.PASSWORD_NOT_NULL);
                 break;
-            case AddressLower:
+            case Address:
                 Object AddressLower = jsonObject.get(type.getValue());
                 if (AddressLower != null) {
                     try {
@@ -156,13 +142,13 @@ public class Verify {
                 Object Host = jsonObject.get(type.getValue());
                 if (Host == null) throw new SDKException(ErrorCode.HOST_NOT_NULL);
                 break;
-            case AmountLower:
+            case Amount:
                 Object AmountLower = jsonObject.get(type.getValue());
                 if (AmountLower != null) {
                     if (AmountLower instanceof Long || AmountLower instanceof Integer && (int)AmountLower >= 0){}else throw new SDKException(ErrorCode.INVALID_AMOUNT);
                 }else throw new SDKException(ErrorCode.AMOUNT_NOT_NULL);
                 break;
-            case MUpper:
+            case M:
                 Object MUpper = jsonObject.get(type.getValue());
                 if (MUpper != null) {
                     if (MUpper instanceof Integer && (int)MUpper >= 0){}else throw new SDKException(ErrorCode.INVALID_M);
@@ -186,39 +172,39 @@ public class Verify {
                     if (Confirmation instanceof Integer && (int)Confirmation >= 0){}else throw new SDKException(ErrorCode.INVALID_CONFIRMATION);
                 }else throw new SDKException(ErrorCode.CONFIRMATION_NOT_NULL);
                 break;
-            case IndexLower:
+            case Index:
                 Object IndexLower = jsonObject.get(type.getValue());
                 if (IndexLower != null) {
                     if (IndexLower instanceof Long || IndexLower instanceof Integer && (int)IndexLower  >= 0){}else throw new SDKException(ErrorCode.INVALID_INDEX);
                 }else throw new SDKException(ErrorCode.INDEX_NOT_NULL);
                 break;
-            case RecordTypeLower:
+            case RecordType:
                 Object RecordTypeLower = jsonObject.get(type.getValue());
                 if (RecordTypeLower != null) {
                     if (Util.isChinese((String)RecordTypeLower))throw new SDKException(ErrorCode.INVALID_RECORD_TYPE);
                 }else throw new SDKException(ErrorCode.RECORD_TYPE_NOT_NULL);
                 break;
-            case RecordDataLower:
+            case RecordData:
                 Object RecordDataLower = jsonObject.get(type.getValue());
                 if (RecordDataLower != null) {
                 }else throw new SDKException(ErrorCode.RECORD_DATA_NOT_NULL);
                 break;
 
 
-            case NameLower:
+            case Name:
                 Object NameLower = jsonObject.get(type.getValue());
                 if (NameLower != null) {
                     boolean isWord=((String)NameLower).matches("[a-zA-Z0-9]+");
                     if (!isWord)throw new SDKException(ErrorCode.INVALID_NAME);
                 }else throw new SDKException(ErrorCode.NAME_NOT_NULL);
                 break;
-            case DescriptionLower:
+            case Description:
                 Object DescriptionLower = jsonObject.get(type.getValue());
                 if (DescriptionLower != null) {
                     if (!isAscii((String)DescriptionLower))throw new SDKException(ErrorCode.INVALID_DESCRIPTION);
                 }else throw new SDKException(ErrorCode.DESCRIPTION_NOT_NULL);
                 break;
-            case PrecisionLower:
+            case Precision:
                 Object PrecisionLower = jsonObject.get(type.getValue());
                 if (PrecisionLower != null) {
                     if (PrecisionLower instanceof Integer && (int)PrecisionLower >= 0){}else throw new SDKException(ErrorCode.INVALID_PRECISION);

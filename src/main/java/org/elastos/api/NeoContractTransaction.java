@@ -21,10 +21,9 @@ public class NeoContractTransaction {
 
     public static String genDeployContractTx(JSONObject inputsAddOutpus){
         try {
-            final JSONArray transaction = inputsAddOutpus.getJSONArray("Transactions");
-            JSONObject json_transaction = (JSONObject) transaction.get(0);
-            final JSONArray utxoInputs = json_transaction.getJSONArray("UTXOInputs");
-            final JSONArray outputs = json_transaction.getJSONArray("Outputs");
+            final JSONObject json_transaction = inputsAddOutpus.getJSONObject("transaction");
+            final JSONArray utxoInputs = json_transaction.getJSONArray("inputs");
+            final JSONArray outputs = json_transaction.getJSONArray("outputs");
 
             //解析inputs
             UTXOTxInput[] UTXOTxInputs = Basic.parseInputs(utxoInputs).toArray(new UTXOTxInput[utxoInputs.size()]);
@@ -40,8 +39,8 @@ public class NeoContractTransaction {
             resultMap.put("rawTx", rawTx.getRawTxString());
             resultMap.put("txHash", rawTx.getTxHash());
 
-            LOGGER.info(Basic.getSuccess("genDeployContractTx" ,resultMap));
-            return Basic.getSuccess("genDeployContractTx" , resultMap);
+            LOGGER.info(Basic.getSuccess(resultMap));
+            return Basic.getSuccess(resultMap);
         } catch (Exception e) {
             LOGGER.error(e.toString());
             return e.toString();
@@ -50,10 +49,9 @@ public class NeoContractTransaction {
 
     public static String genInvokeContractTx(JSONObject inputsAddOutpus){
         try {
-            final JSONArray transaction = inputsAddOutpus.getJSONArray("Transactions");
-            JSONObject json_transaction = (JSONObject) transaction.get(0);
-            final JSONArray utxoInputs = json_transaction.getJSONArray("UTXOInputs");
-            final JSONArray outputs = json_transaction.getJSONArray("Outputs");
+            final JSONObject json_transaction = inputsAddOutpus.getJSONObject("transaction");
+            final JSONArray utxoInputs = json_transaction.getJSONArray("inputs");
+            final JSONArray outputs = json_transaction.getJSONArray("outputs");
 
             //解析inputs
             UTXOTxInput[] UTXOTxInputs = Basic.parseInputs(utxoInputs).toArray(new UTXOTxInput[utxoInputs.size()]);
@@ -67,8 +65,8 @@ public class NeoContractTransaction {
             resultMap.put("rawTx", rawTx.getRawTxString());
             resultMap.put("txHash", rawTx.getTxHash());
 
-            LOGGER.info(Basic.getSuccess("genInvokeContractTx" ,resultMap));
-            return Basic.getSuccess("genInvokeContractTx" , resultMap);
+            LOGGER.info(Basic.getSuccess(resultMap));
+            return Basic.getSuccess(resultMap);
         } catch (Exception e) {
             LOGGER.error(e.toString());
             return e.toString();

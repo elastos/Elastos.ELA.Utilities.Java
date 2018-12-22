@@ -31,10 +31,9 @@ public class ELATransaction {
      */
     public static String genRawTransaction(JSONObject inputsAddOutpus){
         try {
-            final JSONArray transaction = inputsAddOutpus.getJSONArray("Transactions");
-            JSONObject json_transaction = (JSONObject) transaction.get(0);
-            final JSONArray utxoInputs = json_transaction.getJSONArray("UTXOInputs");
-            final JSONArray outputs = json_transaction.getJSONArray("Outputs");
+            final JSONObject json_transaction = inputsAddOutpus.getJSONObject("transaction");
+            final JSONArray utxoInputs = json_transaction.getJSONArray("inputs");
+            final JSONArray outputs = json_transaction.getJSONArray("outputs");
 
             //解析inputs
             UTXOTxInput[] UTXOTxInputs = Basic.parseInputs(utxoInputs).toArray(new UTXOTxInput[utxoInputs.size()]);
@@ -43,7 +42,7 @@ public class ELATransaction {
             //解析payloadRecord
             PayloadRecord payload   = Basic.parsePayloadRecord(json_transaction);
 
-            boolean bool = json_transaction.has("Memo");
+            boolean bool = json_transaction.has("memo");
 
             //创建rawTransaction
             LinkedHashMap<String, Object> resultMap = new LinkedHashMap<String, Object>();
@@ -54,7 +53,7 @@ public class ELATransaction {
             }else if (payload == null && !bool){
                 rawTx = Ela.makeAndSignTx(UTXOTxInputs,txOutputs);
             }else if (bool){
-                String memo = json_transaction.getString("Memo");
+                String memo = json_transaction.getString("memo");
                 rawTx = Ela.makeAndSignTx(UTXOTxInputs,txOutputs,memo);
             }else{
                 rawTx = Ela.makeAndSignTx(UTXOTxInputs,txOutputs,payload);
@@ -62,8 +61,8 @@ public class ELATransaction {
             resultMap.put("rawTx",rawTx.getRawTxString());
             resultMap.put("txHash",rawTx.getTxHash());
 
-            LOGGER.info(Basic.getSuccess("genRawTransaction",resultMap));
-            return Basic.getSuccess("genRawTransaction",resultMap);
+            LOGGER.info(Basic.getSuccess(resultMap));
+            return Basic.getSuccess(resultMap);
         } catch (Exception e) {
             LOGGER.error(e.toString());
             return e.toString();
@@ -80,10 +79,9 @@ public class ELATransaction {
     public static String genRawTransactionByPrivateKey(JSONObject inputsAddOutpus){
 
         try {
-            final JSONArray transaction = inputsAddOutpus.getJSONArray("Transactions");
-            JSONObject json_transaction = (JSONObject) transaction.get(0);
-            final JSONArray PrivateKeys = json_transaction.getJSONArray("PrivateKeys");
-            final JSONArray outputs = json_transaction.getJSONArray("Outputs");
+            final JSONObject json_transaction = inputsAddOutpus.getJSONObject("transaction");
+            final JSONArray PrivateKeys = json_transaction.getJSONArray("privateKeys");
+            final JSONArray outputs = json_transaction.getJSONArray("outputs");
 
             //解析PrivateKeys
             List<String> privateList = Basic.parsePrivates(PrivateKeys);
@@ -94,18 +92,18 @@ public class ELATransaction {
 
             Verify.verifyParameter(Verify.Type.ChangeAddress,json_transaction);
 
-            String changeAddress = json_transaction.getString("ChangeAddress");
+            String changeAddress = json_transaction.getString("changeAddress");
 
             LinkedHashMap<String, Object> resultMap = new LinkedHashMap<String, Object>();
 
             String rawTx ;
-            boolean bool = json_transaction.has("Memo");
+            boolean bool = json_transaction.has("memo");
             if (payload != null && bool){
                 return ErrorCode.ParamErr("PayloadRecord And Memo can't be used at the same time");
             }else if (payload == null && !bool){
                 rawTx = UsableUtxo.makeAndSignTx(privateList, outputList, changeAddress);
             }else if (bool){
-                String memo = json_transaction.getString("Memo");
+                String memo = json_transaction.getString("memo");
                 rawTx = UsableUtxo.makeAndSignTx(privateList, outputList, changeAddress,memo);
             }else{
                 rawTx = UsableUtxo.makeAndSignTx(privateList, outputList, changeAddress,payload);
@@ -113,8 +111,8 @@ public class ELATransaction {
             resultMap.put("rawTx", rawTx);
             resultMap.put("txHash", UsableUtxo.txHash);
 
-            LOGGER.info(Basic.getSuccess("genRawTransactionByPrivateKey" ,resultMap));
-            return Basic.getSuccess("genRawTransactionByPrivateKey" ,resultMap);
+            LOGGER.info(Basic.getSuccess(resultMap));
+            return Basic.getSuccess(resultMap);
         } catch (Exception e) {
             LOGGER.error(e.toString());
             return e.toString();
@@ -131,13 +129,12 @@ public class ELATransaction {
 
     public static String genMultiSignTx(JSONObject inputsAddOutpus){
 
-        final JSONArray transaction = inputsAddOutpus.getJSONArray("Transactions");
-        JSONObject json_transaction = (JSONObject) transaction.get(0);
-        final JSONArray utxoInputs = json_transaction.getJSONArray("UTXOInputs");
+        final JSONObject json_transaction = inputsAddOutpus.getJSONObject("transaction");
+        final JSONArray utxoInputs = json_transaction.getJSONArray("inputs");
 
         if (utxoInputs.size() < 2) {
-            final JSONArray outputs = json_transaction.getJSONArray("Outputs");
-            final JSONArray privateKeyScripte = json_transaction.getJSONArray("PrivateKeyScripte");
+            final JSONArray outputs = json_transaction.getJSONArray("outputs");
+            final JSONArray privateKeyScripte = json_transaction.getJSONArray("privateKeyScripte");
 
             try {
                 //解析inputs
@@ -150,10 +147,10 @@ public class ELATransaction {
                 //解析 创建赎回脚本所需要的私钥
                 List<String> privateKeyScripteList = Basic.parsePrivates(privateKeyScripte);
 
-                boolean bool = json_transaction.has("Memo");
+                boolean bool = json_transaction.has("memo");
 
-                Verify.verifyParameter(Verify.Type.MUpper,json_transaction);
-                final int M = json_transaction.getInt("M");
+                Verify.verifyParameter(Verify.Type.M,json_transaction);
+                final int M = json_transaction.getInt("m");
 
                 //得到 签名所需要的私钥
                 ArrayList<String> privateKeySignList = Basic.genPrivateKeySignByM(M, privateKeyScripte);
@@ -165,7 +162,7 @@ public class ELATransaction {
                 }else if (payload == null && !bool){
                     rawTx = Ela.multiSignTransaction(UTXOTxInputs, txOutputs, privateKeyScripteList, privateKeySignList, M);
                 }else if (bool){
-                    String memo = json_transaction.getString("Memo");
+                    String memo = json_transaction.getString("memo");
                     rawTx = Ela.multiSignTransaction(UTXOTxInputs, txOutputs, privateKeyScripteList, privateKeySignList, M, memo);
                 }else{
                     rawTx = Ela.multiSignTransaction(UTXOTxInputs, txOutputs, privateKeyScripteList, privateKeySignList, M,payload);
@@ -174,7 +171,7 @@ public class ELATransaction {
                 resultMap.put("txHash", rawTx.getTxHash());
 
 
-                return Basic.getSuccess("genMultiSignTx", resultMap);
+                return Basic.getSuccess(resultMap);
             } catch (Exception e) {
                 LOGGER.error(e.toString());
                 return e.toString();
@@ -221,7 +218,7 @@ public class ELATransaction {
         DataInputStream dos = new DataInputStream(byteArrayInputStream);
         Map resultMap = Tx.deserialize(dos);
 
-        LOGGER.info(Basic.getSuccess("decodeRawTransaction",resultMap));
-        return Basic.getSuccess("decodeRawTransaction",resultMap);
+        LOGGER.info(Basic.getSuccess(resultMap));
+        return Basic.getSuccess(resultMap);
     }
 }

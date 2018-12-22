@@ -6,10 +6,16 @@ import java.util.HashMap;
 
 public class ErrorCode {
     public static String getError(int code, String msg) {
+
+        HashMap m = new HashMap();
+        m.put("code",code);
+        m.put("id","");
+        m.put("message",msg);
+
         HashMap map = new HashMap();
-        map.put("Code", code);
-        map.put("Desc", "Error");
-        map.put("Result", msg);
+        map.put("error", m);
+        map.put("jsonrpc", "2.0");
+        map.put("result", "");
         return JSON.toJSONString(map);
     }
 
@@ -44,7 +50,7 @@ public class ErrorCode {
     public static String RECORD_DATA_NOT_NULL = getError(51025, "recordData can not be empty");
     public static String INVALID_BLOCK_HASH = getError(51026, "invalid blockHash");
     public static String BLOCK_HASH_NOT_NULL = getError(51027, "blockHash key can not be empty");
-    public static String INVALID_M = getError(51028, "invalid M");
+    public static String INVALID_M = getError(51028, "invalid m");
     public static String M_NOT_NULL = getError(51029, "M can not be empty");
 
     public static String INVALID_ASSET_ID = getError(51030, "invalid assetId");

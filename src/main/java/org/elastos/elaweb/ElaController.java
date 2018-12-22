@@ -26,29 +26,22 @@ public class ElaController {
     public static String processMethod (String params) throws Exception {
 
         LOGGER.info(params);
-
         JSONObject jsonObject = JSONObject.fromObject(params);
-        JSONArray jsonArray = jsonObject.getJSONArray("params");
         String method = jsonObject.getString("method");
-        if (jsonArray.size() == 0) {
-            switch (method) {
-                case "genPrivateKey":
-                    return Basic.genPrivateKey();
-
-                case "gen_priv_pub_addr":
-                    return Basic.gen_priv_pub_addr();
-
-                case "getAccounts":
-                    return Account.getAccounts();
-
-                case "getAccountAddresses":
-                    return Account.getAccountAddresses();
-                default:
-                    return ErrorCode.ParamErr(method + " method does not exist");
-            }
-        }
-        JSONObject param = (JSONObject)jsonArray.get(0);
+        JSONObject param = jsonObject.getJSONObject("params");
         switch (method) {
+            case "genPrivateKey":
+                return Basic.genPrivateKey();
+
+            case "gen_priv_pub_addr":
+                return Basic.gen_priv_pub_addr();
+
+            case "getAccounts":
+                return Account.getAccounts();
+
+            case "getAccountAddresses":
+                return Account.getAccountAddresses();
+
             case "genPublicKey":
                 return Basic.genPublicKey(param);
 
@@ -92,7 +85,7 @@ public class ElaController {
                 return ELATransaction.genRawTransaction(param);
 
             case "decodeRawTransaction":
-                String rawTransaction = param.getString("RawTransaction");
+                String rawTransaction = param.getString("rawTransaction");
                 return ELATransaction.decodeRawTransaction(rawTransaction);
 
             case "genRawTransactionByPrivateKey":

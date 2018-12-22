@@ -31,9 +31,7 @@ public class Account {
      */
     public static String genTxByAccount(JSONObject outpus){
         try {
-            final JSONArray transaction = outpus.getJSONArray("Transactions");
-            JSONObject json_transaction = (JSONObject) transaction.get(0);
-
+            final JSONObject json_transaction = outpus.getJSONObject("transaction");
             final JSONArray outputs = json_transaction.getJSONArray("Outputs");
 
             List<String> privateList = new LinkedList<String>();
@@ -45,8 +43,8 @@ public class Account {
                     JSONObject JsonAccount = (JSONObject) accountArray.get(i);
 
                     try {
-                        Verify.verifyParameter(Verify.Type.AddressLower, JsonAccount);
-                        Verify.verifyParameter(Verify.Type.PasswordLower, JsonAccount);
+                        Verify.verifyParameter(Verify.Type.Address, JsonAccount);
+                        Verify.verifyParameter(Verify.Type.Password, JsonAccount);
                     } catch (Exception e) {
                         LOGGER.error(e.toString());
                         return e.toString();
@@ -91,8 +89,8 @@ public class Account {
             resultMap.put("rawTx", rawTx);
             resultMap.put("txHash", UsableUtxo.txHash);
 
-            LOGGER.info(Basic.getSuccess("genTxByAccount" ,resultMap));
-            return Basic.getSuccess("genTxByAccount" ,resultMap);
+            LOGGER.info(Basic.getSuccess(resultMap));
+            return Basic.getSuccess(resultMap);
         } catch (Exception e) {
             LOGGER.error(e.toString());
             return e.toString();
@@ -106,7 +104,7 @@ public class Account {
         for (int i = 0; i < accountArray.size(); i++) {
             JSONObject JsonAccount = (JSONObject) accountArray.get(i);
             try {
-                Verify.verifyParameter(Verify.Type.PasswordLower,JsonAccount);
+                Verify.verifyParameter(Verify.Type.Password,JsonAccount);
                 String password = JsonAccount.getString("password");
                 account = WalletMgr.createAccount(password);
             } catch (Exception e) {
@@ -115,8 +113,8 @@ public class Account {
             }
         }
 
-        LOGGER.info(Basic.getSuccess("createAccount" ,account));
-        return Basic.getSuccess("createAccount",account);
+        LOGGER.info(Basic.getSuccess(account));
+        return Basic.getSuccess(account);
     }
 
     public static String importAccount(JSONObject param){
@@ -126,8 +124,8 @@ public class Account {
         for (int i = 0; i < accountArray.size(); i++) {
             JSONObject JsonAccount = (JSONObject) accountArray.get(i);
             try {
-                Verify.verifyParameter(Verify.Type.PasswordLower,JsonAccount);
-                Verify.verifyParameter(Verify.Type.PrivateKeyLower,JsonAccount);
+                Verify.verifyParameter(Verify.Type.Password,JsonAccount);
+                Verify.verifyParameter(Verify.Type.PrivateKey,JsonAccount);
                 String privateKey = JsonAccount.getString("privateKey");
                 String password = JsonAccount.getString("password");
                 account = WalletMgr.addAccount(password,privateKey);
@@ -137,8 +135,8 @@ public class Account {
             }
         }
 
-        LOGGER.info(Basic.getSuccess("importAccount" ,account));
-        return Basic.getSuccess("importAccount",account);
+        LOGGER.info(Basic.getSuccess(account));
+        return Basic.getSuccess(account);
     }
 
     public static String removeAccount(JSONObject param){
@@ -146,13 +144,13 @@ public class Account {
             final JSONArray accountArray = param.getJSONArray("Account");
             JSONObject JsonAccount = (JSONObject) accountArray.get(0);
 
-            Verify.verifyParameter(Verify.Type.PasswordLower,JsonAccount);
-            Verify.verifyParameter(Verify.Type.AddressLower,JsonAccount);
+            Verify.verifyParameter(Verify.Type.Password,JsonAccount);
+            Verify.verifyParameter(Verify.Type.Address,JsonAccount);
             String address = JsonAccount.getString("address");
             String password = JsonAccount.getString("password");
             JSONArray account = WalletMgr.removeAccount(password,address);
-            LOGGER.info(Basic.getSuccess("removeAccount" ,account));
-            return Basic.getSuccess("removeAccount",account);
+            LOGGER.info(Basic.getSuccess(account));
+            return Basic.getSuccess(account);
         } catch (Exception e) {
             LOGGER.error(e.toString());
             return e.toString();
@@ -162,8 +160,8 @@ public class Account {
     public static String getAccountAddresses(){
         try {
             String account = WalletMgr.getAccountAllAddress();
-            LOGGER.info(Basic.getSuccess("getAccountAddresses" ,account));
-            return Basic.getSuccess("getAccountAddresses",account);
+            LOGGER.info(Basic.getSuccess(account));
+            return Basic.getSuccess(account);
         } catch (SDKException e) {
             LOGGER.error(e.toString());
             return e.toString();
@@ -181,8 +179,8 @@ public class Account {
             JSONObject JsonAccount = (JSONObject) accountArray.get(i);
             String privateKey ;
             try {
-                Verify.verifyParameter(Verify.Type.PasswordLower,JsonAccount);
-                Verify.verifyParameter(Verify.Type.AddressLower,JsonAccount);
+                Verify.verifyParameter(Verify.Type.Password,JsonAccount);
+                Verify.verifyParameter(Verify.Type.Address,JsonAccount);
                 String address = JsonAccount.getString("address");
                 String password = JsonAccount.getString("password");
                 privateKey = WalletMgr.getAccountPrivateKey(password,address);
@@ -193,15 +191,15 @@ public class Account {
             privateKeyList.add(privateKey);
         }
 
-        LOGGER.info(Basic.getSuccess("exportPrivateKey" ,privateKeyList));
-        return Basic.getSuccess("exportPrivateKey",privateKeyList);
+        LOGGER.info(Basic.getSuccess(privateKeyList));
+        return Basic.getSuccess(privateKeyList);
     }
 
     public static String getAccounts(){
         JSONArray account = KeystoreFile.readAccount();
 
-        LOGGER.info(Basic.getSuccess("getAccounts" ,account));
-        return Basic.getSuccess("getAccounts",account);
+        LOGGER.info(Basic.getSuccess(account));
+        return Basic.getSuccess(account);
     }
 
 }

@@ -32,12 +32,11 @@ public class CrossChainTransaction {
 
     public static String genCrossChainTx(JSONObject inputsAddOutpus){
         try {
-            final JSONArray transaction = inputsAddOutpus.getJSONArray("Transactions");
-            JSONObject json_transaction = (JSONObject) transaction.get(0);
-            final JSONArray utxoInputs = json_transaction.getJSONArray("UTXOInputs");
-            final JSONArray outputs = json_transaction.getJSONArray("Outputs");
-            final JSONArray CrossChainAsset = json_transaction.getJSONArray("CrossChainAsset");
-            final JSONArray privateKeySign = json_transaction.getJSONArray("PrivateKeySign");
+            final JSONObject json_transaction = inputsAddOutpus.getJSONObject("transaction");
+            final JSONArray utxoInputs = json_transaction.getJSONArray("inputs");
+            final JSONArray outputs = json_transaction.getJSONArray("outputs");
+            final JSONArray CrossChainAsset = json_transaction.getJSONArray("crossChainAsset");
+            final JSONArray privateKeySign = json_transaction.getJSONArray("privateKeySign");
 
             //解析inputs
             UTXOTxInput[] UTXOTxInputs = Basic.parseInputsAddress(utxoInputs).toArray(new UTXOTxInput[utxoInputs.size()]);
@@ -53,8 +52,8 @@ public class CrossChainTransaction {
             resultMap.put("rawTx", rawTx.getRawTxString());
             resultMap.put("txHash", rawTx.getTxHash());
 
-            LOGGER.info(Basic.getSuccess("genCrossChainTx" ,resultMap));
-            return Basic.getSuccess("genCrossChainTx" , resultMap);
+            LOGGER.info(Basic.getSuccess(resultMap));
+            return Basic.getSuccess(resultMap);
         } catch (Exception e) {
             LOGGER.error(e.toString());
             return e.toString();
@@ -63,11 +62,10 @@ public class CrossChainTransaction {
 
     public static String genCrossChainTxByPrivateKey(JSONObject inputsAddOutpus){
         try {
-            final JSONArray transaction = inputsAddOutpus.getJSONArray("Transactions");
-            JSONObject json_transaction = (JSONObject) transaction.get(0);
-            final JSONArray PrivateKeys = json_transaction.getJSONArray("PrivateKeys");
-            final JSONArray outputs = json_transaction.getJSONArray("Outputs");
-            final JSONArray CrossChainAsset = json_transaction.getJSONArray("CrossChainAsset");
+            final JSONObject json_transaction = inputsAddOutpus.getJSONObject("transaction");
+            final JSONArray PrivateKeys = json_transaction.getJSONArray("privateKeys");
+            final JSONArray outputs = json_transaction.getJSONArray("outputs");
+            final JSONArray CrossChainAsset = json_transaction.getJSONArray("crossChainAsset");
 
             List<String> privateList = Basic.parsePrivates(PrivateKeys);
             //解析outputs
@@ -76,15 +74,15 @@ public class CrossChainTransaction {
             PayloadTransferCrossChainAsset[] payloadTransferCrossChainAssets = Basic.parseCrossChainAsset(CrossChainAsset).toArray(new PayloadTransferCrossChainAsset[CrossChainAsset.size()]);
 
             Verify.verifyParameter(Verify.Type.ChangeAddress,json_transaction);
-            String changeAddress = json_transaction.getString("ChangeAddress");
+            String changeAddress = json_transaction.getString("changeAddress");
 
             LinkedHashMap<String, Object> resultMap = new LinkedHashMap<String, Object>();
             RawTx rawTx = UsableUtxo.makeAndSignTxByCrossChain(privateList, txOutputs,payloadTransferCrossChainAssets,changeAddress);
             resultMap.put("rawTx", rawTx.getRawTxString());
             resultMap.put("txHash", rawTx.getTxHash());
 
-            LOGGER.info(Basic.getSuccess("genCrossChainTxByPrivateKey" ,resultMap));
-            return Basic.getSuccess("genCrossChainTxByPrivateKey" , resultMap);
+            LOGGER.info(Basic.getSuccess(resultMap));
+            return Basic.getSuccess(resultMap);
         } catch (Exception e) {
             LOGGER.error(e.toString());
             return e.toString();
@@ -101,14 +99,13 @@ public class CrossChainTransaction {
 
     public static String genCrossChainMultiSignTx(JSONObject inputsAddOutpus){
 
-        final JSONArray transaction = inputsAddOutpus.getJSONArray("Transactions");
-        JSONObject json_transaction = (JSONObject) transaction.get(0);
-        final JSONArray utxoInputs = json_transaction.getJSONArray("UTXOInputs");
+        final JSONObject json_transaction = inputsAddOutpus.getJSONObject("transaction");
+        final JSONArray utxoInputs = json_transaction.getJSONArray("inputs");
 
         if (utxoInputs.size() < 2) {
-            final JSONArray outputs = json_transaction.getJSONArray("Outputs");
-            final JSONArray privateKeyScripte = json_transaction.getJSONArray("PrivateKeyScripte");
-            final JSONArray CrossChainAsset = json_transaction.getJSONArray("CrossChainAsset");
+            final JSONArray outputs = json_transaction.getJSONArray("outputs");
+            final JSONArray privateKeyScripte = json_transaction.getJSONArray("privateKeyScripte");
+            final JSONArray CrossChainAsset = json_transaction.getJSONArray("crossChainAsset");
 
             try {
                 //解析inputs
@@ -120,7 +117,7 @@ public class CrossChainTransaction {
                 //解析 创建赎回脚本所需要的私钥
                 List<String> privateKeyScripteList = Basic.parsePrivates(privateKeyScripte);
 
-                final int M = json_transaction.getInt("M");
+                final int M = json_transaction.getInt("m");
 
                 //得到 签名所需要的私钥
                 ArrayList<String> privateKeySignList = Basic.genPrivateKeySignByM(M, privateKeyScripte);
@@ -130,8 +127,8 @@ public class CrossChainTransaction {
                 resultMap.put("rawTx", rawTx.getRawTxString());
                 resultMap.put("txHash", rawTx.getTxHash());
 
-                LOGGER.info(Basic.getSuccess("genCrossChainMultiSignTx" ,resultMap));
-                return Basic.getSuccess("genCrossChainMultiSignTx" , resultMap);
+                LOGGER.info(Basic.getSuccess(resultMap));
+                return Basic.getSuccess(resultMap);
             } catch (Exception e) {
                 LOGGER.error(e.toString());
                 return e.toString();
