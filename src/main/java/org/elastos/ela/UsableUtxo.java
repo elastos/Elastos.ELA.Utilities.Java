@@ -31,10 +31,10 @@ import static org.elastos.ela.payload.PayloadRegisterAsset.MaxPrecision;
  */
 public class UsableUtxo {
 
-    private static String RPCURL ;
-    private static long FEE ;
-    private static long REGISTERASSETFEE;
-    private static int CONFIRMATION ;
+    public static String RPCURL ;
+    public static long FEE ;
+    public static long REGISTERASSETFEE;
+    public static int CONFIRMATION ;
 
     private static String utxoAmount;
     private static List<UTXOTxInput> inputList ;
@@ -98,17 +98,16 @@ public class UsableUtxo {
         //privatekey to heavy
         ArrayList<String> privateList = new ArrayList<String>(new HashSet<String>(privates));
         //get utxo
-        Map<String,Object> params = new HashMap<String,Object>();
+//        Map<String,Object> params = new HashMap<String,Object>();
         String[] addressList = new String[privateList.size()];
         for (int i = 0 ; i < privateList.size() ; i++){
             String address = Ela.getAddressFromPrivate(privateList.get(i));
             addressList[i] = address;
         }
-        params.put("addresses",addressList);
-        params.put("assetid",assetid);
         getConfig_url();
         //        System.out.println("==================== 通过地址查询uxto  ====================");
-        String utxo = Rpc.call_("listunspent",params,RPCURL);
+
+        String utxo = Rpc.listunspent(assetid,JSONArray.fromObject(addressList) , RPCURL);
         return utxo;
     }
 
@@ -324,12 +323,9 @@ public class UsableUtxo {
      * @return
      */
     public static Boolean unlockeUtxo(String blockHash , String txid , int vout){
-        LinkedHashMap<String, Object> paramsMap = new LinkedHashMap<String, Object>();
-        paramsMap.put("blockhash",blockHash);
-        paramsMap.put("verbosity",2);
 
 //        System.out.println("==================== 通过区块Hash查询区块信息  ====================");
-        String block = Rpc.call_("getblock" ,paramsMap, RPCURL);
+        String block = Rpc.getblock(blockHash, 2, RPCURL);
 
         JSONObject jsonObject = JSONObject.fromObject(block);
         String error = jsonObject.getString("error");
@@ -388,12 +384,9 @@ public class UsableUtxo {
      * @return
      */
     public static String getBlockHash(String txid){
-        LinkedHashMap<String, Object> paramsMap = new LinkedHashMap<String, Object>();
-        paramsMap.put("txid",txid);
-        paramsMap.put("verbose",true);
 
-//        System.out.println("==================== 通过txid查询区块Hash  ====================");
-        String Transcation = Rpc.call_("getrawtransaction",paramsMap , RPCURL);
+        //        System.out.println("==================== 通过txid查询区块Hash  ====================");
+        String Transcation =Rpc.getrawtransaction(txid,true,RPCURL);
         JSONObject jsonObject = JSONObject.fromObject(Transcation);
         String error = jsonObject.getString("error");
         if (error != "null"){

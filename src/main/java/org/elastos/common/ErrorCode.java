@@ -1,6 +1,7 @@
 package org.elastos.common;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.serializer.SerializerFeature;
 
 import java.util.HashMap;
 
@@ -9,14 +10,14 @@ public class ErrorCode {
 
         HashMap m = new HashMap();
         m.put("code",code);
-        m.put("id","");
+        m.put("id",null);
         m.put("message",msg);
 
         HashMap map = new HashMap();
         map.put("error", m);
         map.put("jsonrpc", "2.0");
-        map.put("result", "");
-        return JSON.toJSONString(map);
+        map.put("result", null);
+        return JSON.toJSONString(map, SerializerFeature.WriteMapNullValue);
     }
 
     //account error

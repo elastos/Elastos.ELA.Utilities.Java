@@ -5,6 +5,7 @@ import net.sf.json.JSONObject;
 import org.elastos.api.*;
 import org.elastos.common.ErrorCode;
 import org.elastos.common.SDKException;
+import org.elastos.ela.UsableUtxo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,104 +26,136 @@ public class ElaController {
      */
     public static String processMethod (String params) throws Exception {
 
+        UsableUtxo.getConfig_url();
+
         LOGGER.info(params);
         JSONObject jsonObject = JSONObject.fromObject(params);
         String method = jsonObject.getString("method");
         JSONObject param = jsonObject.getJSONObject("params");
         switch (method) {
-            case "genPrivateKey":
+            case "genprivatekey":
                 return Basic.genPrivateKey();
 
-            case "gen_priv_pub_addr":
+            case "genprivpubaddr":
                 return Basic.gen_priv_pub_addr();
 
-            case "getAccounts":
+            case "getaccounts":
                 return Account.getAccounts();
 
-            case "getAccountAddresses":
+            case "getaccountaddresses":
                 return Account.getAccountAddresses();
 
-            case "genPublicKey":
+            case "genpublickey":
                 return Basic.genPublicKey(param);
 
-            case "genAddress":
+            case "genaddress":
                 return Basic.genAddress(param);
 
-            case "genNeoContractHashAndAddress":
+            case "genneocontracthashandaddress":
                 return Basic.genNeoContractHashAndAddress(param);
 
-            case "genNeoContractAddress":
+            case "genneocontractaddress":
                 return Basic.genNeoContractAddress(param);
 
-            case "genIdentityID":
+            case "genidentityid":
                 return Basic.genIdentityID(param);
 
-            case "genGenesisAddress":
+            case "gengenesisaddress":
                 return Basic.genGenesisAddress(param);
 
-            case "genMultiSignAddress":
+            case "genmultisignaddress":
                 return Basic.genMultiSignAddress(param);
 
-            case "checkAddress":
+            case "checkaddress":
                 return Basic.checkAddress(param);
 
-            case "genRegisterTx":
+            case "genregistertx":
                 return TokenTransaction.genRegisterTx(param);
 
-            case "genTokenTx":
+            case "gentokentx":
                 return TokenTransaction.genTokenTx(param);
 
-            case "genTokenMultiSignTx":
+            case "gentokenmultisigntx":
                 return TokenTransaction.genTokenMultiSignTx(param);
 
-            case "genRegisterTxByPrivateKey":
+            case "genregistertxbyprivatekey":
                 return TokenTransaction.genRegisterTxByPrivateKey(param);
 
-            case "genTokenTxByPrivateKey":
+            case "gentokentxbyprivatekey":
                 return TokenTransaction.genTokenTxByPrivateKey(param);
 
-            case "genRawTransaction":
+            case "genrawtransaction":
                 return ELATransaction.genRawTransaction(param);
 
-            case "decodeRawTransaction":
+            case "decoderawtransaction":
                 String rawTransaction = param.getString("rawTransaction");
                 return ELATransaction.decodeRawTransaction(rawTransaction);
 
-            case "genRawTransactionByPrivateKey":
+            case "genrawtransactionbyprivatekey":
                 return ELATransaction.genRawTransactionByPrivateKey(param);
 
-            case "genMultiSignTx":
+            case "genmultisigntx":
                 return ELATransaction.genMultiSignTx(param);
 
-            case "genTxByAccount":
+            case "gentxbyaccount":
                 return Account.genTxByAccount(param);
 
-            case "importAccount":
+            case "importaccount":
                 return Account.importAccount(param);
 
-            case "removeAccount":
+            case "removeaccount":
                 return Account.removeAccount(param);
 
-            case "createAccount":
+            case "createaccount":
                 return Account.createAccount(param);
 
-            case "exportPrivateKey":
+            case "exportprivatekey":
                 return Account.exportPrivateKey(param);
 
-            case "genCrossChainTx":
+            case "getaccountamount":
+                return Account.getAccountAmount();
+
+            case "gencrosschaintx":
                 return CrossChainTransaction.genCrossChainTx(param);
 
-            case "genCrossChainMultiSignTx":
+            case "gencrosschainmultisigntx":
                 return CrossChainTransaction.genCrossChainMultiSignTx(param);
 
-            case "genCrossChainTxByPrivateKey":
+            case "gencrosschaintxbyprivatekey":
                 return CrossChainTransaction.genCrossChainTxByPrivateKey(param);
 
-            case "genDeployContractTx":
+            case "gendeploycontracttx":
                 return NeoContractTransaction.genDeployContractTx(param);
 
-            case "genInvokeContractTx":
+            case "geninvokecontracttx":
                 return NeoContractTransaction.genInvokeContractTx(param);
+
+            case "getblockcount":
+                return ElaApi.getblockcount();
+
+            case "getblockbyheight":
+                return ElaApi.getblockbyheight(param);
+
+            case "listunspent":
+                return ElaApi.listunspent(param);
+
+            case "getblock":
+                return ElaApi.getblock(param);
+
+            case "getrawtransaction":
+                return ElaApi.getrawtransaction(param);
+
+            case "sendrawtransaction":
+                return ElaApi.sendrawtransaction(param);
+
+            case "getblockhash":
+                return ElaApi.getblockhash(param);
+
+            case "discretemining":
+                return ElaApi.discretemining(param);
+
+            case "getreceivedbyaddress":
+                return ElaApi.getreceivedbyaddress(param);
 
             default:
                 return ErrorCode.ParamErr(method + " method does not exist");

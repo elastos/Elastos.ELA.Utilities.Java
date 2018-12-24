@@ -74,7 +74,7 @@ public class WalletMgr {
         return null;
     }
 
-    public static String getAccountAllAddress() throws SDKException {
+    public static List<String> getAccountAllAddress() throws SDKException {
         if (KeystoreFile.isExistKeystoreFile()){
             try {
                 File file = KeystoreFile.getKeystorePath();
@@ -85,7 +85,7 @@ public class WalletMgr {
                     JSONObject jsonObject = (JSONObject)jsonArray.get(i);
                     addressList.add(jsonObject.getString("address"));
                 }
-                return addressList.toString();
+                return addressList;
             }catch (Exception e){
                 e.printStackTrace();
             }

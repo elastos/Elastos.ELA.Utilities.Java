@@ -124,4 +124,10 @@ public class ElaTest {
         Tx.deserialize(dos);
     }
 
+    @Test
+    public void test(){
+        String  result = "[qqq,www]";
+        JSONArray addressArray = JSONArray.fromObject(result);
+    }
+
 }

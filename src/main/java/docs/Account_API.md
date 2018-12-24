@@ -9,7 +9,7 @@
 Create account to generate keystore.dat file under Java program directory
 ```
 
-## genTxByAccount
+## gentxbyaccount
 
 #### Tips：
 - Do not calculate utxo
@@ -44,29 +44,24 @@ Create account to generate keystore.dat file under Java program directory
 ```
 Transaction type is 3,use the payload.recordType cannot be Chinese
 {
-    "method":"genTxByAccount",
-    "id":0,
-    "params":[
-        {
-            "Transactions":[
+    "method":"gentxbyaccount",
+    "params":{
+        "transaction":{
+            "account":[
                 {
-                    "Account":[
-                        {
-                            "password":"12345",
-                            "address":"ENKj2J5dGjSRgHHxBZ3yLjB6RyXvHikW5K"
-                        }
-                    ],
-                    "Outputs":[
-                        {
-                            "address":"EQSpUzE4XYJhBSx5j7Tf2cteaKdFdixfVB",
-                            "amount":"30.1"
-                        }
-                    ],
-                    "ChangeAddress":"Edi5WWMFBsEL2qgggrFhnJe1HTjDnw447H"
+                    "password":"12345",
+                    "address":"EQSpUzE4XYJhBSx5j7Tf2cteaKdFdixfVB"
                 }
-            ]
+            ],
+            "outputs":[
+                {
+                    "address":"EQSpUzE4XYJhBSx5j7Tf2cteaKdFdixfVB",
+                    "amount":"3"
+                }
+            ],
+            "changeAddress":"Edi5WWMFBsEL2qgggrFhnJe1HTjDnw447H"
         }
-    ]
+    }
 }
 
 ```
@@ -74,17 +69,18 @@ Transaction type is 3,use the payload.recordType cannot be Chinese
 ##### Response
 ```
 {
-    "Action": "genTxByAccount",
-    "Desc": "SUCCESS",
-    "Result": {
-        "rawTx": "0200010013363731323032A214F6036D8221E7F1C010000000000B67901062723993D9FBADC32C33807EE7B9FCB370D777C5A955A3056DF3B9CB40100000000002B20EB60E4191B374DFC69503E1ED6888E7456FDE2554E77E1D9A1AB3360562F1D6FF4BAC",
-        "txHash": "98FCA1FABB606AEDF84921E24CDF7A0931FF11DAFDDC1B8584206881A5229060"
-    }
+    "result": {
+        "rawTx": "0200010013383331353530313537353535363835373030350DBAD4926FAA46F0EC32C7195C6840EDD5D9B6149731A8C0F7EB281C0EE680A8AF0000000000007E6651E24BE075BB0B9BF7CAAA9B8A21E662988FDC3A98DA26F0BFA3A8BA47010000000000007C4D0C33BBAEAADC4AB4D2B1C66A682C40868544DE892886E1A9FDCDC07592D40000000000000B00C24D895DD1FFDAD36071B7AC63F793C7445B346504B2EF6E12EBD915EB5B000000000000BAD4926FAA46F0EC32C7195C6840EDD5D9B6149731A8C0F7EB281C0EE680A8AF0100000000007E6651E24BE075BB0B9BF7CAAA9B8A21E662988FDC3A98DA26F0BFA3A8BA47010100000000007C4D0C33BBAEAADC4AB4D2B1C66A682C40868544DE892886E1A9FDCDC07592D40100000000000B00C24D895DD1FFDAD36071B7AC63F793C7445B346504B2EF6E12EBD915EB5B010000000000BAD4926FAA46F0EC32C7195C6840EDD5D9B6149731A8C0F7EB281C0EE680A8AF0200000000007E6651E24BE075BB0B9BF7CAAA9B8A21E662988FDC3A98DA26F0BFA3A8BA47010200000000007C4D0C33BBAEAADC4AB4D2B1C66A682C40868544DE892886E1A9FDCDC07592D40200000000000B00C24D895DD1FFDAD36071B7AC63F793C7445B346504B2EF6E12EBD915EB5B020000000000FE52A99C9CA67307BCEB50BA0A7D2E05E4461954FB34FCF29FBBEA7F7F08CB2800000000000002B037DB964A231458D2D6FFD5EA18944C4F90E63D547C5D3B9874DF66A4EAD0A300A3E1110000000000000000214FFBC4FB3B3C30A626A3B298BFA392A0121D4249B037DB964A231458D2D6FFD5EA18944C4F90E63D547C5D3B9874DF66A4EAD0A32053DF0E55B90B000000000021E1782FF3A250484A368CA7B426B15451CF8A01AF00000000014140FFFB15F277E4A6C2698B221BAF81680549D46A55C3D75426AD594BC8D37F592B174044F70CB30D2EDAEDE667AC147CB88AD92A1CF8586302DA3F83D828CB61B12321037F3CAEDE72447B6082C1E8F7705FFD1ED6E24F348130D34CBC7C0A35C9E993F5AC",
+        "txHash": "B75FD6415A4E9A3B17BE1279FDC53A9946E4662A28369A52B8486F84F6E3D9C6"
+    },
+    "id": null,
+    "jsonrpc": "2.0",
+    "error": null
 }
 
 ```
 
-## createAccount
+## createaccount
 description:create account 
 
 #### Parameter Description
@@ -96,26 +92,24 @@ description:create account
 ##### Request
 ```
 {
-    "method":"createAccount",
+    "method":"createaccount",
     "id":0,
-    "params":[
+    "params":{"account":[
         {
             "password":"12345"
         }
-    ]
+    ]}
 }
 ```
 
 ##### Response
 ```
 {
-    "Action": "createAccount",
-    "Desc": "SUCCESS",
-    "Result": [
+    "result": [
         {
-            "address": "EbrydLF4BuJ7mPJYpxk7qzwx1CirFCDcPg",
-            "encryptedPrivateKey": "8xHdZwJFeYLs0zRRf4uvxZThhGUA0jwwkae/WFxIXbf1aBy3Hm+iTbuVtkusFYiA",
-            "salt": "ZUPbh6H6LcNv6PZ64e1HPw==",
+            "address": "EQPJ8sfFvWhCTUuyxMypK9H3iqshmHbk5Y",
+            "encryptedPrivateKey": "4YI3NxrXgkoXmGnYgDJYMmEaUCRAzaFTLGnsA3udUfzpmnXNkwHcCOSI7jim24Xx",
+            "salt": "kas+nHNj13mtFSVhT5P68A==",
             "scrypt": {
                 "dkLen": 64,
                 "n": 16384,
@@ -124,11 +118,14 @@ description:create account
             },
             "version": "1.0"
         }
-    ]
+    ],
+    "id": null,
+    "jsonrpc": "2.0",
+    "error": null
 }
 ```
 
-## importAccount
+## importaccount
 
 #### Parameter Description
 
@@ -140,31 +137,26 @@ description:create account
 ##### Request
 ```
 {
-    "method":"importAccount",
-    "id":0,
-    "params":[
-    	{
-	       "Account":[
-	            {
-	                "password":"12345",
-	                "privateKey":"5FA927E5664E563F019F50DCD4D7E2D9404F2D5D49E31F9482912E23D6D7B9EB"
-	            }
-	        ]
-    	}
-    ]
+    "method":"importaccount",
+    "params":{
+       "account":[
+            {
+                "password":"12345",
+                "privateKey":"5FA927E5664E563F019F50DCD4D7E2D9404F2D5D49E31F9482912E23D6D7B9EB"
+            }
+        ]
+	}
 }
 ```
 
 ##### Response
 ```
 {
-    "Action": "importAccount",
-    "Desc": "SUCCESS",
-    "Result": [
+    "result": [
         {
-            "address": "EKNh1wS42ur6Pfai6DthfH61vDUmg8M93v",
-            "encryptedPrivateKey": "sbMP2vWA/5rDMUT0aB22rLkS+QA7zHVXS3xEhJjhzEX0YPR4+HkPaQ8QSAg5LRJw",
-            "salt": "sE7vPJSD2pnd1qDjIsHXnw==",
+            "address": "Eby3aa39hc33dF4RfKCP7iaFnrDuNDhRHB",
+            "encryptedPrivateKey": "55y15OPlQxVkVHjl5GsI+UzE9KdpmJXzM1z5Mda2JILuCEvmQhjTBLbumtLqqV8B",
+            "salt": "4yE1lSiNpolckdvdBAbg9g==",
             "scrypt": {
                 "dkLen": 64,
                 "n": 16384,
@@ -175,8 +167,8 @@ description:create account
         },
         {
             "address": "EQSpUzE4XYJhBSx5j7Tf2cteaKdFdixfVB",
-            "encryptedPrivateKey": "+PVIa2LLfWWwsfRIWGE1BwGGqg1YtnG5jBHepI6x26TtEB12y2jf0m6FCp7Tc9BN",
-            "salt": "Zu0sQcTq14ce7mCcP9emkA==",
+            "encryptedPrivateKey": "C0cOobOPPuo8wPydhUwn4yErtgI3E0sFZNaVrCp8aNcM3rEsK/Ye8mIlUjeZumRZ",
+            "salt": "I2wgDwPwCyLrHTXH9CddTw==",
             "scrypt": {
                 "dkLen": 64,
                 "n": 16384,
@@ -185,11 +177,14 @@ description:create account
             },
             "version": "1.0"
         }
-    ]
+    ],
+    "id": null,
+    "jsonrpc": "2.0",
+    "error": null
 }
 ```
 
-## removeAccount
+## removeaccount
 
 #### Parameter Description
 
@@ -201,31 +196,26 @@ description:create account
 ##### Request
 ```
 {
-    "method":"removeAccount",
-    "id":0,
-    "params":[
-    	{
-	       "Account":[
-	            {
-	                "password":"12345",
-	                "address":"EQSpUzE4XYJhBSx5j7Tf2cteaKdFdixfVB"
-	            }
-	        ]
-    	}
-    ]
+    "method":"removeaccount",
+    "params":{
+       "account":[
+            {
+                "password":"12345",
+                "address":"EQSpUzE4XYJhBSx5j7Tf2cteaKdFdixfVB"
+            }
+        ]
+	}
 }
 ```
 
 ##### Response
 ```
 {
-    "Action": "removeAccount",
-    "Desc": "SUCCESS",
-    "Result": [
+    "result": [
         {
-            "address": "EKNh1wS42ur6Pfai6DthfH61vDUmg8M93v",
-            "encryptedPrivateKey": "sbMP2vWA/5rDMUT0aB22rLkS+QA7zHVXS3xEhJjhzEX0YPR4+HkPaQ8QSAg5LRJw",
-            "salt": "sE7vPJSD2pnd1qDjIsHXnw==",
+            "address": "Eby3aa39hc33dF4RfKCP7iaFnrDuNDhRHB",
+            "encryptedPrivateKey": "55y15OPlQxVkVHjl5GsI+UzE9KdpmJXzM1z5Mda2JILuCEvmQhjTBLbumtLqqV8B",
+            "salt": "4yE1lSiNpolckdvdBAbg9g==",
             "scrypt": {
                 "dkLen": 64,
                 "n": 16384,
@@ -234,11 +224,14 @@ description:create account
             },
             "version": "1.0"
         }
-    ]
+    ],
+    "id": null,
+    "jsonrpc": "2.0",
+    "error": null
 }
 ```
 
-## exportPrivateKey
+## exportprivatekey
 
 #### Parameter Description
 
@@ -250,60 +243,49 @@ description:create account
 ##### Request
 ```
 {
-    "method":"exportPrivateKey",
-    "id":0,
-    "params":[
-    	{
-	       "Account":[
-	            {
-	                "password":"12345",
-	                "address":"EQSpUzE4XYJhBSx5j7Tf2cteaKdFdixfVB"
-	            },
-	            {
-	                "password":"12345",
-	                "address":"EKNh1wS42ur6Pfai6DthfH61vDUmg8M93v"
-	            }
-	        ]
-    	}
-    ]
+    "method":"exportprivatekey",
+    "params":{
+       "account":[
+            {
+                "password":"12345",
+                "address":"Eby3aa39hc33dF4RfKCP7iaFnrDuNDhRHB"
+            }
+        ]
+	}
 }
 ```
 
 ##### Response
 ```
 {
-    "Action": "exportPrivateKey",
-    "Desc": "SUCCESS",
-    "Result": [
-        "5fa927e5664e563f019f50dcd4d7e2d9404f2d5d49e31f9482912e23d6d7b9eb",
-        "06d243f6835ced1253c6cd939de12d4f482922b86c165d532384368ea2bbe72b"
-    ]
+    "result": [
+        "883d7a9d52359252cfbb75352765963e80edc822de9e0879baafb7952a7cda87"
+    ],
+    "id": null,
+    "jsonrpc": "2.0",
+    "error": null
 }
 ```
 
 
-## getAccounts
+## getaccounts
 description:get all account information
 
 ##### Request
 ```
 {
-    "method":"getAccounts",
-    "id":0,
-    "params":[]
-}
+       "method":"getaccounts"
+   }
 ```
 
 ##### Response
 ```
 {
-    "Action": "getAccounts",
-    "Desc": "SUCCESS",
-    "Result": [
+    "result": [
         {
-            "address": "EKNh1wS42ur6Pfai6DthfH61vDUmg8M93v",
-            "encryptedPrivateKey": "sbMP2vWA/5rDMUT0aB22rLkS+QA7zHVXS3xEhJjhzEX0YPR4+HkPaQ8QSAg5LRJw",
-            "salt": "sE7vPJSD2pnd1qDjIsHXnw==",
+            "address": "Eby3aa39hc33dF4RfKCP7iaFnrDuNDhRHB",
+            "encryptedPrivateKey": "55y15OPlQxVkVHjl5GsI+UzE9KdpmJXzM1z5Mda2JILuCEvmQhjTBLbumtLqqV8B",
+            "salt": "4yE1lSiNpolckdvdBAbg9g==",
             "scrypt": {
                 "dkLen": 64,
                 "n": 16384,
@@ -314,8 +296,8 @@ description:get all account information
         },
         {
             "address": "EQSpUzE4XYJhBSx5j7Tf2cteaKdFdixfVB",
-            "encryptedPrivateKey": "+PVIa2LLfWWwsfRIWGE1BwGGqg1YtnG5jBHepI6x26TtEB12y2jf0m6FCp7Tc9BN",
-            "salt": "Zu0sQcTq14ce7mCcP9emkA==",
+            "encryptedPrivateKey": "C0cOobOPPuo8wPydhUwn4yErtgI3E0sFZNaVrCp8aNcM3rEsK/Ye8mIlUjeZumRZ",
+            "salt": "I2wgDwPwCyLrHTXH9CddTw==",
             "scrypt": {
                 "dkLen": 64,
                 "n": 16384,
@@ -324,28 +306,53 @@ description:get all account information
             },
             "version": "1.0"
         }
-    ]
+    ],
+    "id": null,
+    "jsonrpc": "2.0",
+    "error": null
 }
 ```
 
-## getAccountAddresses
+## getaccountaddresses
 description:get all account address
 
 ##### Request
 ```
 {
-    "method":"getAccountAddresses",
-    "id":0,
-    "params":[]
+    "method":"getaccountaddresses"
 }
 ```
 
 ##### Response
 ```
 {
-    "Action": "getAccountAddresses",
-    "Desc": "SUCCESS",
-    "Result": "[EKNh1wS42ur6Pfai6DthfH61vDUmg8M93v, EQSpUzE4XYJhBSx5j7Tf2cteaKdFdixfVB]"
+    "result": "[Eby3aa39hc33dF4RfKCP7iaFnrDuNDhRHB, EQSpUzE4XYJhBSx5j7Tf2cteaKdFdixfVB]",
+    "id": null,
+    "jsonrpc": "2.0",
+    "error": null
 }
 ```
 
+
+## getaccountamount
+description:get all account address
+
+##### Request
+```
+{
+    "method":"getaccountamount"
+}
+```
+
+##### Response
+```
+{
+    "result": {
+        "EQSpUzE4XYJhBSx5j7Tf2cteaKdFdixfVB": "33000000.16742768",
+        "Eby3aa39hc33dF4RfKCP7iaFnrDuNDhRHB": "0"
+    },
+    "id": null,
+    "jsonrpc": "2.0",
+    "error": null
+}
+```

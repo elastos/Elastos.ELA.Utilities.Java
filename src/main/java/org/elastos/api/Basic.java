@@ -1,6 +1,7 @@
 package org.elastos.api;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.serializer.SerializerFeature;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.elastos.common.*;
@@ -153,13 +154,14 @@ public class Basic {
      * @return
      */
     public static String getSuccess(Object resultMap){
+
         HashMap map = new HashMap();
-        map.put("id","");
+        map.put("id",null);
         map.put("jsonrpc","2.0");
-        map.put("error","");
+        map.put("error",null);
         map.put("result",resultMap);
 
-        return JSON.toJSONString(map);
+        return JSON.toJSONString(map, SerializerFeature.WriteMapNullValue);
     }
 
     /**

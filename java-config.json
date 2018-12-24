@@ -1,5 +1,5 @@
 {
-  "Host": "127.0.0.1:14336",
+  "Host": "127.0.0.1:11336",
   "Fee":"0.0005",
   "Confirmation":1,
   "RegisterAssetFee":"10"
