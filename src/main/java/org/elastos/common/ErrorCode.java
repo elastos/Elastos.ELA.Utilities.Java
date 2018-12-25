@@ -35,8 +35,8 @@ public class ErrorCode {
 
     public static String INVALID_TX_ID = getError(51010, "invalid txid");
     public static String TX_ID_NOT_NULL = getError(51011, "txid can not be empty");
-    public static String INVALID_INDEX = getError(51012, "invalid index");
-    public static String INDEX_NOT_NULL = getError(51013, "index can not be empty");
+    public static String INVALID_VOUT = getError(51012, "invalid vout");
+    public static String VOUT_NOT_NULL = getError(51013, "vout can not be empty");
     public static String INVALID_CHANGE_ADDRESS = getError(51014, "invalid changeAddress");
     public static String CHANGE_ADDRESS_NOT_NULL = getError(51015, "changeAddress can not be empty");
     public static String INVALID_AMOUNT = getError(51016, "amount requires long type");

@@ -296,16 +296,16 @@ public class Basic {
             JSONObject utxoInput = (JSONObject)utxoInputs.get(i);
 
             Verify.verifyParameter(Verify.Type.Txid,utxoInput);
-            Verify.verifyParameter(Verify.Type.Index,utxoInput);
+            Verify.verifyParameter(Verify.Type.Vout,utxoInput);
             Verify.verifyParameter(Verify.Type.PrivateKey,utxoInput);
 
 
             String txid = utxoInput.getString("txid");
-            int index = utxoInput.getInt("index");
+            int vout = utxoInput.getInt("vout");
             String privateKey = utxoInput.getString("privateKey");
             String address = Ela.getAddressFromPrivate(privateKey);
 
-            inputList.add(new UTXOTxInput(txid,index,privateKey,address));
+            inputList.add(new UTXOTxInput(txid,vout,privateKey,address));
         }
         return inputList;
     }
@@ -317,13 +317,13 @@ public class Basic {
             JSONObject utxoInput = (JSONObject)utxoInputs.get(i);
 
             Verify.verifyParameter(Verify.Type.Txid,utxoInput);
-            Verify.verifyParameter(Verify.Type.Index,utxoInput);
+            Verify.verifyParameter(Verify.Type.Vout,utxoInput);
             Verify.verifyParameter(Verify.Type.Address,utxoInput);
 
             String txid = utxoInput.getString("txid");
-            int index = utxoInput.getInt("index");
+            int vout = utxoInput.getInt("vout");
             String address = utxoInput.getString("address");
-            inputList.add(new UTXOTxInput(txid,index,"",address));
+            inputList.add(new UTXOTxInput(txid,vout,"",address));
         }
         return inputList;
     }
@@ -573,7 +573,7 @@ public class Basic {
         Object ContractHash = json_transaction.get("contractHash");
         if (ContractHash != null) {
             //合约hash不需要反转
-            contractHash = DatatypeConverter.parseHexBinary(json_transaction.getString("ContractHash"));
+            contractHash = DatatypeConverter.parseHexBinary(json_transaction.getString("contractHash"));
             //去掉1c 一个字节
             byte[] tmp = new byte[contractHash.length - 1];
             System.arraycopy(contractHash,1,tmp,0,tmp.length);
@@ -593,7 +593,7 @@ public class Basic {
         paramByte = code_buf;
 
         //programHash
-        JSONObject utxoInput = (JSONObject) json_transaction.getJSONArray("UTXOInputs").get(0);
+        JSONObject utxoInput = (JSONObject) json_transaction.getJSONArray("inputs").get(0);
         String privateKey = utxoInput.getString("privateKey");
         String address = Ela.getAddressFromPrivate(privateKey);
         byte[] programHash = Util.ToScriptHash(address);

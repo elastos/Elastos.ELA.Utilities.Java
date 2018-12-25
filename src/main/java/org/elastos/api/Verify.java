@@ -29,7 +29,7 @@ public class Verify {
         RegisterAssetFee("RegisterAssetFee"),
         Confirmation("Confirmation"),
         Txid("txid"),
-        Index("index"),
+        Vout("vout"),
         Password("password"),
         RecordType("recordType"),
         RecordData("recordData"),
@@ -172,11 +172,11 @@ public class Verify {
                     if (Confirmation instanceof Integer && (int)Confirmation >= 0){}else throw new SDKException(ErrorCode.INVALID_CONFIRMATION);
                 }else throw new SDKException(ErrorCode.CONFIRMATION_NOT_NULL);
                 break;
-            case Index:
+            case Vout:
                 Object IndexLower = jsonObject.get(type.getValue());
                 if (IndexLower != null) {
-                    if (IndexLower instanceof Long || IndexLower instanceof Integer && (int)IndexLower  >= 0){}else throw new SDKException(ErrorCode.INVALID_INDEX);
-                }else throw new SDKException(ErrorCode.INDEX_NOT_NULL);
+                    if (IndexLower instanceof Long || IndexLower instanceof Integer && (int)IndexLower  >= 0){}else throw new SDKException(ErrorCode.INVALID_VOUT);
+                }else throw new SDKException(ErrorCode.VOUT_NOT_NULL);
                 break;
             case RecordType:
                 Object RecordTypeLower = jsonObject.get(type.getValue());
