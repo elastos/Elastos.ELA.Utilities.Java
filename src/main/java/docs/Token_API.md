@@ -12,7 +12,7 @@ description: register asset transaciton
 | name  | type | description |
 | ------ | ---- | ----------- |
 | txid | string | transaction where the available balance of address is located |
-| index| int | the serial number of the tx in which the balance is available ,and the vout returned by RPC form utxo is the index| 
+| vout| int | the serial number of the tx in which the balance is available 
 | privateKey | string | Utxo address corresponds to the private key| 
 | address | string | arrival address | 
 | amount | string | the unit is ELA,Namely:32.2ELA | 
@@ -31,7 +31,7 @@ description: register asset transaciton
 	                "inputs":[
 	                    {
 	                        "txid":"8add3578e31d57606ab4843805ab98bb9c9fd4bab1f84431efdc1e16e590a916",
-	                        "index":2,
+	                        "vout":2,
 	                        "privateKey":"bed9478121e264145c0734f2e3ef391a402e9fa270d526d151a01771613e054a"
 	                    }
 	                ],
@@ -154,7 +154,7 @@ description:asset transaction
 | name  | type | description |
 | ------ | ---- | ----------- |
 | txid | string | transaction where the available balance of address is located |
-| index| int | the serial number of the tx in which the balance is available ,and the vout returned by RPC form utxo is the index| 
+| vout| int | the serial number of the tx in which the balance is available 
 | privateKey | string | Utxo address corresponds to the private key|
 | assetId | string | asset unique identification | 
 | address | string | arrival address | 
@@ -169,12 +169,12 @@ description:asset transaction
                 "inputs":[
                     {
                         "txid":"4bd22df531d291d6e35aea6ab4bd31586950037985f1c5459b57d033acb0ae2c",
-                        "index":1,
+                        "vout":1,
                         "privateKey":"3807d593ebd67569999cbe011616a21930d42a2b45e81574f2c52792ed1b6414"
                     },
                     {
                         "txid":"c24cee36ebf8938315976c8c4bdeb29ff4d0d328de53caeaaa2a6d8790ccb87f",
-                        "index":1,
+                        "vout":1,
                         "privateKey":"3807d593ebd67569999cbe011616a21930d42a2b45e81574f2c52792ed1b6414"
                     }
                 ],
@@ -277,7 +277,7 @@ description:multi sign asset transaction
 | name  | type | description |
 | ------ | ---- | ----------- |
 | txid | string | transaction where the available balance of address is located |
-| index| int | the serial number of the tx in which the balance is available ,and the vout returned by RPC form utxo is the index| 
+| vout| int | the serial number of the tx in which the balance is available 
 | privateKey | string | Utxo address corresponds to the private key|
 | assetId | string | asset unique identification | 
 | address | string | arrival address | 
@@ -295,12 +295,12 @@ description:multi sign asset transaction
                     "inputs":[
                         {
                             "txid":"4bd22df531d291d6e35aea6ab4bd31586950037985f1c5459b57d033acb0ae2c",
-                            "index":0,
+                            "vout":0,
                             "address":"8XEsZFhuwEwmy4uT8SL5USCzWAHY6vdVk7"
                         },
                     	{
                             "txid":"5bd488a43e9b27d5096d9832c795e2f9210c8a50e4671e4108c12868c73c6e32",
-                            "index":0,
+                            "vout":0,
                             "address":"8XEsZFhuwEwmy4uT8SL5USCzWAHY6vdVk7"
                         }
                     ],

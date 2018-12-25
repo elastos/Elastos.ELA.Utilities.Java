@@ -16,7 +16,7 @@ description:constructing single sign transaction
 | name  | type | description |
 | ------ | ---- | ----------- |
 | txid | string | transaction where the available balance of address is located |
-| index| int | the serial number of the tx in which the balance is available ,and the vout returned by RPC form utxo is the index| 
+| vout| int | the serial number of the tx in which the balance is available 
 | privateKey | string | Utxo address corresponds to the private key| 
 | address | string | arrival address | 
 | amount | string | the unit is ELA,Namely:200.01ELA | 
@@ -31,7 +31,7 @@ description:constructing single sign transaction
             "inputs":[
                 {
                     "txid":"28cb087f7feabb9ff2fc34fb541946e4052e7d0aba50ebbc0773a69c9ca952fe",
-                    "index":0,
+                    "vout":0,
                     "privateKey":"5FA927E5664E563F019F50DCD4D7E2D9404F2D5D49E31F9482912E23D6D7B9EB"
                 }
             ],
@@ -145,7 +145,7 @@ description:multi sign transaction
 | name  | type | description |
 | ------ | ---- | ----------- |
 | txid | string | transaction where the available balance of address is located |
-| index| int | the serial number of the tx in which the balance is available ,and the vout returned by RPC form utxo is the index| 
+| vout| int | the serial number of the tx in which the balance is available  
 | address | string | multi sign address| 
 | amount | string | the unit is ELA,Namely:200.01ELA | 
 | PrivateKeyScripte |  |private key for generating multi-signature addresses | 
@@ -162,7 +162,7 @@ description:multi sign transaction
             "inputs":[
                 {
                     "txid":"02d79aeae97d879f850e0c7ebb9bb62d93d1fbe4665d8e895106636e9e2656ae",
-                    "index":1,
+                    "vout":1,
                     "address":"8ZNizBf4KhhPjeJRGpox6rPcHE5Np6tFx3"
                 }
             ],
@@ -219,7 +219,7 @@ description:cross chain single sign transcation
 | name  | type | description |
 | ------ | ---- | ----------- |
 | txid | string | transaction where the available balance of address is located |
-| index| int | the serial number of the tx in which the balance is available ,and the vout returned by RPC form utxo is the index| 
+| vout| int | the serial number of the tx in which the balance is available 
 | privateKeySign |  |Private key corresponding to the address of inputs | 
 | crossChainAsset |  |Side Chain to Account Address and Balance | 
 
@@ -232,7 +232,7 @@ description:cross chain single sign transcation
             "inputs":[
                 {
                     "txid":"4bb237fb16a233dbd2414a014da7ca02c215bb6ffd976acc84b5cf4ec0439ba0",
-                    "index":0,
+                    "vout":0,
                     "address":"Eco3fa2sZfyY6P524JTK9WpvzFjKEaoF5U"
                 }
             ],
@@ -285,7 +285,7 @@ description:cross chain multi sign transcation
 | name  | type | description |
 | ------ | ---- | ----------- |
 | txid | string | transaction where the available balance of address is located |
-| index| int | the serial number of the tx in which the balance is available ,and the vout returned by RPC form utxo is the index| 
+| vout| int | the serial number of the tx in which the balance is available 
 | PrivateKeyScripte |  |Private key corresponding to the address of inputs | 
 | CrossChainAsset |  |Side Chain to Account Address and Balance | 
 | PrivateKeyScripte |  |private key for generating multi-signature addresses | 
@@ -300,7 +300,7 @@ description:cross chain multi sign transcation
             "inputs":[
                 {
                     "txid":"723523b9f92394b9428c7abf4d13d7049efeba3c3a154e1b88e96ff6b95bd608",
-                    "index":0,
+                    "vout":0,
                     "address":"8NRxtbMKScEWzW8gmPDGUZ8LSzm688nkZZ"
                 }
             ],
