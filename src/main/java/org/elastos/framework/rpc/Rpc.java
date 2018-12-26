@@ -28,16 +28,6 @@ public class Rpc {
         return jsonObject.toString();
     }
 
-    public static String getblockcount(String url){
-        return call("getblockcount",null,url);
-    }
-
-    public static String getblockbyheight(int height,String url){
-        HashMap<String, Object> params = new HashMap<>();
-        params.put("height",height);
-        return call("getblockbyheight",params,url);
-    }
-
     public static String listunspent(String assetid, JSONArray addressList, String url){
         HashMap<String, Object> params = new HashMap<>();
         params.put("addresses",addressList);
@@ -59,27 +49,11 @@ public class Rpc {
         return call("getrawtransaction",params,url);
     }
 
-    public static String sendrawtransaction(String data, String url){
-        HashMap<String, Object> params = new HashMap<>();
-        params.put("data",data);
-        return call("sendrawtransaction",params,url);
-    }
-
-    public static String getblockhash(int height, String url){
-        HashMap<String, Object> params = new HashMap<>();
-        params.put("height",height);
-        return call("getblockhash",params,url);
-    }
-
-    public static String discretemining(int count, String url){
-        HashMap<String, Object> params = new HashMap<>();
-        params.put("count",count);
-        return call("discretemining",params,url);
-    }
-
     public static String getreceivedbyaddress(String address, String url){
         HashMap<String, Object> params = new HashMap<>();
         params.put("address",address);
         return call("getreceivedbyaddress",params,url);
     }
+
+
 }

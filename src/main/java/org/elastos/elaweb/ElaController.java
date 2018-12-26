@@ -133,6 +133,9 @@ public class ElaController {
             case "getblockcount":
                 return ElaApi.getblockcount();
 
+            case "estimatesmartfee":
+                return ElaApi.estimatesmartfee(param);
+
             case "getblockbyheight":
                 return ElaApi.getblockbyheight(param);
 

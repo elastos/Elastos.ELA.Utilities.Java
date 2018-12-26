@@ -39,6 +39,7 @@ public class Verify {
         Description("description"),
         Precision("precision");
         private String type;
+
         private Type(String t) {
             this.type = t;
         }
@@ -189,7 +190,6 @@ public class Verify {
                 if (RecordDataLower != null) {
                 }else throw new SDKException(ErrorCode.RECORD_DATA_NOT_NULL);
                 break;
-
 
             case Name:
                 Object NameLower = jsonObject.get(type.getValue());

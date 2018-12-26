@@ -25,6 +25,43 @@ description: get block count
 }
 ```
 
+
+## estimatesmartfee
+description: estimate transaction fee smartly
+
+#### Parameter Description
+
+| name | type | description |
+| ---- | ---- | ----------- |
+| confirmations | int | in how many blocks do you want your transaction to be packed |
+
+result:
+| name | type | description |
+| ---- | ---- | ----------- |
+|  -   | int  | fee rate, the unit is sela per KB |
+
+##### Request
+```
+{
+  "method": "estimatesmartfee",
+  "params":{
+	"confirmations": 5
+  }
+}
+```
+
+##### Response
+```
+{
+    "error": null,
+    "id": null,
+    "jsonrpc": "2.0",
+    "result": 10000
+}
+
+```
+
+
 ## listunspent
 description: list all utxo of given addresses 
 
