@@ -113,9 +113,9 @@ public class Basic {
         String publicKey = Ela.getPublicFromPrivate(privateKey);
         String address    = Ela.getAddressFromPrivate(privateKey);
         LinkedHashMap<String, Object> resultMap = new LinkedHashMap<String, Object>();
-        resultMap.put("PrivateKey",privateKey);
-        resultMap.put("PublicKey",publicKey);
-        resultMap.put("Address",address);
+        resultMap.put("privateKey",privateKey);
+        resultMap.put("publicKey",publicKey);
+        resultMap.put("address",address);
 
         LOGGER.info(getSuccess(resultMap));
         return getSuccess(resultMap);
