@@ -13,7 +13,7 @@ description: register asset transaciton
 | ------ | ---- | ----------- |
 | txid | string | transaction where the available balance of address is located |
 | vout| int | the serial number of the tx in which the balance is available 
-| privateKey | string | Utxo address corresponds to the private key| 
+| privatekey | string | Utxo address corresponds to the private key| 
 | address | string | arrival address | 
 | amount | string | the unit is ELA,Namely:32.2ELA | 
 | name | string | asset name , only letters and numbers are allowed in English| 
@@ -32,7 +32,7 @@ description: register asset transaciton
 	                    {
 	                        "txid":"8add3578e31d57606ab4843805ab98bb9c9fd4bab1f84431efdc1e16e590a916",
 	                        "vout":2,
-	                        "privateKey":"bed9478121e264145c0734f2e3ef391a402e9fa270d526d151a01771613e054a"
+	                        "privatekey":"bed9478121e264145c0734f2e3ef391a402e9fa270d526d151a01771613e054a"
 	                    }
 	                ],
 	                "outputs":[{
@@ -57,7 +57,7 @@ description: register asset transaciton
     "result": {
         "rawTx": "01000567616F7070033132331200001027000000000000214FFBC4FB3B3C30A626A3B298BFA392A0121D4249010013353836373137363831323535383032393533360116A990E5161EDCEF3144F8B1BAD49F9CBB98AB053884B46A60571DE37835DD8A02000000000002E572EE241B5A2F495CCADAE7D08778FCBA95B37E2AC30C5FC3B14DE62C32F9F50A021E19E0C9BAB240000000000000214FFBC4FB3B3C30A626A3B298BFA392A0121D4249B037DB964A231458D2D6FFD5EA18944C4F90E63D547C5D3B9874DF66A4EAD0A300E78A4E52B90B0000000000216EE6D18D1E8824BFC2BFDF7EF320D5A92F296BAD0000000001414047B75C7711C9EAA5E6710513A83B066828FA6707D591A95187F78D1FC2668E10B86ED75548BB3859104B40A183F2648297CB3EE3C02EB210E36B0B828E4541E82321039212D6AAF85B2FC952EFDAC9D3F5E4D3798BBF682999B17E88503DF1E96F3CD0AC",
         "txHash": "5AB2CE56073EFE89D3C0CF05B171378A3231F59ADAE4FFEBE1BC41FDFF2DCC24",
-        "assetId": "F5F9322CE64DB1C35F0CC32A7EB395BAFC7887D0E7DACA5C492F5A1B24EE72E5"
+        "assetid": "F5F9322CE64DB1C35F0CC32A7EB395BAFC7887D0E7DACA5C492F5A1B24EE72E5"
     },
     "id": null,
     "jsonrpc": "2.0",
@@ -81,7 +81,7 @@ description: register asset transaciton
 | Fee| string | The single output or multiple input and output fees of a transaction are the same | 
 | Confirmation| string | Number of block confirmation transactions | 
 | RegisterAssetFee| string | Minimum transaction fee for registered assets 10 ela |
-| privateKey | string | Utxo address corresponds to the private key| 
+| privatekey | string | Utxo address corresponds to the private key| 
 | address | string | arrival address | 
 | amount | string | the unit is ELA,Namely:32.2ELA | 
 | name | string | asset name , only letters and numbers are allowed in English| 
@@ -89,7 +89,7 @@ description: register asset transaciton
 | precision | int | asset precision ,0-18 | 
 | address | string | register asset address | 
 | amount | long | Initial assets balance | 
-| ChangeAddress | string | change address | 
+| changeaddress | string | change address | 
 
 - ##### java-config.json
 
@@ -109,9 +109,9 @@ description: register asset transaciton
     "method":"genregistertxbyprivatekey",
     "params":{
         "transaction":{
-                "privateKeys":[
+                "privatekeys":[
                     {
-                        "privateKey":"5FA927E5664E563F019F50DCD4D7E2D9404F2D5D49E31F9482912E23D6D7B9EB"
+                        "privatekey":"5FA927E5664E563F019F50DCD4D7E2D9404F2D5D49E31F9482912E23D6D7B9EB"
                     }
                 ],
                 "payload":{
@@ -121,7 +121,7 @@ description: register asset transaciton
                 	    "address":"Eazj14ifau5eH1SP5F8MJRuiSsPMiGbJV1",
                 	    "amount":10000
                 },
-                "changeAddress":"Eazj14ifau5eH1SP5F8MJRuiSsPMiGbJV1"
+                "changeaddress":"Eazj14ifau5eH1SP5F8MJRuiSsPMiGbJV1"
             }
     }
 }
@@ -133,7 +133,7 @@ description: register asset transaciton
     "result": {
         "rawTx": "01000567616F707003313233120000102700000000000021C3B5C32D6FE7CAC86A855276D087C443FB12178B010013313334393831353930313034343536333130310DBAD4926FAA46F0EC32C7195C6840EDD5D9B6149731A8C0F7EB281C0EE680A8AF0000000000007E6651E24BE075BB0B9BF7CAAA9B8A21E662988FDC3A98DA26F0BFA3A8BA47010000000000007C4D0C33BBAEAADC4AB4D2B1C66A682C40868544DE892886E1A9FDCDC07592D40000000000000B00C24D895DD1FFDAD36071B7AC63F793C7445B346504B2EF6E12EBD915EB5B000000000000BAD4926FAA46F0EC32C7195C6840EDD5D9B6149731A8C0F7EB281C0EE680A8AF0100000000007E6651E24BE075BB0B9BF7CAAA9B8A21E662988FDC3A98DA26F0BFA3A8BA47010100000000007C4D0C33BBAEAADC4AB4D2B1C66A682C40868544DE892886E1A9FDCDC07592D40100000000000B00C24D895DD1FFDAD36071B7AC63F793C7445B346504B2EF6E12EBD915EB5B010000000000BAD4926FAA46F0EC32C7195C6840EDD5D9B6149731A8C0F7EB281C0EE680A8AF0200000000007E6651E24BE075BB0B9BF7CAAA9B8A21E662988FDC3A98DA26F0BFA3A8BA47010200000000007C4D0C33BBAEAADC4AB4D2B1C66A682C40868544DE892886E1A9FDCDC07592D40200000000000B00C24D895DD1FFDAD36071B7AC63F793C7445B346504B2EF6E12EBD915EB5B020000000000FE52A99C9CA67307BCEB50BA0A7D2E05E4461954FB34FCF29FBBEA7F7F08CB2800000000000002B037DB964A231458D2D6FFD5EA18944C4F90E63D547C5D3B9874DF66A4EAD0A370EF26E554B90B000000000021C3B5C32D6FE7CAC86A855276D087C443FB12178BE572EE241B5A2F495CCADAE7D08778FCBA95B37E2AC30C5FC3B14DE62C32F9F50A021E19E0C9BAB24000000000000021C3B5C32D6FE7CAC86A855276D087C443FB12178B00000000014140C12AD3A7EF9DBB2591E88F8E119A616F9603F4571CF806D7AD7ADC21397DB1ACF153C32C7E7CA128EB52BBB9118F58893D2525DB4321D7D458324159C90BD07F2321037F3CAEDE72447B6082C1E8F7705FFD1ED6E24F348130D34CBC7C0A35C9E993F5AC",
         "txHash": "B32A9DE867C0E56D0E705B6EF1B1E8F6B50F2A92D6F848A2114410E7D52EBD5D",
-        "assetId": "F5F9322CE64DB1C35F0CC32A7EB395BAFC7887D0E7DACA5C492F5A1B24EE72E5"
+        "assetid": "F5F9322CE64DB1C35F0CC32A7EB395BAFC7887D0E7DACA5C492F5A1B24EE72E5"
     },
     "id": null,
     "jsonrpc": "2.0",
@@ -155,8 +155,8 @@ description:asset transaction
 | ------ | ---- | ----------- |
 | txid | string | transaction where the available balance of address is located |
 | vout| int | the serial number of the tx in which the balance is available 
-| privateKey | string | Utxo address corresponds to the private key|
-| assetId | string | asset unique identification | 
+| privatekey | string | Utxo address corresponds to the private key|
+| assetid | string | asset unique identification | 
 | address | string | arrival address | 
 | amount | string | the unit is ELA,Namely:200.01ELA | 
 
@@ -170,22 +170,22 @@ description:asset transaction
                     {
                         "txid":"4bd22df531d291d6e35aea6ab4bd31586950037985f1c5459b57d033acb0ae2c",
                         "vout":1,
-                        "privateKey":"3807d593ebd67569999cbe011616a21930d42a2b45e81574f2c52792ed1b6414"
+                        "privatekey":"3807d593ebd67569999cbe011616a21930d42a2b45e81574f2c52792ed1b6414"
                     },
                     {
                         "txid":"c24cee36ebf8938315976c8c4bdeb29ff4d0d328de53caeaaa2a6d8790ccb87f",
                         "vout":1,
-                        "privateKey":"3807d593ebd67569999cbe011616a21930d42a2b45e81574f2c52792ed1b6414"
+                        "privatekey":"3807d593ebd67569999cbe011616a21930d42a2b45e81574f2c52792ed1b6414"
                     }
                 ],
                 "outputs":[
                 	{
-                    	"assetId":"2b57ea7d168b4ce199a6e47c9ec35d8b23aefc12e1776b911e717afca7ca3936",
+                    	"assetid":"2b57ea7d168b4ce199a6e47c9ec35d8b23aefc12e1776b911e717afca7ca3936",
                         "address":"EQSpUzE4XYJhBSx5j7Tf2cteaKdFdixfVB",
                         "amount":"100"
                     },
                     {
-                    	"assetId":"a3d0eaa466df74983b5d7c543de6904f4c9418ead5ffd6d25814234a96db37b0",
+                    	"assetid":"a3d0eaa466df74983b5d7c543de6904f4c9418ead5ffd6d25814234a96db37b0",
                         "address":"EQSpUzE4XYJhBSx5j7Tf2cteaKdFdixfVB",
                         "amount":"0.00000001"
                     }
@@ -220,11 +220,11 @@ description:asset transaction
 
 | name  | type | description |
 | ------ | ---- | ----------- |
-| privateKey | string | Utxo address corresponds to the private key| 
-| assetId | string | asset unique identification | 
+| privatekey | string | Utxo address corresponds to the private key| 
+| assetid | string | asset unique identification | 
 | address | string | arrival address | 
 | amount | string | asset transfer amount | 
-| ChangeAddress | string | change address | 
+| changeaddress | string | change address | 
 
 
 ##### Request
@@ -233,19 +233,19 @@ description:asset transaction
     "method":"gentokentxbyprivatekey",
     "params":{
         "transaction":{
-                "privateKeys":[
+                "privatekeys":[
                     {
-                        "privateKey":"5FA927E5664E563F019F50DCD4D7E2D9404F2D5D49E31F9482912E23D6D7B9EB"
+                        "privatekey":"5FA927E5664E563F019F50DCD4D7E2D9404F2D5D49E31F9482912E23D6D7B9EB"
                     }
                 ],
                 "outputs":[
                 	{
-                    	"assetId":"f5f9322ce64db1c35f0cc32a7eb395bafc7887d0e7daca5c492f5a1b24ee72e5",
+                    	"assetid":"f5f9322ce64db1c35f0cc32a7eb395bafc7887d0e7daca5c492f5a1b24ee72e5",
                         "address":"Eazj14ifau5eH1SP5F8MJRuiSsPMiGbJV1",
                         "amount":"100"
                     }
                 ],
-                "changeAddress":"Eazj14ifau5eH1SP5F8MJRuiSsPMiGbJV1"
+                "changeaddress":"Eazj14ifau5eH1SP5F8MJRuiSsPMiGbJV1"
             }
     }
 }
@@ -278,11 +278,11 @@ description:multi sign asset transaction
 | ------ | ---- | ----------- |
 | txid | string | transaction where the available balance of address is located |
 | vout| int | the serial number of the tx in which the balance is available 
-| privateKey | string | Utxo address corresponds to the private key|
-| assetId | string | asset unique identification | 
+| privatekey | string | Utxo address corresponds to the private key|
+| assetid | string | asset unique identification | 
 | address | string | arrival address | 
 | amount | string | asset transfer amount | 
-| PrivateKeyScripte |  |private key for generating multi-signature addresses | 
+| privatekeyscripte |  |private key for generating multi-signature addresses | 
 | M | int | sign number | 
 
 ##### Request
@@ -306,28 +306,28 @@ description:multi sign asset transaction
                     ],
                     "outputs":[
                     	{
-                        	"assetId":"2b57ea7d168b4ce199a6e47c9ec35d8b23aefc12e1776b911e717afca7ca3936",
+                        	"assetid":"2b57ea7d168b4ce199a6e47c9ec35d8b23aefc12e1776b911e717afca7ca3936",
                             "address":"8XEsZFhuwEwmy4uT8SL5USCzWAHY6vdVk7",
                             "amount":"1000"
                         },
                         {
-                        	"assetId":"a3d0eaa466df74983b5d7c543de6904f4c9418ead5ffd6d25814234a96db37b0",
+                        	"assetid":"a3d0eaa466df74983b5d7c543de6904f4c9418ead5ffd6d25814234a96db37b0",
                             "address":"EQSpUzE4XYJhBSx5j7Tf2cteaKdFdixfVB",
                             "amount":"0.00018500"
                         }
                     ],
-                    "privateKeyScripte":[
+                    "privatekeyscripte":[
                         {
-                            "privateKey":"A9FE7748161227F5232B4A37336BD4EA2DBB633304F95F62F20F68C94A2A4E5B"
+                            "privatekey":"A9FE7748161227F5232B4A37336BD4EA2DBB633304F95F62F20F68C94A2A4E5B"
                         },
                         {
-                            "privateKey":"FA667242EEB4AAB69433CF406001520BE1CEE3F2E5266E8BAE17614E7B241FE5"
+                            "privatekey":"FA667242EEB4AAB69433CF406001520BE1CEE3F2E5266E8BAE17614E7B241FE5"
                         },
                         {
-                            "privateKey":"3315EA8114B7758E98AADA635C5A99E1523576EA72B42F156ECBE5B73447E9D6"
+                            "privatekey":"3315EA8114B7758E98AADA635C5A99E1523576EA72B42F156ECBE5B73447E9D6"
                         },
                         {
-                            "privateKey":"4849048B13242F83107CAD9F8C0DF4A3698A0DFB37055F11B91A2E5F044557C2"
+                            "privatekey":"4849048B13242F83107CAD9F8C0DF4A3698A0DFB37055F11B91A2E5F044557C2"
                         }
                     ],
                 	"m":3

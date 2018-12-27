@@ -88,7 +88,7 @@ public class ElaController {
                 return ELATransaction.genRawTransaction(param);
 
             case "decoderawtransaction":
-                String rawTransaction = param.getString("rawTransaction");
+                String rawTransaction = param.getString("rawtransaction");
                 return ELATransaction.decodeRawTransaction(rawTransaction);
 
             case "genrawtransactionbyprivatekey":

@@ -19,6 +19,8 @@ import java.io.DataOutputStream;
 import java.math.BigDecimal;
 import java.util.*;
 
+import static org.elastos.api.Verify.Type.*;
+import static org.elastos.common.InterfaceParams.*;
 import static org.elastos.common.Opcode.PACK;
 import static org.elastos.common.Opcode.TAILCALL;
 import static org.elastos.ela.payload.PayloadRegisterAsset.ElaPrecision;
@@ -57,7 +59,7 @@ public class Basic {
             return e.toString();
         }
 
-        String privateKey = jsonObject.getString("privateKey");
+        String privateKey = jsonObject.getString(PRIVATEKEY);
         String publicKey = Ela.getPublicFromPrivate(privateKey);
 
         LOGGER.info(getSuccess(publicKey));
@@ -77,7 +79,7 @@ public class Basic {
             LOGGER.error(e.toString());
             return e.toString();
         }
-        String privateKey = jsonObject.getString("privateKey");
+        String privateKey = jsonObject.getString(PRIVATEKEY);
         String address    = Ela.getAddressFromPrivate(privateKey);
 
         LOGGER.info(getSuccess(address));
@@ -97,7 +99,7 @@ public class Basic {
             LOGGER.error(e.toString());
             return e.toString();
         }
-        String privateKey = jsonObject.getString("privateKey");
+        String privateKey = jsonObject.getString(PRIVATEKEY);
         String address    = Ela.getIdentityIDFromPrivate(privateKey);
 
         LOGGER.info(getSuccess(address));
@@ -113,9 +115,9 @@ public class Basic {
         String publicKey = Ela.getPublicFromPrivate(privateKey);
         String address    = Ela.getAddressFromPrivate(privateKey);
         LinkedHashMap<String, Object> resultMap = new LinkedHashMap<String, Object>();
-        resultMap.put("privateKey",privateKey);
-        resultMap.put("publicKey",publicKey);
-        resultMap.put("address",address);
+        resultMap.put(PRIVATEKEY,privateKey);
+        resultMap.put(PUBLICKEY,publicKey);
+        resultMap.put(ADDRESS,address);
 
         LOGGER.info(getSuccess(resultMap));
         return getSuccess(resultMap);
@@ -128,7 +130,7 @@ public class Basic {
      */
     public static String checkAddress(JSONObject addresses){
         LinkedHashMap<String, Object> resultMap = new LinkedHashMap<String, Object>();
-        JSONArray addressesJSONArray = addresses.getJSONArray("addresses");
+        JSONArray addressesJSONArray = addresses.getJSONArray(ADDRESSES);
         Object addressesObject = addressesJSONArray.get(0);
         if (addressesObject instanceof String){
             for (int i = 0 ; i < addressesJSONArray.size() ; i ++){
@@ -138,7 +140,7 @@ public class Basic {
         }else {
             for (int i = 0 ; i < addressesJSONArray.size() ; i ++){
                 JSONObject o = (JSONObject) addressesJSONArray.get(i);
-                String address = o.getString("address");
+                String address = o.getString(ADDRESS);
                 boolean boo =  Util.checkAddress(address);
                 resultMap.put(address,boo);
             }
@@ -164,6 +166,25 @@ public class Basic {
         return JSON.toJSONString(map, SerializerFeature.WriteMapNullValue);
     }
 
+    public static  LinkedHashMap<String, Object> getRawTxMap(String rawTx,String txHash){
+
+        LinkedHashMap<String, Object> resultMap = new LinkedHashMap<String, Object>();
+        resultMap.put(InterfaceParams.RAWTX, rawTx);
+        resultMap.put(InterfaceParams.TXHASH, txHash);
+
+        return resultMap;
+    }
+
+    public static  LinkedHashMap<String, Object> getRawTxAndAssetIdMap(String rawTx,String txHash ,String assetId){
+
+        LinkedHashMap<String, Object> resultMap = new LinkedHashMap<String, Object>();
+        resultMap.put(InterfaceParams.RAWTX, rawTx);
+        resultMap.put(InterfaceParams.TXHASH, txHash);
+        resultMap.put(InterfaceParams.ASSET_ID, assetId);
+        return resultMap;
+    }
+
+
     /**
      * generates the address based on blockHash
      *
@@ -175,7 +196,7 @@ public class Basic {
         String address ;
         try {
             Verify.verifyParameter(Verify.Type.BlockHash,jsonObject);
-            String blockHash = jsonObject.getString("blockHash");
+            String blockHash = jsonObject.getString(BLOCK_HASH);
             address = ECKey.toGenesisSignAddress(blockHash);
         } catch (SDKException e) {
             LOGGER.error(e.toString());
@@ -195,17 +216,17 @@ public class Basic {
 
         String address ;
         try {
-            final JSONArray PrivateKeys = jsonObject.getJSONArray("privateKeys");
+            final JSONArray PrivateKeys = jsonObject.getJSONArray(PRIVATEKEYS);
             List<String> privateKeyList = new ArrayList<String>();
             for (int a = 0; a < PrivateKeys.size(); a++) {
                 Verify.verifyParameter(Verify.Type.PrivateKey,(JSONObject) PrivateKeys.get(a));
 
                 JSONObject privateKeyJson = (JSONObject) PrivateKeys.get(a);
-                String privatekey = privateKeyJson.getString("privateKey");
+                String privatekey = privateKeyJson.getString(PRIVATEKEY);
                 privateKeyList.add(privatekey);
             }
 
-            final int M = jsonObject.getInt("m");
+            final int M = jsonObject.getInt(InterfaceParams.M);
             address = Ela.getMultiSignAddress(privateKeyList, M);
         } catch (SDKException e) {
             LOGGER.error(e.toString());
@@ -217,12 +238,12 @@ public class Basic {
 
     public static String genNeoContractHashAndAddress(JSONObject jsonObject){
         try {
-            String contract = jsonObject.getString("contract");
+            String contract = jsonObject.getString(CONTRACT);
             String contractHash = Ela.genNeoContractHash(contract);
             String contractAddress = Ela.genNeoContractAddress(contractHash);
             LinkedHashMap<String, Object> resultMap = new LinkedHashMap<String, Object>();
-            resultMap.put("ContractHash",contractHash);
-            resultMap.put("ContractAddress",contractAddress);
+            resultMap.put(CONTRACT_HASH,contractHash);
+            resultMap.put(CONTRACT_ADDRESS,contractAddress);
 
             LOGGER.info(getSuccess(resultMap));
             return getSuccess(resultMap);
@@ -234,7 +255,7 @@ public class Basic {
 
     public static String genNeoContractAddress(JSONObject jsonObject){
         try {
-            String contractHash = jsonObject.getString("contractHash");
+            String contractHash = jsonObject.getString(CONTRACT_HASH);
             String contractAddress = Ela.genNeoContractAddress(contractHash);
 
             LOGGER.info(getSuccess(contractAddress));
@@ -253,14 +274,14 @@ public class Basic {
      * @throws SDKException
      */
     public static PayloadRecord parsePayloadRecord(JSONObject json_transaction) throws SDKException {
-        Object payload = json_transaction.get("payload");
+        Object payload = json_transaction.get(PAYLOAD);
         if (payload != null){
-            final JSONObject PayloadObject = json_transaction.getJSONObject("payload");
+            final JSONObject PayloadObject = json_transaction.getJSONObject(PAYLOAD);
 
-            Verify.verifyParameter(Verify.Type.RecordType,PayloadObject);
-            Verify.verifyParameter(Verify.Type.RecordData,PayloadObject);
+            Verify.verifyParameter(RecordType,PayloadObject);
+            Verify.verifyParameter(RecordData,PayloadObject);
 
-            return new PayloadRecord(PayloadObject.getString("recordType"),PayloadObject.getString("recordData"));
+            return new PayloadRecord(PayloadObject.getString(RECORD_TYPE),PayloadObject.getString(RECORD_DATA));
         }else return null;
     }
 
@@ -279,11 +300,11 @@ public class Basic {
         for (int t = 0; t < outputs.size(); t++) {
             JSONObject output = (JSONObject) outputs.get(t);
 
-            Verify.verifyParameter(Verify.Type.Address,output);
-            Verify.verifyParameter(Verify.Type.AmountStr,output);
+            Verify.verifyParameter(Address,output);
+            Verify.verifyParameter(AmountStr,output);
 
-            String amount = output.getString("amount");
-            String address = output.getString("address");
+            String amount = output.getString(AMOUNT);
+            String address = output.getString(ADDRESS);
             outputList.add(new TxOutput(address, amount,Common.SYSTEM_ASSET_ID,ElaPrecision));
         }
         return outputList;
@@ -300,9 +321,9 @@ public class Basic {
             Verify.verifyParameter(Verify.Type.PrivateKey,utxoInput);
 
 
-            String txid = utxoInput.getString("txid");
-            int vout = utxoInput.getInt("vout");
-            String privateKey = utxoInput.getString("privateKey");
+            String txid = utxoInput.getString(TX_ID);
+            int vout = utxoInput.getInt(VOUT);
+            String privateKey = utxoInput.getString(PRIVATEKEY);
             String address = Ela.getAddressFromPrivate(privateKey);
 
             inputList.add(new UTXOTxInput(txid,vout,privateKey,address));
@@ -318,11 +339,11 @@ public class Basic {
 
             Verify.verifyParameter(Verify.Type.Txid,utxoInput);
             Verify.verifyParameter(Verify.Type.Vout,utxoInput);
-            Verify.verifyParameter(Verify.Type.Address,utxoInput);
+            Verify.verifyParameter(Address,utxoInput);
 
-            String txid = utxoInput.getString("txid");
-            int vout = utxoInput.getInt("vout");
-            String address = utxoInput.getString("address");
+            String txid = utxoInput.getString(TX_ID);
+            int vout = utxoInput.getInt(VOUT);
+            String address = utxoInput.getString(ADDRESS);
             inputList.add(new UTXOTxInput(txid,vout,"",address));
         }
         return inputList;
@@ -333,19 +354,19 @@ public class Basic {
         for (int i = 0; i < PrivateKeys.size(); i++) {
             JSONObject utxoInput = (JSONObject) PrivateKeys.get(i);
             Verify.verifyParameter(Verify.Type.PrivateKey,utxoInput);
-            privateList.add(utxoInput.getString("privateKey"));
+            privateList.add(utxoInput.getString(PRIVATEKEY));
         }
         //去重
         return new ArrayList<>(new HashSet<>(privateList));
     }
 
     public static ArrayList<String> genPrivateKeySignByM(int M , JSONArray privateKeyScripte) throws SDKException {
-        if (M > privateKeyScripte.size()) throw new SDKException(ErrorCode.ParamErr("M cannot be greater than the number of privateKeys"));
+        if (M > privateKeyScripte.size()) throw new SDKException(ErrorCode.ParamErr("m cannot be greater than the number of privateKeys"));
 
         ArrayList<String> privateKeySignList = new ArrayList<String>();
         for (int n = 0; n < M; n++) {
             JSONObject privateKeys = (JSONObject) privateKeyScripte.get(n);
-            String privatekey = privateKeys.getString("privateKey");
+            String privatekey = privateKeys.getString(PRIVATEKEY);
             privateKeySignList.add(privatekey);
         }
         return privateKeySignList;
@@ -357,9 +378,9 @@ public class Basic {
         LinkedList<PayloadTransferCrossChainAsset> CrossChainAssetList = new LinkedList<PayloadTransferCrossChainAsset>();
         for (int n = 0; n < CrossChainAsset.size(); n++) {
             JSONObject output = (JSONObject) CrossChainAsset.get(n);
-            Verify.verifyParameter(Verify.Type.AmountStr,output);
-            String address = output.getString("address");
-            String  amount = output.getString("amount");
+            Verify.verifyParameter(AmountStr,output);
+            String address = output.getString(ADDRESS);
+            String  amount = output.getString(AMOUNT);
             long longValue = Util.multiplyAmountELA(new BigDecimal(amount), ElaPrecision).longValue();
             CrossChainAssetList.add(new PayloadTransferCrossChainAsset(address, longValue, n));
         }
@@ -377,11 +398,11 @@ public class Basic {
         for (int t = 0; t < outputs.size(); t++) {
             JSONObject output = (JSONObject) outputs.get(t);
 
-            Verify.verifyParameter(Verify.Type.AmountStr,output);
+            Verify.verifyParameter(AmountStr,output);
 
             //没有用到的blockhash是为了接口灵活，找零逻辑不用很麻烦
-            String amount = output.getString("amount");
-            String address = output.getString("address");
+            String amount = output.getString(AMOUNT);
+            String address = output.getString(ADDRESS);
             outputList.add(new TxOutput(address, amount,Common.SYSTEM_ASSET_ID,ElaPrecision));
         }
         return outputList;
@@ -400,12 +421,12 @@ public class Basic {
             JSONObject output = (JSONObject) outputs.get(t);
 
             Verify.verifyParameter(Verify.Type.AssetId,output);
-            Verify.verifyParameter(Verify.Type.Address,output);
-            Verify.verifyParameter(Verify.Type.AmountStr,output);
+            Verify.verifyParameter(Address,output);
+            Verify.verifyParameter(AmountStr,output);
 
-            String  assetId = output.getString("assetId");
-            String address = output.getString("address");
-            String  amount = output.getString("amount");
+            String  assetId = output.getString(ASSET_ID);
+            String address = output.getString(ADDRESS);
+            String  amount = output.getString(AMOUNT);
             int precision = ElaPrecision;
             if (!assetId.toLowerCase().equals(Common.SYSTEM_ASSET_ID)){
                 precision = MaxPrecision;
@@ -425,7 +446,7 @@ public class Basic {
      */
     public static TxOutput[] parseRegisterOutput(PayloadRegisterAsset payload,JSONObject json_transaction) throws SDKException {
         LinkedList<TxOutput> outputList = new LinkedList<TxOutput>();
-        final JSONArray outputs = json_transaction.getJSONArray("outputs");
+        final JSONArray outputs = json_transaction.getJSONArray(InterfaceParams.OUTPUTS);
         //添加注册资产
         registerToOutput(payload,outputList);
         //添加消费ELA
@@ -451,26 +472,26 @@ public class Basic {
      * @throws SDKException
      */
     public static PayloadRegisterAsset payloadRegisterAsset(JSONObject json_transaction) throws SDKException {
-        Object payload = json_transaction.get("payload");
+        Object payload = json_transaction.get(PAYLOAD);
         if (payload != null){
-            final JSONObject PayloadObject = json_transaction.getJSONObject("payload");
+            final JSONObject PayloadObject = json_transaction.getJSONObject(PAYLOAD);
 
             Verify.verifyParameter(Verify.Type.Name,PayloadObject);
             Verify.verifyParameter(Verify.Type.Description,PayloadObject);
             Verify.verifyParameter(Verify.Type.Precision,PayloadObject);
-            Verify.verifyParameter(Verify.Type.Address,PayloadObject);
+            Verify.verifyParameter(Address,PayloadObject);
             Verify.verifyParameter(Verify.Type.Amount,PayloadObject);
 
-            String assetname = PayloadObject.getString("name");
-            String description = PayloadObject.getString("description");
-            int precision = PayloadObject.getInt("precision");
-            String address = PayloadObject.getString("address");
-            long amount = PayloadObject.getLong("amount");
+            String assetname = PayloadObject.getString(NAME);
+            String description = PayloadObject.getString(DESCRIPTION);
+            int precision = PayloadObject.getInt(PRECISION);
+            String address = PayloadObject.getString(ADDRESS);
+            long amount = PayloadObject.getLong(AMOUNT);
 
             //生成assetId
             Asset asset = new Asset(assetname, description, (byte) precision, (byte) 0x00);
             return new PayloadRegisterAsset(asset,amount,address);
-        }throw new SDKException(ErrorCode.ParamErr("Payload can not be empty"));
+        }throw new SDKException(ErrorCode.ParamErr("payload can not be empty"));
     }
 
 
@@ -483,9 +504,9 @@ public class Basic {
         byte[] code ;
 
         //ParamTypes
-        Object ParamTypes = json_transaction.get("params");
+        Object ParamTypes = json_transaction.get(PARAMS);
         if (ParamTypes != null){
-            final JSONArray paramTypes = json_transaction.getJSONArray("params");
+            final JSONArray paramTypes = json_transaction.getJSONArray(PARAMS);
             List<Byte> list = new ArrayList<>();
             for (int i = 0; i<paramTypes.size();i++){
                 String paramType = paramTypes.getString(i);
@@ -493,19 +514,19 @@ public class Basic {
                 list.add(iota);
             }
             parameterTypes = Util.byteToByteArray(list);
-        }else throw  new SDKException(ErrorCode.ParamErr("ParamTypes can not be empty"));
+        }else throw  new SDKException(ErrorCode.ParamErr("paramtypes can not be empty"));
 
         //ReturnType
-        Object ReturnType = json_transaction.get("returnType");
+        Object ReturnType = json_transaction.get(RETURN_TYPE);
         if (ReturnType != null){
-            String returnTypeStr = json_transaction.getString("returnType");
+            String returnTypeStr = json_transaction.getString(RETURN_TYPE);
             returnTypeByte = parameterTypemap.get(returnTypeStr);
-        }else throw new SDKException(ErrorCode.ParamErr("ReturnType can not be empty"));
+        }else throw new SDKException(ErrorCode.ParamErr("returntype can not be empty"));
 
         //ContractCode
-        Object ContractCode = json_transaction.get("contractCode");
+        Object ContractCode = json_transaction.get(InterfaceParams.CONTRACT_CODE);
         if (ContractCode != null){
-            String contractCodeStr = json_transaction.getString("contractCode");
+            String contractCodeStr = json_transaction.getString(InterfaceParams.CONTRACT_CODE);
             code = DatatypeConverter.parseHexBinary(contractCodeStr);
 
 //            if (!(code[code.length -1] == SMART_CONTRACT)){
@@ -521,33 +542,33 @@ public class Basic {
             FunctionCode functionCode = new FunctionCode(returnTypeByte, parameterTypes, code);
             PayloadDeploy.Code = functionCode;
 
-        }else throw new SDKException(ErrorCode.ParamErr("ContractCode can not be empty"));
+        }else throw new SDKException(ErrorCode.ParamErr("contractcode can not be empty"));
     }
 
     public static PayloadDeploy parsePayloadDeploy(JSONObject json_transaction) throws SDKException {
 
         //programHash
-        JSONObject utxoInput = (JSONObject) json_transaction.getJSONArray("inputs").get(0);
-        String privateKey = utxoInput.getString("privateKey");
+        JSONObject utxoInput = (JSONObject) json_transaction.getJSONArray(INPUTS).get(0);
+        String privateKey = utxoInput.getString(PRIVATEKEY);
         String address = Ela.getAddressFromPrivate(privateKey);
         byte[] programHash = Util.ToScriptHash(address);
 
         //Payload
-        Object PayloadDeploy = json_transaction.get("payload");
+        Object PayloadDeploy = json_transaction.get(PAYLOAD);
         if (PayloadDeploy != null){
-            final JSONObject PayloadObject = json_transaction.getJSONObject("payload");
+            final JSONObject PayloadObject = json_transaction.getJSONObject(PAYLOAD);
 
-            String name = PayloadObject.getString("name");
-            String codeVersion = PayloadObject.getString("codeVersion");
-            String author = PayloadObject.getString("author");
-            String email = PayloadObject.getString("email");
-            String description = PayloadObject.getString("description");
-            String gas = PayloadObject.getString("gas");
+            String name = PayloadObject.getString(NAME);
+            String codeVersion = PayloadObject.getString(CODE_VERSION);
+            String author = PayloadObject.getString(AUTHOR);
+            String email = PayloadObject.getString(EMAIL);
+            String description = PayloadObject.getString(DESCRIPTION);
+            String gas = PayloadObject.getString(GAS);
 
             long longValue = Util.multiplyAmountELA(new BigDecimal(gas), ElaPrecision).toBigInteger().longValue();
 
             return new PayloadDeploy(name,codeVersion,author,email,description,programHash,longValue);
-        }throw new SDKException(ErrorCode.ParamErr("Payload can not be empty"));
+        }throw new SDKException(ErrorCode.ParamErr("payload can not be empty"));
     }
 
 
@@ -557,9 +578,9 @@ public class Basic {
         byte[] paramByte;
 
         //ParamTypes
-        Object ParamTypes = json_transaction.get("params");
+        Object ParamTypes = json_transaction.get(PARAMS);
         if (ParamTypes != null) {
-            JSONArray paramTypes = json_transaction.getJSONArray("params");
+            JSONArray paramTypes = json_transaction.getJSONArray(PARAMS);
 
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             DataOutputStream o = new DataOutputStream(baos);
@@ -567,20 +588,20 @@ public class Basic {
             parseJsonToBytes(o,paramTypes);
 
             paramByte = baos.toByteArray();
-        }else throw new SDKException(ErrorCode.ParamErr("ParamTypes can not be empty"));
+        }else throw new SDKException(ErrorCode.ParamErr("paramtypes can not be empty"));
 
         //ContractHash
-        Object ContractHash = json_transaction.get("contractHash");
+        Object ContractHash = json_transaction.get(CONTRACT_HASH);
         if (ContractHash != null) {
             //合约hash不需要反转
-            contractHash = DatatypeConverter.parseHexBinary(json_transaction.getString("contractHash"));
+            contractHash = DatatypeConverter.parseHexBinary(json_transaction.getString(CONTRACT_HASH));
             //去掉1c 一个字节
             byte[] tmp = new byte[contractHash.length - 1];
             System.arraycopy(contractHash,1,tmp,0,tmp.length);
             contractHash = tmp;
             //合约hash反转是需要和编译器一致
             reverseContractHash = Utils.reverseBytes(contractHash);
-        }else throw new SDKException(ErrorCode.ParamErr("contractHash can not be empty"));
+        }else throw new SDKException(ErrorCode.ParamErr("contracthash can not be empty"));
 
         // paramByte + TAILCALL + contractHash
         byte[] tailCall = new byte[1];
@@ -593,18 +614,18 @@ public class Basic {
         paramByte = code_buf;
 
         //programHash
-        JSONObject utxoInput = (JSONObject) json_transaction.getJSONArray("inputs").get(0);
-        String privateKey = utxoInput.getString("privateKey");
+        JSONObject utxoInput = (JSONObject) json_transaction.getJSONArray(INPUTS).get(0);
+        String privateKey = utxoInput.getString(PRIVATEKEY);
         String address = Ela.getAddressFromPrivate(privateKey);
         byte[] programHash = Util.ToScriptHash(address);
 
         // gas
-        Object Gas = json_transaction.get("gas");
+        Object Gas = json_transaction.get(GAS);
         if (Gas != null) {
-            String gas = json_transaction.getString("gas");
+            String gas = json_transaction.getString(GAS);
             long longValue = Util.multiplyAmountELA(new BigDecimal(gas), ElaPrecision).toBigInteger().longValue();
             return new PayloadInvoke(contractHash,paramByte,programHash,longValue);
-        }else throw new SDKException(ErrorCode.ParamErr("Gas can not be empty"));
+        }else throw new SDKException(ErrorCode.ParamErr("gas can not be empty"));
     }
 
     public static void parseJsonToBytes(DataOutputStream o, JSONArray params) throws SDKException {
@@ -648,7 +669,7 @@ public class Basic {
                 }
             }
         }catch (Exception e){
-            throw new SDKException(ErrorCode.ParamErr("ParamTypes serialize err : " + e));
+            throw new SDKException(ErrorCode.ParamErr("paramtypes serialize err : " + e));
         }
     }
 }

@@ -78,7 +78,7 @@ public class UTXOTxInput {
         String Txid = DatatypeConverter.printHexBinary(Utils.reverseBytes(buf));
 
         Map<String, Object> inputMap = new HashMap<String, Object>();
-        inputMap.put("Txid:",Txid);
+        inputMap.put("txid:",Txid);
 
         //ReferTxOutputIndex
         Short.reverseBytes(o.readShort());

@@ -34,7 +34,7 @@ description:obtain the public key based on the private key
 ```
 {
     "method":"genpublickey",
-    "params": { "privateKey":"4EA80EDBFC783A19FAC1072D15893AC7A20B4EDE1402FD57DE76D02EA61E28E4"}
+    "params": { "privatekey":"4EA80EDBFC783A19FAC1072D15893AC7A20B4EDE1402FD57DE76D02EA61E28E4"}
 }
 ```
 
@@ -56,7 +56,7 @@ description:obtain the address based on the private key
 ```
 {
     "method":"genaddress",
-    "params": {"privateKey":"bddeadcdef4391dd95e3f48de69c607fa4c84ebf9452baf816e2311520ee9344"}
+    "params": {"privatekey":"bddeadcdef4391dd95e3f48de69c607fa4c84ebf9452baf816e2311520ee9344"}
 }
 
 ```
@@ -86,8 +86,8 @@ description:generate private key and public key and address
 ```
 {
     "result": {
-        "privateKey": "B9A74F7C3F134D92932379CEDA431B3D52BC8D2800F1995803BE970A6727E4FA",
-        "publicKey": "02218B25A023D1C4BAF8857BFF7D13D6C83F48767DB02C6519ABF681E6FC5D54C2",
+        "privatekey": "B9A74F7C3F134D92932379CEDA431B3D52BC8D2800F1995803BE970A6727E4FA",
+        "publickey": "02218B25A023D1C4BAF8857BFF7D13D6C83F48767DB02C6519ABF681E6FC5D54C2",
         "address": "EaupPuQPhcWvHDUDWdL9RUmAjCQZp637F1"
     },
     "id": null,
@@ -103,7 +103,7 @@ description:obtain the identity id based on the private key
 ```
 {
     "method":"genidentityid",
-    "params":{"privateKey":"4EA80EDBFC783A19FAC1072D15893AC7A20B4EDE1402FD57DE76D02EA61E28E4"}
+    "params":{"privatekey":"4EA80EDBFC783A19FAC1072D15893AC7A20B4EDE1402FD57DE76D02EA61E28E4"}
 }
 
 ```
@@ -126,7 +126,7 @@ description:obtain the genesis address based on the genesis block hash
 ```
 {
     "method":"gengenesisaddress",
-    "params":{"BlockHash":"56be936978c261b2e649d58dbfaf3f23d4a868274f5522cd2adb4308a955c4a3"}
+    "params":{"blockhash":"56be936978c261b2e649d58dbfaf3f23d4a868274f5522cd2adb4308a955c4a3"}
 }
 
 ```
@@ -182,18 +182,18 @@ description:generate multi sign address, M is sign number
 {
     "method":"genmultisignaddress",
     "params":{
-			"privateKeys":[
+			"privatekeys":[
                 {
-                    "privateKey":"37b1ae4caac014db4d585b07af19be90da4e0767f39753177711860765aeb4b2"
+                    "privatekey":"37b1ae4caac014db4d585b07af19be90da4e0767f39753177711860765aeb4b2"
                 },
                 {
-                    "privateKey":"3587efd8a04b77d626532bd46a32d24879ee9e9b6e16298faa7320bf6b32a5d6"
+                    "privatekey":"3587efd8a04b77d626532bd46a32d24879ee9e9b6e16298faa7320bf6b32a5d6"
                 },
                 {
-                    "privateKey":"73541c05f4f4c7407663e3abde883a6eb9ef682b1dcaa691efdcb6231a7f17a9"
+                    "privatekey":"73541c05f4f4c7407663e3abde883a6eb9ef682b1dcaa691efdcb6231a7f17a9"
                 },
                 {
-                    "privateKey":"f358893425c842d0d48cb4eb498ac995d9f31bb7a151742cb3b14e97f656284f"
+                    "privatekey":"f358893425c842d0d48cb4eb498ac995d9f31bb7a151742cb3b14e97f656284f"
                 }
             ],
             "m":3       
@@ -229,8 +229,8 @@ description:obtain the neo contract hash and address based on the contract
 ```
 {
     "result": {
-        "ContractHash": "1C1A894CE949A9DE9B466405032C3E4F542158C96A",
-        "ContractAddress": "CJtCcq7PUNz7LwYNfXq1ZhxS5VxKe9YC4y"
+        "contracthash": "1C1A894CE949A9DE9B466405032C3E4F542158C96A",
+        "contractaddress": "CJtCcq7PUNz7LwYNfXq1ZhxS5VxKe9YC4y"
     },
     "id": null,
     "jsonrpc": "2.0",
@@ -245,7 +245,7 @@ description:obtain the neo contract address based on the contract hash
 ```
 {
     "method":"genneocontractaddress",
-    "params":{"contractHash":"1C1A894CE949A9DE9B466405032C3E4F542158C96A"}
+    "params":{"contracthash":"1C1A894CE949A9DE9B466405032C3E4F542158C96A"}
 }
 
 ```

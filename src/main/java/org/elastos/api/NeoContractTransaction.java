@@ -14,6 +14,8 @@ import org.slf4j.LoggerFactory;
 import java.util.LinkedHashMap;
 
 import static org.elastos.api.Basic.genfunctionCode;
+import static org.elastos.api.Basic.getRawTxMap;
+import static org.elastos.common.InterfaceParams.*;
 
 public class NeoContractTransaction {
 
@@ -21,9 +23,9 @@ public class NeoContractTransaction {
 
     public static String genDeployContractTx(JSONObject inputsAddOutpus){
         try {
-            final JSONObject json_transaction = inputsAddOutpus.getJSONObject("transaction");
-            final JSONArray utxoInputs = json_transaction.getJSONArray("inputs");
-            final JSONArray outputs = json_transaction.getJSONArray("outputs");
+            final JSONObject json_transaction = inputsAddOutpus.getJSONObject(TRANSACTION);
+            final JSONArray utxoInputs = json_transaction.getJSONArray(INPUTS);
+            final JSONArray outputs = json_transaction.getJSONArray(OUTPUTS);
 
             //解析inputs
             UTXOTxInput[] UTXOTxInputs = Basic.parseInputs(utxoInputs).toArray(new UTXOTxInput[utxoInputs.size()]);
@@ -34,10 +36,8 @@ public class NeoContractTransaction {
             //PayloadDeploy
             PayloadDeploy payloadDeploy = Basic.parsePayloadDeploy(json_transaction);
 
-            LinkedHashMap<String, Object> resultMap = new LinkedHashMap<String, Object>();
             RawTx rawTx = Ela.deployContractTransaction(UTXOTxInputs,txOutputs,payloadDeploy);
-            resultMap.put("rawtx", rawTx.getRawTxString());
-            resultMap.put("txhash", rawTx.getTxHash());
+            LinkedHashMap<String, Object> resultMap = getRawTxMap(rawTx.getRawTxString(), rawTx.getTxHash());
 
             LOGGER.info(Basic.getSuccess(resultMap));
             return Basic.getSuccess(resultMap);
@@ -49,9 +49,9 @@ public class NeoContractTransaction {
 
     public static String genInvokeContractTx(JSONObject inputsAddOutpus){
         try {
-            final JSONObject json_transaction = inputsAddOutpus.getJSONObject("transaction");
-            final JSONArray utxoInputs = json_transaction.getJSONArray("inputs");
-            final JSONArray outputs = json_transaction.getJSONArray("outputs");
+            final JSONObject json_transaction = inputsAddOutpus.getJSONObject(TRANSACTION);
+            final JSONArray utxoInputs = json_transaction.getJSONArray(INPUTS);
+            final JSONArray outputs = json_transaction.getJSONArray(OUTPUTS);
 
             //解析inputs
             UTXOTxInput[] UTXOTxInputs = Basic.parseInputs(utxoInputs).toArray(new UTXOTxInput[utxoInputs.size()]);
@@ -60,10 +60,8 @@ public class NeoContractTransaction {
             // invoke
             PayloadInvoke payloadInvoke = Basic.genPayloadInvoke(json_transaction);
 
-            LinkedHashMap<String, Object> resultMap = new LinkedHashMap<String, Object>();
             RawTx rawTx = Ela.invokenContractTransaction(UTXOTxInputs,txOutputs,payloadInvoke);
-            resultMap.put("rawtx", rawTx.getRawTxString());
-            resultMap.put("txhash", rawTx.getTxHash());
+            LinkedHashMap<String, Object> resultMap = getRawTxMap(rawTx.getRawTxString(), rawTx.getTxHash());
 
             LOGGER.info(Basic.getSuccess(resultMap));
             return Basic.getSuccess(resultMap);

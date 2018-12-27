@@ -79,8 +79,8 @@ public class TxOutput {
         String address = Util.ToAddress(programHash);
 
         Map<String, Object> outputMap = new LinkedHashMap<String, Object>();
-        outputMap.put("Address:",address);
-        outputMap.put("Value:",v);
+        outputMap.put("address:",address);
+        outputMap.put("amount:",v);
         return outputMap;
     }
 

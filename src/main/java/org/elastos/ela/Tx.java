@@ -309,8 +309,8 @@ public class Tx {
         }
 
         Map<String, List<Map>> resultmap = new LinkedHashMap<String, List<Map>>();
-        resultmap.put("UTXOInputs:",inputList);
-        resultmap.put("Outputs:",outputList);
+        resultmap.put("inputs:",inputList);
+        resultmap.put("outputs:",outputList);
         return resultmap;
     }
 

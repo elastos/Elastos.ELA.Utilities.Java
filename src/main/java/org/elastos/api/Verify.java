@@ -17,12 +17,12 @@ import static org.elastos.common.Util.isAscii;
  */
 public class Verify {
     public enum Type{
-        PrivateKey("privateKey"),
+        PrivateKey("privatekey"),
         Address("address"),
-        ChangeAddress("changeAddress"),
+        ChangeAddress("changeaddress"),
         Amount("amount"),
         AmountStr("amount"),
-        AssetId("assetId"),
+        AssetId("assetid"),
         M("m"),
         Host("Host"),
         Fee("Fee"),
@@ -33,7 +33,7 @@ public class Verify {
         Password("password"),
         RecordType("recordType"),
         RecordData("recordData"),
-        BlockHash("blockHash"),
+        BlockHash("blockhash"),
 
         Name("name"),
         Description("description"),

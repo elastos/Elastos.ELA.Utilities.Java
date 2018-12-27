@@ -3,6 +3,7 @@ package org.elastos.api;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.elastos.common.ErrorCode;
+import org.elastos.common.InterfaceParams;
 import org.elastos.common.SDKException;
 import org.elastos.ela.*;
 import org.elastos.ela.payload.PayloadTransferCrossChainAsset;
@@ -13,6 +14,8 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
+
+import static org.elastos.api.Basic.getRawTxMap;
 
 /**
  * @author: DongLei.Tan
@@ -32,11 +35,11 @@ public class CrossChainTransaction {
 
     public static String genCrossChainTx(JSONObject inputsAddOutpus){
         try {
-            final JSONObject json_transaction = inputsAddOutpus.getJSONObject("transaction");
-            final JSONArray utxoInputs = json_transaction.getJSONArray("inputs");
-            final JSONArray outputs = json_transaction.getJSONArray("outputs");
-            final JSONArray CrossChainAsset = json_transaction.getJSONArray("crossChainAsset");
-            final JSONArray privateKeySign = json_transaction.getJSONArray("privateKeySign");
+            final JSONObject json_transaction = inputsAddOutpus.getJSONObject(InterfaceParams.TRANSACTION);
+            final JSONArray utxoInputs = json_transaction.getJSONArray(InterfaceParams.INPUTS);
+            final JSONArray outputs = json_transaction.getJSONArray(InterfaceParams.OUTPUTS);
+            final JSONArray CrossChainAsset = json_transaction.getJSONArray(InterfaceParams.CROSS_CHAIN_ASSET);
+            final JSONArray privateKeySign = json_transaction.getJSONArray(InterfaceParams.PRIVATEKEY_SIGN);
 
             //解析inputs
             UTXOTxInput[] UTXOTxInputs = Basic.parseInputsAddress(utxoInputs).toArray(new UTXOTxInput[utxoInputs.size()]);
@@ -47,10 +50,8 @@ public class CrossChainTransaction {
             //解析 签名所需要的私钥
             List<String> privateKeySignList = Basic.parsePrivates(privateKeySign);
 
-            LinkedHashMap<String, Object> resultMap = new LinkedHashMap<String, Object>();
             RawTx rawTx = Ela.crossChainSignTx(UTXOTxInputs, txOutputs,payloadTransferCrossChainAssets, privateKeySignList);
-            resultMap.put("rawtx", rawTx.getRawTxString());
-            resultMap.put("txhash", rawTx.getTxHash());
+            LinkedHashMap<String, Object> resultMap = getRawTxMap(rawTx.getRawTxString(), rawTx.getTxHash());
 
             LOGGER.info(Basic.getSuccess(resultMap));
             return Basic.getSuccess(resultMap);
@@ -62,10 +63,10 @@ public class CrossChainTransaction {
 
     public static String genCrossChainTxByPrivateKey(JSONObject inputsAddOutpus){
         try {
-            final JSONObject json_transaction = inputsAddOutpus.getJSONObject("transaction");
-            final JSONArray PrivateKeys = json_transaction.getJSONArray("privateKeys");
-            final JSONArray outputs = json_transaction.getJSONArray("outputs");
-            final JSONArray CrossChainAsset = json_transaction.getJSONArray("crossChainAsset");
+            final JSONObject json_transaction = inputsAddOutpus.getJSONObject(InterfaceParams.TRANSACTION);
+            final JSONArray PrivateKeys = json_transaction.getJSONArray(InterfaceParams.PRIVATEKEYS);
+            final JSONArray outputs = json_transaction.getJSONArray(InterfaceParams.OUTPUTS);
+            final JSONArray CrossChainAsset = json_transaction.getJSONArray(InterfaceParams.CROSS_CHAIN_ASSET);
 
             List<String> privateList = Basic.parsePrivates(PrivateKeys);
             //解析outputs
@@ -74,12 +75,12 @@ public class CrossChainTransaction {
             PayloadTransferCrossChainAsset[] payloadTransferCrossChainAssets = Basic.parseCrossChainAsset(CrossChainAsset).toArray(new PayloadTransferCrossChainAsset[CrossChainAsset.size()]);
 
             Verify.verifyParameter(Verify.Type.ChangeAddress,json_transaction);
-            String changeAddress = json_transaction.getString("changeAddress");
+            String changeAddress = json_transaction.getString(InterfaceParams.CHANGE_ADDRESS);
 
-            LinkedHashMap<String, Object> resultMap = new LinkedHashMap<String, Object>();
+
             RawTx rawTx = UsableUtxo.makeAndSignTxByCrossChain(privateList, txOutputs,payloadTransferCrossChainAssets,changeAddress);
-            resultMap.put("rawtx", rawTx.getRawTxString());
-            resultMap.put("txhash", rawTx.getTxHash());
+
+            LinkedHashMap<String, Object> resultMap = getRawTxMap(rawTx.getRawTxString(), rawTx.getTxHash());
 
             LOGGER.info(Basic.getSuccess(resultMap));
             return Basic.getSuccess(resultMap);
@@ -99,13 +100,13 @@ public class CrossChainTransaction {
 
     public static String genCrossChainMultiSignTx(JSONObject inputsAddOutpus){
 
-        final JSONObject json_transaction = inputsAddOutpus.getJSONObject("transaction");
-        final JSONArray utxoInputs = json_transaction.getJSONArray("inputs");
+        final JSONObject json_transaction = inputsAddOutpus.getJSONObject(InterfaceParams.TRANSACTION);
+        final JSONArray utxoInputs = json_transaction.getJSONArray(InterfaceParams.INPUTS);
 
         if (utxoInputs.size() < 2) {
-            final JSONArray outputs = json_transaction.getJSONArray("outputs");
-            final JSONArray privateKeyScripte = json_transaction.getJSONArray("privateKeyScripte");
-            final JSONArray CrossChainAsset = json_transaction.getJSONArray("crossChainAsset");
+            final JSONArray outputs = json_transaction.getJSONArray(InterfaceParams.OUTPUTS);
+            final JSONArray privateKeyScripte = json_transaction.getJSONArray(InterfaceParams.PRIVATEKEY_SCRIPTE);
+            final JSONArray CrossChainAsset = json_transaction.getJSONArray(InterfaceParams.CROSS_CHAIN_ASSET);
 
             try {
                 //解析inputs
@@ -117,15 +118,13 @@ public class CrossChainTransaction {
                 //解析 创建赎回脚本所需要的私钥
                 List<String> privateKeyScripteList = Basic.parsePrivates(privateKeyScripte);
 
-                final int M = json_transaction.getInt("m");
+                final int M = json_transaction.getInt(InterfaceParams.M);
 
                 //得到 签名所需要的私钥
                 ArrayList<String> privateKeySignList = Basic.genPrivateKeySignByM(M, privateKeyScripte);
 
-                LinkedHashMap<String, Object> resultMap = new LinkedHashMap<String, Object>();
                 RawTx rawTx = Ela.crossChainMultiSignTx(UTXOTxInputs,txOutputs,payloadTransferCrossChainAssets, privateKeyScripteList, privateKeySignList, M);
-                resultMap.put("rawtx", rawTx.getRawTxString());
-                resultMap.put("txhash", rawTx.getTxHash());
+                LinkedHashMap<String, Object> resultMap = getRawTxMap(rawTx.getRawTxString(), rawTx.getTxHash());
 
                 LOGGER.info(Basic.getSuccess(resultMap));
                 return Basic.getSuccess(resultMap);

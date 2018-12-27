@@ -2,6 +2,7 @@ package org.elastos.api;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
+import org.elastos.common.InterfaceParams;
 import org.elastos.ela.*;
 import org.elastos.ela.payload.PayloadRecord;
 import org.elastos.ela.payload.PayloadRegisterAsset;
@@ -13,14 +14,18 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 
+import static org.elastos.api.Basic.getRawTxAndAssetIdMap;
+import static org.elastos.api.Basic.getRawTxMap;
+import static org.elastos.common.InterfaceParams.*;
+
 public class TokenTransaction {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TokenTransaction.class);
 
     public static String genRegisterTx(JSONObject inputsAddOutpus){
         try {
-            final JSONObject json_transaction = inputsAddOutpus.getJSONObject("transaction");
-            final JSONArray utxoInputs = json_transaction.getJSONArray("inputs");
+            final JSONObject json_transaction = inputsAddOutpus.getJSONObject(TRANSACTION);
+            final JSONArray utxoInputs = json_transaction.getJSONArray(INPUTS);
 
             //解析inputs
             UTXOTxInput[] UTXOTxInputs = Basic.parseInputs(utxoInputs).toArray(new UTXOTxInput[utxoInputs.size()]);
@@ -30,11 +35,8 @@ public class TokenTransaction {
             TxOutput[] txOutputs = Basic.parseRegisterOutput(payload,json_transaction);
 
             //创建rawTransaction
-            LinkedHashMap<String, Object> resultMap = new LinkedHashMap<String, Object>();
             RawTx rawTx = Ela.makeAndSignTx(UTXOTxInputs,txOutputs,payload);
-            resultMap.put("rawtx",rawTx.getRawTxString());
-            resultMap.put("txhash",rawTx.getTxHash());
-            resultMap.put("assetid",Asset.AssetId);
+            LinkedHashMap<String, Object> resultMap = getRawTxAndAssetIdMap(rawTx.getRawTxString(), rawTx.getTxHash(),Asset.AssetId);
 
             LOGGER.info(Basic.getSuccess(resultMap));
             return Basic.getSuccess(resultMap);
@@ -46,8 +48,8 @@ public class TokenTransaction {
 
     public static String genRegisterTxByPrivateKey(JSONObject inputsAddOutpus){
         try {
-            final JSONObject json_transaction = inputsAddOutpus.getJSONObject("transaction");
-            final JSONArray PrivateKeys = json_transaction.getJSONArray("privateKeys");
+            final JSONObject json_transaction = inputsAddOutpus.getJSONObject(TRANSACTION);
+            final JSONArray PrivateKeys = json_transaction.getJSONArray(PRIVATEKEYS);
 
             List<String> privateList = Basic.parsePrivates(PrivateKeys);
             //解析PayloadRegisterAsset
@@ -55,14 +57,11 @@ public class TokenTransaction {
             //解析outputs
             LinkedList<TxOutput> outputList = new LinkedList<TxOutput>();
 
-            String changeAddress = json_transaction.getString("changeAddress");
+            String changeAddress = json_transaction.getString(CHANGE_ADDRESS);
 
             //创建rawTransaction
-            LinkedHashMap<String, Object> resultMap = new LinkedHashMap<String, Object>();
             String rawTx = UsableUtxo.makeAndSignTxByToken(privateList, outputList, changeAddress ,payload);
-            resultMap.put("rawtx",rawTx);
-            resultMap.put("txhash",UsableUtxo.txHash);
-            resultMap.put("assetid",Asset.AssetId);
+            LinkedHashMap<String, Object> resultMap = getRawTxAndAssetIdMap(rawTx, UsableUtxo.txHash,Asset.AssetId);
 
             LOGGER.info(Basic.getSuccess(resultMap));
             return Basic.getSuccess(resultMap);
@@ -74,23 +73,21 @@ public class TokenTransaction {
 
     public static String genTokenTxByPrivateKey(JSONObject inputsAddOutpus){
         try {
-            final JSONObject json_transaction = inputsAddOutpus.getJSONObject("transaction");
-            final JSONArray PrivateKeys = json_transaction.getJSONArray("privateKeys");
-            final JSONArray outputs = json_transaction.getJSONArray("outputs");
+            final JSONObject json_transaction = inputsAddOutpus.getJSONObject(TRANSACTION);
+            final JSONArray PrivateKeys = json_transaction.getJSONArray(PRIVATEKEYS);
+            final JSONArray outputs = json_transaction.getJSONArray(OUTPUTS);
 
             List<String> privateList = Basic.parsePrivates(PrivateKeys);
             //解析outputs
             LinkedList<TxOutput> txOutputs = Basic.parseOutputsByAsset(outputs);
 
-            String changeAddress = json_transaction.getString("changeAddress");
+            String changeAddress = json_transaction.getString(CHANGE_ADDRESS);
 
             //创建rawTransaction
-            LinkedHashMap<String, Object> resultMap = new LinkedHashMap<String, Object>();
 
             String rawTx = UsableUtxo.makeAndSignTx(privateList, txOutputs, changeAddress);
 
-            resultMap.put("rawtx",rawTx);
-            resultMap.put("txhash",UsableUtxo.txHash);
+            LinkedHashMap<String, Object> resultMap = getRawTxMap(rawTx, UsableUtxo.txHash);
 
             LOGGER.info(Basic.getSuccess(resultMap));
             return Basic.getSuccess(resultMap);
@@ -102,9 +99,9 @@ public class TokenTransaction {
 
     public static String genTokenTx(JSONObject inputsAddOutpus){
         try {
-            final JSONObject json_transaction = inputsAddOutpus.getJSONObject("transaction");
-            final JSONArray utxoInputs = json_transaction.getJSONArray("inputs");
-            final JSONArray outputs = json_transaction.getJSONArray("outputs");
+            final JSONObject json_transaction = inputsAddOutpus.getJSONObject(TRANSACTION);
+            final JSONArray utxoInputs = json_transaction.getJSONArray(INPUTS);
+            final JSONArray outputs = json_transaction.getJSONArray(OUTPUTS);
 
             //解析inputs
             UTXOTxInput[] UTXOTxInputs = Basic.parseInputs(utxoInputs).toArray(new UTXOTxInput[utxoInputs.size()]);
@@ -112,11 +109,9 @@ public class TokenTransaction {
             TxOutput[] txOutputs = Basic.parseOutputsByAsset(outputs).toArray(new TxOutput[outputs.size()]);
 
             //创建rawTransaction
-            LinkedHashMap<String, Object> resultMap = new LinkedHashMap<String, Object>();
             RawTx rawTx  = Ela.makeAndSignTx(UTXOTxInputs,txOutputs);
 
-            resultMap.put("rawtx",rawTx.getRawTxString());
-            resultMap.put("txhash",rawTx.getTxHash());
+            LinkedHashMap<String, Object> resultMap = getRawTxMap(rawTx.getRawTxString(), rawTx.getTxHash());
 
             LOGGER.info(Basic.getSuccess(resultMap));
             return Basic.getSuccess(resultMap);
@@ -128,11 +123,11 @@ public class TokenTransaction {
 
     public static String genTokenMultiSignTx(JSONObject inputsAddOutpus){
 
-        final JSONObject json_transaction = inputsAddOutpus.getJSONObject("transaction");
-        final JSONArray utxoInputs = json_transaction.getJSONArray("inputs");
+        final JSONObject json_transaction = inputsAddOutpus.getJSONObject(TRANSACTION);
+        final JSONArray utxoInputs = json_transaction.getJSONArray(INPUTS);
 
-        final JSONArray outputs = json_transaction.getJSONArray("outputs");
-        final JSONArray privateKeyScripte = json_transaction.getJSONArray("privateKeyScripte");
+        final JSONArray outputs = json_transaction.getJSONArray(OUTPUTS);
+        final JSONArray privateKeyScripte = json_transaction.getJSONArray(PRIVATEKEY_SCRIPTE);
 
         try {
             //解析inputs
@@ -147,16 +142,13 @@ public class TokenTransaction {
 
 
             Verify.verifyParameter(Verify.Type.M,json_transaction);
-            final int M = json_transaction.getInt("m");
+            final int M = json_transaction.getInt(InterfaceParams.M);
 
             //得到 签名所需要的私钥
             ArrayList<String> privateKeySignList = Basic.genPrivateKeySignByM(M, privateKeyScripte);
 
-            LinkedHashMap<String, Object> resultMap = new LinkedHashMap<String, Object>();
             RawTx rawTx  = Ela.multiSignTransaction(UTXOTxInputs, txOutputs, privateKeyScripteList, privateKeySignList, M);
-            resultMap.put("rawtx", rawTx.getRawTxString());
-            resultMap.put("txhash", rawTx.getTxHash());
-
+            LinkedHashMap<String, Object> resultMap = getRawTxMap(rawTx.getRawTxString(), rawTx.getTxHash());
 
             return Basic.getSuccess(resultMap);
         } catch (Exception e) {
