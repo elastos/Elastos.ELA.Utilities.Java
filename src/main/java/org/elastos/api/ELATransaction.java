@@ -58,8 +58,8 @@ public class ELATransaction {
             }else{
                 rawTx = Ela.makeAndSignTx(UTXOTxInputs,txOutputs,payload);
             }
-            resultMap.put("rawTx",rawTx.getRawTxString());
-            resultMap.put("txHash",rawTx.getTxHash());
+            resultMap.put("rawtx",rawTx.getRawTxString());
+            resultMap.put("txhash",rawTx.getTxHash());
 
             LOGGER.info(Basic.getSuccess(resultMap));
             return Basic.getSuccess(resultMap);
@@ -108,8 +108,8 @@ public class ELATransaction {
             }else{
                 rawTx = UsableUtxo.makeAndSignTx(privateList, outputList, changeAddress,payload);
             }
-            resultMap.put("rawTx", rawTx);
-            resultMap.put("txHash", UsableUtxo.txHash);
+            resultMap.put("rawtx", rawTx);
+            resultMap.put("txhash", UsableUtxo.txHash);
 
             LOGGER.info(Basic.getSuccess(resultMap));
             return Basic.getSuccess(resultMap);
@@ -167,8 +167,8 @@ public class ELATransaction {
                 }else{
                     rawTx = Ela.multiSignTransaction(UTXOTxInputs, txOutputs, privateKeyScripteList, privateKeySignList, M,payload);
                 }
-                resultMap.put("rawTx", rawTx.getRawTxString());
-                resultMap.put("txHash", rawTx.getTxHash());
+                resultMap.put("rawtx", rawTx.getRawTxString());
+                resultMap.put("txhash", rawTx.getTxHash());
 
 
                 return Basic.getSuccess(resultMap);

@@ -36,8 +36,8 @@ public class NeoContractTransaction {
 
             LinkedHashMap<String, Object> resultMap = new LinkedHashMap<String, Object>();
             RawTx rawTx = Ela.deployContractTransaction(UTXOTxInputs,txOutputs,payloadDeploy);
-            resultMap.put("rawTx", rawTx.getRawTxString());
-            resultMap.put("txHash", rawTx.getTxHash());
+            resultMap.put("rawtx", rawTx.getRawTxString());
+            resultMap.put("txhash", rawTx.getTxHash());
 
             LOGGER.info(Basic.getSuccess(resultMap));
             return Basic.getSuccess(resultMap);
@@ -62,8 +62,8 @@ public class NeoContractTransaction {
 
             LinkedHashMap<String, Object> resultMap = new LinkedHashMap<String, Object>();
             RawTx rawTx = Ela.invokenContractTransaction(UTXOTxInputs,txOutputs,payloadInvoke);
-            resultMap.put("rawTx", rawTx.getRawTxString());
-            resultMap.put("txHash", rawTx.getTxHash());
+            resultMap.put("rawtx", rawTx.getRawTxString());
+            resultMap.put("txhash", rawTx.getTxHash());
 
             LOGGER.info(Basic.getSuccess(resultMap));
             return Basic.getSuccess(resultMap);

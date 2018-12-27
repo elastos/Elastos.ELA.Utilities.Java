@@ -32,9 +32,9 @@ public class TokenTransaction {
             //创建rawTransaction
             LinkedHashMap<String, Object> resultMap = new LinkedHashMap<String, Object>();
             RawTx rawTx = Ela.makeAndSignTx(UTXOTxInputs,txOutputs,payload);
-            resultMap.put("rawTx",rawTx.getRawTxString());
-            resultMap.put("txHash",rawTx.getTxHash());
-            resultMap.put("assetId",Asset.AssetId);
+            resultMap.put("rawtx",rawTx.getRawTxString());
+            resultMap.put("txhash",rawTx.getTxHash());
+            resultMap.put("assetid",Asset.AssetId);
 
             LOGGER.info(Basic.getSuccess(resultMap));
             return Basic.getSuccess(resultMap);
@@ -60,9 +60,9 @@ public class TokenTransaction {
             //创建rawTransaction
             LinkedHashMap<String, Object> resultMap = new LinkedHashMap<String, Object>();
             String rawTx = UsableUtxo.makeAndSignTxByToken(privateList, outputList, changeAddress ,payload);
-            resultMap.put("rawTx",rawTx);
-            resultMap.put("txHash",UsableUtxo.txHash);
-            resultMap.put("assetId",Asset.AssetId);
+            resultMap.put("rawtx",rawTx);
+            resultMap.put("txhash",UsableUtxo.txHash);
+            resultMap.put("assetid",Asset.AssetId);
 
             LOGGER.info(Basic.getSuccess(resultMap));
             return Basic.getSuccess(resultMap);
@@ -89,8 +89,8 @@ public class TokenTransaction {
 
             String rawTx = UsableUtxo.makeAndSignTx(privateList, txOutputs, changeAddress);
 
-            resultMap.put("rawTx",rawTx);
-            resultMap.put("txHash",UsableUtxo.txHash);
+            resultMap.put("rawtx",rawTx);
+            resultMap.put("txhash",UsableUtxo.txHash);
 
             LOGGER.info(Basic.getSuccess(resultMap));
             return Basic.getSuccess(resultMap);
@@ -115,8 +115,8 @@ public class TokenTransaction {
             LinkedHashMap<String, Object> resultMap = new LinkedHashMap<String, Object>();
             RawTx rawTx  = Ela.makeAndSignTx(UTXOTxInputs,txOutputs);
 
-            resultMap.put("rawTx",rawTx.getRawTxString());
-            resultMap.put("txHash",rawTx.getTxHash());
+            resultMap.put("rawtx",rawTx.getRawTxString());
+            resultMap.put("txhash",rawTx.getTxHash());
 
             LOGGER.info(Basic.getSuccess(resultMap));
             return Basic.getSuccess(resultMap);
@@ -154,8 +154,8 @@ public class TokenTransaction {
 
             LinkedHashMap<String, Object> resultMap = new LinkedHashMap<String, Object>();
             RawTx rawTx  = Ela.multiSignTransaction(UTXOTxInputs, txOutputs, privateKeyScripteList, privateKeySignList, M);
-            resultMap.put("rawTx", rawTx.getRawTxString());
-            resultMap.put("txHash", rawTx.getTxHash());
+            resultMap.put("rawtx", rawTx.getRawTxString());
+            resultMap.put("txhash", rawTx.getTxHash());
 
 
             return Basic.getSuccess(resultMap);

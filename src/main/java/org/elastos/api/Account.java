@@ -88,8 +88,8 @@ public class Account {
             }else{
                 rawTx = UsableUtxo.makeAndSignTx(privateList, txOutputs, changeAddress,payload);
             }
-            resultMap.put("rawTx", rawTx);
-            resultMap.put("txHash", UsableUtxo.txHash);
+            resultMap.put("rawtx", rawTx);
+            resultMap.put("txhash", UsableUtxo.txHash);
 
             LOGGER.info(Basic.getSuccess(resultMap));
             return Basic.getSuccess(resultMap);

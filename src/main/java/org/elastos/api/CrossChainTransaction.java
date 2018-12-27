@@ -49,8 +49,8 @@ public class CrossChainTransaction {
 
             LinkedHashMap<String, Object> resultMap = new LinkedHashMap<String, Object>();
             RawTx rawTx = Ela.crossChainSignTx(UTXOTxInputs, txOutputs,payloadTransferCrossChainAssets, privateKeySignList);
-            resultMap.put("rawTx", rawTx.getRawTxString());
-            resultMap.put("txHash", rawTx.getTxHash());
+            resultMap.put("rawtx", rawTx.getRawTxString());
+            resultMap.put("txhash", rawTx.getTxHash());
 
             LOGGER.info(Basic.getSuccess(resultMap));
             return Basic.getSuccess(resultMap);
@@ -78,8 +78,8 @@ public class CrossChainTransaction {
 
             LinkedHashMap<String, Object> resultMap = new LinkedHashMap<String, Object>();
             RawTx rawTx = UsableUtxo.makeAndSignTxByCrossChain(privateList, txOutputs,payloadTransferCrossChainAssets,changeAddress);
-            resultMap.put("rawTx", rawTx.getRawTxString());
-            resultMap.put("txHash", rawTx.getTxHash());
+            resultMap.put("rawtx", rawTx.getRawTxString());
+            resultMap.put("txhash", rawTx.getTxHash());
 
             LOGGER.info(Basic.getSuccess(resultMap));
             return Basic.getSuccess(resultMap);
@@ -124,8 +124,8 @@ public class CrossChainTransaction {
 
                 LinkedHashMap<String, Object> resultMap = new LinkedHashMap<String, Object>();
                 RawTx rawTx = Ela.crossChainMultiSignTx(UTXOTxInputs,txOutputs,payloadTransferCrossChainAssets, privateKeyScripteList, privateKeySignList, M);
-                resultMap.put("rawTx", rawTx.getRawTxString());
-                resultMap.put("txHash", rawTx.getTxHash());
+                resultMap.put("rawtx", rawTx.getRawTxString());
+                resultMap.put("txhash", rawTx.getTxHash());
 
                 LOGGER.info(Basic.getSuccess(resultMap));
                 return Basic.getSuccess(resultMap);
