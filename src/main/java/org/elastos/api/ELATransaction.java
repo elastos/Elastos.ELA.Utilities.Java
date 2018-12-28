@@ -28,12 +28,12 @@ public class ELATransaction {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ELATransaction.class);
     /**
-     * 生成RawTrnsaction
+     * genRawTx
      * @param inputsAddOutpus 交易输入和交易输出的json字符串
      * @return  返回RawTransaction的json字符串
      * @throws Exception
      */
-    public static String genRawTransaction(JSONObject inputsAddOutpus){
+    public static String genRawTx(JSONObject inputsAddOutpus){
         try {
             final JSONObject json_transaction = inputsAddOutpus.getJSONObject(InterfaceParams.TRANSACTION);
             final JSONArray utxoInputs = json_transaction.getJSONArray(INPUTS);
@@ -78,7 +78,7 @@ public class ELATransaction {
      * @return 返回RawTransaction的json字符串
      * @throws Exception
      */
-    public static String genRawTransactionByPrivateKey(JSONObject inputsAddOutpus){
+    public static String genRawTxByPrivatekey(JSONObject inputsAddOutpus){
 
         try {
             final JSONObject json_transaction = inputsAddOutpus.getJSONObject(InterfaceParams.TRANSACTION);
@@ -183,7 +183,7 @@ public class ELATransaction {
      * @return
      * @throws IOException
      */
-    public static String decodeRawTransaction(String rawTransaction) throws IOException {
+    public static String decodeRawTx(String rawTransaction) throws IOException {
 
         byte[] rawTxByte = DatatypeConverter.parseHexBinary(rawTransaction);
         ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(rawTxByte);

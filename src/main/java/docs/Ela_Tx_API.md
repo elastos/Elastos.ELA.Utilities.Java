@@ -25,7 +25,7 @@ description:constructing single sign transaction
 ##### Request
 ```
 {
-    "method":"genrawtransaction",
+    "method":"genrawtx",
     "params":{
         "transaction":{
             "inputs":[
@@ -64,7 +64,7 @@ description:constructing single sign transaction
 
 ```
 
-## genrawtransactionbyprivatekey
+## genrawtxbyprivatekey
 
 #### Tips：
 - Do not calculate utxo
@@ -83,7 +83,7 @@ description:constructing single sign transaction
 | amount | string | the unit is ELA,Namely:289.1ELA | 
 | changeaddress | string | Change address | 
 
-#### 接口名：genrawtransactionbyprivatekey
+#### 接口名：genrawtxbyprivatekey
 
 - ##### java-config.json
 
@@ -100,7 +100,7 @@ description:constructing single sign transaction
 
 ```
 {
-    "method":"genrawtransactionbyprivatekey",
+    "method":"genrawtxbyprivatekey",
     "params":{
         "transaction":{
             "privatekeys":[

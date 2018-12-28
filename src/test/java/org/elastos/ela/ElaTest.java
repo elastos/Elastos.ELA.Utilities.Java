@@ -51,7 +51,7 @@ public class ElaTest {
                 System.out.println((Basic.genAddress(param)));
             }
             if (method.equals("getRawTransaction")){
-                System.out.println(ELATransaction.genRawTransaction(param));
+                System.out.println(ELATransaction.genRawTx(param));
             }
         }
         inputStream.close();

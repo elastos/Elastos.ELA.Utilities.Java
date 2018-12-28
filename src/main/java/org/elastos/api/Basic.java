@@ -491,7 +491,7 @@ public class Basic {
             //生成assetId
             Asset asset = new Asset(assetname, description, (byte) precision, (byte) 0x00);
             return new PayloadRegisterAsset(asset,amount,address);
-        }throw new SDKException(ErrorCode.ParamErr("payload can not be empty"));
+        }throw new SDKException(ErrorCode.ParamErr(PAYLOAD +" can not be empty"));
     }
 
 
@@ -514,14 +514,14 @@ public class Basic {
                 list.add(iota);
             }
             parameterTypes = Util.byteToByteArray(list);
-        }else throw  new SDKException(ErrorCode.ParamErr("paramtypes can not be empty"));
+        }else throw  new SDKException(ErrorCode.ParamErr(PARAMS + " can not be empty"));
 
         //ReturnType
         Object ReturnType = json_transaction.get(RETURN_TYPE);
         if (ReturnType != null){
             String returnTypeStr = json_transaction.getString(RETURN_TYPE);
             returnTypeByte = parameterTypemap.get(returnTypeStr);
-        }else throw new SDKException(ErrorCode.ParamErr("returntype can not be empty"));
+        }else throw new SDKException(ErrorCode.ParamErr(RETURN_TYPE + " can not be empty"));
 
         //ContractCode
         Object ContractCode = json_transaction.get(InterfaceParams.CONTRACT_CODE);
@@ -542,7 +542,7 @@ public class Basic {
             FunctionCode functionCode = new FunctionCode(returnTypeByte, parameterTypes, code);
             PayloadDeploy.Code = functionCode;
 
-        }else throw new SDKException(ErrorCode.ParamErr("contractcode can not be empty"));
+        }else throw new SDKException(ErrorCode.ParamErr(CONTRACT_CODE + " can not be empty"));
     }
 
     public static PayloadDeploy parsePayloadDeploy(JSONObject json_transaction) throws SDKException {
@@ -568,7 +568,7 @@ public class Basic {
             long longValue = Util.multiplyAmountELA(new BigDecimal(gas), ElaPrecision).toBigInteger().longValue();
 
             return new PayloadDeploy(name,codeVersion,author,email,description,programHash,longValue);
-        }throw new SDKException(ErrorCode.ParamErr("payload can not be empty"));
+        }throw new SDKException(ErrorCode.ParamErr(PAYLOAD + " can not be empty"));
     }
 
 
@@ -588,7 +588,7 @@ public class Basic {
             parseJsonToBytes(o,paramTypes);
 
             paramByte = baos.toByteArray();
-        }else throw new SDKException(ErrorCode.ParamErr("paramtypes can not be empty"));
+        }else throw new SDKException(ErrorCode.ParamErr(PARAMS + " can not be empty"));
 
         //ContractHash
         Object ContractHash = json_transaction.get(CONTRACT_HASH);
@@ -601,7 +601,7 @@ public class Basic {
             contractHash = tmp;
             //合约hash反转是需要和编译器一致
             reverseContractHash = Utils.reverseBytes(contractHash);
-        }else throw new SDKException(ErrorCode.ParamErr("contracthash can not be empty"));
+        }else throw new SDKException(ErrorCode.ParamErr(CONTRACT_HASH + " can not be empty"));
 
         // paramByte + TAILCALL + contractHash
         byte[] tailCall = new byte[1];
@@ -625,7 +625,7 @@ public class Basic {
             String gas = json_transaction.getString(GAS);
             long longValue = Util.multiplyAmountELA(new BigDecimal(gas), ElaPrecision).toBigInteger().longValue();
             return new PayloadInvoke(contractHash,paramByte,programHash,longValue);
-        }else throw new SDKException(ErrorCode.ParamErr("gas can not be empty"));
+        }else throw new SDKException(ErrorCode.ParamErr(GAS + " can not be empty"));
     }
 
     public static void parseJsonToBytes(DataOutputStream o, JSONArray params) throws SDKException {
@@ -669,7 +669,7 @@ public class Basic {
                 }
             }
         }catch (Exception e){
-            throw new SDKException(ErrorCode.ParamErr("paramtypes serialize err : " + e));
+            throw new SDKException(ErrorCode.ParamErr(PARAMS + " serialize err : " + e));
         }
     }
 }

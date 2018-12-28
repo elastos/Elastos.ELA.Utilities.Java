@@ -1,10 +1,8 @@
 package org.elastos.elaweb;
 
-import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.elastos.api.*;
 import org.elastos.common.ErrorCode;
-import org.elastos.common.SDKException;
 import org.elastos.ela.UsableUtxo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -84,15 +82,15 @@ public class ElaController {
             case "gentokentxbyprivatekey":
                 return TokenTransaction.genTokenTxByPrivateKey(param);
 
-            case "genrawtransaction":
-                return ELATransaction.genRawTransaction(param);
+            case "genrawtx":
+                return ELATransaction.genRawTx(param);
 
-            case "decoderawtransaction":
+            case "decoderawtx":
                 String rawTransaction = param.getString("rawtransaction");
-                return ELATransaction.decodeRawTransaction(rawTransaction);
+                return ELATransaction.decodeRawTx(rawTransaction);
 
-            case "genrawtransactionbyprivatekey":
-                return ELATransaction.genRawTransactionByPrivateKey(param);
+            case "genrawtxbyprivatekey":
+                return ELATransaction.genRawTxByPrivatekey(param);
 
             case "genmultisigntx":
                 return ELATransaction.genMultiSignTx(param);
