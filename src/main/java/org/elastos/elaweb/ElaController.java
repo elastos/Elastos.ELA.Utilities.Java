@@ -2,6 +2,7 @@ package org.elastos.elaweb;
 
 import net.sf.json.JSONObject;
 import org.elastos.api.*;
+import org.elastos.common.Config;
 import org.elastos.common.ErrorCode;
 import org.elastos.ela.UsableUtxo;
 import org.slf4j.Logger;
@@ -24,7 +25,8 @@ public class ElaController {
      */
     public static String processMethod (String params) throws Exception {
 
-        UsableUtxo.getConfig_url();
+        //read config
+        Config.getConfig();
 
         LOGGER.info(params);
         JSONObject jsonObject = JSONObject.fromObject(params);

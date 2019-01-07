@@ -46,4 +46,13 @@ public class InterfaceParams {
     public static String GAS = "gas";
     public static String CONTRACT_HASH = "contracthash";
     public static String CONTRACT_ADDRESS = "contractaddress";
+
+    //   ======================= Config =========================
+    public static String HOST = "Host";
+    public static String FEE = "Fee";
+    public static String CONFIRMATION = "Confirmation";
+    public static String REGISTER_ASSET_FEE = "RegisterAssetFee";
+    public static String RPC_CONFIGURATION = "RpcConfiguration";
+    public static String USER = "User";
+    public static String PASS = "Pass";
 }

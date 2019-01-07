@@ -2,7 +2,9 @@ package org.elastos.framework.rpc;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
+import org.elastos.common.Config;
 import org.elastos.ela.HttpRequestUtil;
+import org.elastos.ela.UsableUtxo;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -23,9 +25,9 @@ public class Rpc {
         //发送请求
         JSONObject jsonParam = new JSONObject();
         jsonParam.accumulateAll(map);
-        JSONObject jsonObject = HttpRequestUtil.httpPost(url, jsonParam);
+        String str = HttpRequestUtil.doPost(url, jsonParam, Config.getUser(),Config.getPass());
 
-        return jsonObject.toString();
+        return str;
     }
 
     public static String listunspent(String assetid, JSONArray addressList, String url){

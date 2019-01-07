@@ -2,6 +2,7 @@ package org.elastos.api;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
+import org.elastos.common.Config;
 import org.elastos.common.ErrorCode;
 import org.elastos.common.InterfaceParams;
 import org.elastos.common.SDKException;
@@ -17,7 +18,6 @@ import org.slf4j.LoggerFactory;
 import java.util.*;
 
 import static org.elastos.api.Basic.getRawTxMap;
-import static org.elastos.ela.UsableUtxo.RPCURL;
 
 /**
  * @author: DongLei.Tan
@@ -178,7 +178,7 @@ public class Account {
             HashMap<String, String> hashMap = new HashMap<>();
             for (int i = 0; i < addresses.size(); i++) {
                 String address =(String) addresses.get(i);
-                String getreceivedbyaddress = Rpc.getreceivedbyaddress(address, RPCURL);
+                String getreceivedbyaddress = Rpc.getreceivedbyaddress(address, Config.getRpcUrl());
                 JSONObject fromObject = JSONObject.fromObject(getreceivedbyaddress);
                 String amount = fromObject.getString("result");
                 hashMap.put(address,amount);

@@ -5,9 +5,7 @@ import net.sf.json.JSONObject;
 import org.apache.commons.io.FileUtils;
 import org.elastos.api.Basic;
 import org.elastos.api.Verify;
-import org.elastos.common.ErrorCode;
-import org.elastos.common.SDKException;
-import org.elastos.common.Util;
+import org.elastos.common.*;
 import org.elastos.ela.bitcoinj.Utils;
 import org.elastos.ela.payload.PayloadRecord;
 import org.elastos.ela.payload.PayloadRegisterAsset;
@@ -30,11 +28,6 @@ import static org.elastos.ela.payload.PayloadRegisterAsset.MaxPrecision;
  * @time: 2018/6/20
  */
 public class UsableUtxo {
-
-    public static String RPCURL ;
-    public static long FEE ;
-    public static long REGISTERASSETFEE;
-    public static int CONFIRMATION ;
 
     private static String utxoAmount;
     private static List<UTXOTxInput> inputList ;
@@ -104,10 +97,10 @@ public class UsableUtxo {
             String address = Ela.getAddressFromPrivate(privateList.get(i));
             addressList[i] = address;
         }
-        getConfig_url();
+
         //        System.out.println("==================== 通过地址查询uxto  ====================");
 
-        String utxo = Rpc.listunspent(assetid,JSONArray.fromObject(addressList) , RPCURL);
+        String utxo = Rpc.listunspent(assetid,JSONArray.fromObject(addressList) , Config.getRpcUrl());
         return utxo;
     }
 
@@ -145,13 +138,13 @@ public class UsableUtxo {
             long inputValue = getInputsValue(UTXOInputList, outputValue);
 
             //changeAddress to output
-            long ChangeValue = inputValue - outputValue - FEE;
+            long ChangeValue = inputValue - outputValue - Config.getFee();
             String valueStr = Util.divideAmountELA(new BigDecimal(ChangeValue), ElaPrecision).toString();
             outputs.add(new TxOutput(changeAddress, valueStr,Common.SYSTEM_ASSET_ID,ElaPrecision));
         }else {
             // register asset
             long inputValue = registerAssetFee(UTXOInputList);
-            long changeAddressValue = inputValue - REGISTERASSETFEE;
+            long changeAddressValue = inputValue - Config.getRegisterAssetFee();
             String valueStr = Util.divideAmountELA(new BigDecimal(changeAddressValue), ElaPrecision).toString();
             outputs.add(new TxOutput(changeAddress, valueStr,Common.SYSTEM_ASSET_ID,ElaPrecision));
         }
@@ -189,14 +182,14 @@ public class UsableUtxo {
             inputValue += Util.multiplyAmountELA(new BigDecimal(input.getAmount()),ElaPrecision).longValue();
             inputList.add(new UTXOTxInput(inputTxid,inputVont,"",inputAddress));
             addrList.add(inputAddress);
-            if (inputValue >= REGISTERASSETFEE){
+            if (inputValue >= Config.getRegisterAssetFee()){
                 break;
             }
         }
 
-        if (inputValue >= REGISTERASSETFEE){
+        if (inputValue >= Config.getRegisterAssetFee()){
             return inputValue;
-        }else throw new SDKException(ErrorCode.ParamErr("Utxo deficiency , inputValue : " + Util.divideAmountELA(new BigDecimal(inputValue), ElaPrecision).toString() + " , registerAssetFee :" + Util.divideAmountELA(new BigDecimal(REGISTERASSETFEE), ElaPrecision).toString()));
+        }else throw new SDKException(ErrorCode.ParamErr("Utxo deficiency , inputValue : " + Util.divideAmountELA(new BigDecimal(inputValue), ElaPrecision).toString() + " , registerAssetFee :" + Util.divideAmountELA(new BigDecimal(Config.getRegisterAssetFee()), ElaPrecision).toString()));
     }
 
     public static  long getInputsValue(List<UTXOInputSort> UTXOInputList,long outputValue) throws SDKException {
@@ -213,14 +206,14 @@ public class UsableUtxo {
             inputList.add(new UTXOTxInput(inputTxid,inputVont,"",inputAddress));
             addrList.add(inputAddress);
 
-            if (inputValue >= outputValue + FEE){
+            if (inputValue >= outputValue + Config.getFee()){
                 break;
             }
         }
 
-        if (inputValue >= outputValue + FEE){
+        if (inputValue >= outputValue + Config.getFee()){
             return inputValue;
-        }else throw new SDKException(ErrorCode.ParamErr("Utxo deficiency , inputValue : " + Util.divideAmountELA(new BigDecimal(inputValue), ElaPrecision).toString() + " , outputValue :" + Util.divideAmountELA(new BigDecimal(outputValue), ElaPrecision).toString() + " , fee :" + Util.divideAmountELA(new BigDecimal(FEE), ElaPrecision).toString()));
+        }else throw new SDKException(ErrorCode.ParamErr("Utxo deficiency , inputValue : " + Util.divideAmountELA(new BigDecimal(inputValue), ElaPrecision).toString() + " , outputValue :" + Util.divideAmountELA(new BigDecimal(outputValue), ElaPrecision).toString() + " , fee :" + Util.divideAmountELA(new BigDecimal(Config.getFee()), ElaPrecision).toString()));
     }
 
     public static  BigInteger getTokenInputsValue(List<UTXOInputSort> UTXOInputList,BigInteger tokenOutputValue) throws SDKException {
@@ -246,7 +239,7 @@ public class UsableUtxo {
 
         if (i >= 0){
             return inputValue;
-        }else throw new SDKException(ErrorCode.ParamErr("Utxo deficiency , inputValue : " + Util.multiplyAmountELA(new BigDecimal(inputValue), MaxPrecision).toString() + " , tokenOutputValue :" + Util.divideAmountETH(new BigDecimal(tokenOutputValue), MaxPrecision).toString() + " , fee :" + Util.divideAmountELA(new BigDecimal(FEE), ElaPrecision).toString()));
+        }else throw new SDKException(ErrorCode.ParamErr("Utxo deficiency , inputValue : " + Util.multiplyAmountELA(new BigDecimal(inputValue), MaxPrecision).toString() + " , tokenOutputValue :" + Util.divideAmountETH(new BigDecimal(tokenOutputValue), MaxPrecision).toString() + " , fee :" + Util.divideAmountELA(new BigDecimal(Config.getFee()), ElaPrecision).toString()));
 
 
     }
@@ -325,7 +318,7 @@ public class UsableUtxo {
     public static Boolean unlockeUtxo(String blockHash , String txid , int vout){
 
 //        System.out.println("==================== 通过区块Hash查询区块信息  ====================");
-        String block = Rpc.getblock(blockHash, 2, RPCURL);
+        String block = Rpc.getblock(blockHash, 2, Config.getRpcUrl());
 
         JSONObject jsonObject = JSONObject.fromObject(block);
         String error = jsonObject.getString("error");
@@ -386,7 +379,7 @@ public class UsableUtxo {
     public static String getBlockHash(String txid){
 
         //        System.out.println("==================== 通过txid查询区块Hash  ====================");
-        String Transcation =Rpc.getrawtransaction(txid,true,RPCURL);
+        String Transcation =Rpc.getrawtransaction(txid,true,Config.getRpcUrl());
         JSONObject jsonObject = JSONObject.fromObject(Transcation);
         String error = jsonObject.getString("error");
         if (error != "null"){
@@ -398,47 +391,12 @@ public class UsableUtxo {
 //        JSONArray jsonArray = jsonObject.getJSONArray("result");
         JSONObject result = jsonObject.getJSONObject("result");
         int confirmations = result.getInt("confirmations");
-        if (confirmations >= CONFIRMATION){
+        if (confirmations >= Config.getConfirmation()){
             return result.getString("blockhash");
         }
         return null;
     }
 
-    /**
-     * 获取java-config.json配置文件信息
-     * @throws SDKException
-     */
-    public static void getConfig_url() throws SDKException {
-        String content;
-        try {
-            File directory = new File ("");
-            String courseFile = directory.getCanonicalPath();
-//        File file = new File(courseFile + "/src/main/resources/java-config.json");
-            File file = new File(courseFile + "/java-config.json");
-            content = FileUtils.readFileToString(file,"UTF-8");
-            JSONObject jsonObject = JSONObject.fromObject(content);
-
-            Verify.verifyParameter(Verify.Type.Host,jsonObject);
-            Verify.verifyParameter(Verify.Type.Confirmation,jsonObject);
-            Verify.verifyParameter(Verify.Type.Fee,jsonObject);
-            Verify.verifyParameter(Verify.Type.RegisterAssetFee,jsonObject);
-
-            String host = jsonObject.getString("Host");
-
-            String fee = jsonObject.getString("Fee");
-            FEE = Util.multiplyAmountELA(new BigDecimal(fee), ElaPrecision).longValue();
-
-            RPCURL = "http://" + host;
-            CONFIRMATION = jsonObject.getInt("Confirmation");
-            String registerAssetFee = jsonObject.getString("RegisterAssetFee");
-            REGISTERASSETFEE = Util.multiplyAmountELA(new BigDecimal(registerAssetFee), ElaPrecision).longValue();
-            if (CONFIRMATION == 0){
-                CONFIRMATION = 16;
-            }
-        }catch (Exception e){
-            throw new SDKException(ErrorCode.ParamErr("reade java-config.json error : " + e.toString()));
-        }
-    }
 
     /**
      * 拿到需要花费utxo的地址对应的私钥

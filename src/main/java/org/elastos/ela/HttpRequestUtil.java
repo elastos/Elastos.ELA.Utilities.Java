@@ -1,103 +1,120 @@
 package org.elastos.ela;
 
+
 import net.sf.json.JSONObject;
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
+import org.apache.commons.codec.binary.Base64;
+import org.apache.http.HttpEntity;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.config.RequestConfig;
+import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 
-import java.io.IOException;
-import java.net.URLDecoder;
-
+import java.io.*;
+import java.nio.charset.Charset;
 
 /**
  * Created by mdj17 on 2018/1/18.
  */
 public class HttpRequestUtil {
-    /**
-     * 发送get请求
-     * @param url 路径
-     * @return
-     */
-    public static JSONObject httpGet(String url){
+    public String doGet(String url){
+        CloseableHttpClient httpClient = null;
+        CloseableHttpResponse response = null;
+        String result = "";
+        try{
+            //通过默认配置创建一个httpClient实例
+            httpClient = HttpClients.createDefault();
+            //创建httpGet远程连接实例
+            HttpGet httpGet = new HttpGet(url);
+            //httpGet.addHeader("Connection", "keep-alive");
+            //设置请求头信息
+            httpGet.addHeader("Accept", "application/json");
+            //配置请求参数
+            RequestConfig requestConfig = RequestConfig.custom()
+                    .setConnectTimeout(35000) //设置连接主机服务超时时间
+                    .setConnectionRequestTimeout(35000)//设置请求超时时间
+                    .setSocketTimeout(60000)//设置数据读取超时时间
+                    .build();
+            //为httpGet实例设置配置
+            httpGet.setConfig(requestConfig);
+            //执行get请求得到返回对象
+            response = httpClient.execute(httpGet);
+            //通过返回对象获取返回数据
+            HttpEntity entity = response.getEntity();
+            //通过EntityUtils中的toString方法将结果转换为字符串，后续根据需要处理对应的reponse code
+            result = EntityUtils.toString(entity);
+            System.out.println(result);
 
-        //get请求返回结果
-        JSONObject jsonResult = null;
-        try {
-            DefaultHttpClient client = new DefaultHttpClient();
-            //发送get请求
-            HttpGet request = new HttpGet(url);
-            HttpResponse response = client.execute(request);
-
-            /**请求发送成功，并得到响应**/
-            if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-                /**读取服务器返回过来的json字符串数据**/
-                String strResult = EntityUtils.toString(response.getEntity());
-                /**把json字符串转换成json对象**/
-                jsonResult = JSONObject.fromObject(strResult);
-                url = URLDecoder.decode(url, "UTF-8");
-            } else {
-                System.out.println("get请求提交失败:" + url);
-            }
-        } catch (IOException e) {
-            System.out.println("get请求提交失败:" + e);
-        }
-        return jsonResult;
-    }
-
-    /**
-     * httpPost
-     * @param url  路径
-     * @param jsonParam 参数
-     * @return
-     */
-    public static JSONObject httpPost(String url,JSONObject jsonParam){
-        return httpPost(url, jsonParam, false);
-    }
-
-    /**
-     * post请求
-     * @param url         url地址
-     * @param jsonParam     参数
-     * @param noNeedResponse    不需要返回结果
-     * @return
-     */
-    public static JSONObject httpPost(String url,JSONObject jsonParam, boolean noNeedResponse){
-
-        //post请求返回结果
-        DefaultHttpClient httpClient = new DefaultHttpClient();
-        JSONObject jsonResult = null;
-        HttpPost method = new HttpPost(url);
-        try {
-            if (null != jsonParam) {
-                //解决中文乱码问题
-                StringEntity entity = new StringEntity(jsonParam.toString(), "utf-8");
-                entity.setContentEncoding("UTF-8");
-                entity.setContentType("application/json");
-                method.setEntity(entity);
-            }
-            HttpResponse result = httpClient.execute(method);
-            /**请求发送成功，并得到响应**/
-            if (result.getStatusLine().getStatusCode() == 200) {
-                String str = "";
+        }catch (ClientProtocolException e){
+            e.printStackTrace();
+        }catch (IOException ioe){
+            ioe.printStackTrace();
+        }catch (Exception e){
+            e.printStackTrace();
+        }finally {
+            //关闭资源
+            if(response != null){
                 try {
-                    /**读取服务器返回过来的json字符串数据**/
-                    str = EntityUtils.toString(result.getEntity());
-                    if (noNeedResponse) {
-                        return null;
-                    }
-                    /**把json字符串转换成json对象**/
-                    jsonResult = JSONObject.fromObject(str);
-                } catch (Exception e) {
-                    System.out.println("post请求提交失败:" +  e);
+                    response.close();
+                }catch (IOException ioe){
+                    ioe.printStackTrace();
                 }
             }
-        } catch (IOException e) {
-            System.out.println("post请求提交失败:" +  e);
+            if(httpClient != null){
+                try{
+                    httpClient.close();
+                }catch (IOException ioe){
+                    ioe.printStackTrace();
+                }
+            }
         }
-        return jsonResult;
+        return result;
+    }
+
+    public static String doPost(String url , JSONObject param,String user ,String passowrd){
+        //创建httpClient对象
+        CloseableHttpClient httpClient = HttpClients.createDefault();
+        CloseableHttpResponse response = null;
+        String result = "";
+        try{
+
+            String auth = user + ":" + passowrd;
+            byte[] encodedAuth = Base64.encodeBase64(auth.getBytes(Charset.forName("US-ASCII")));
+            String authHeader = "Basic " + new String(encodedAuth);
+
+            //创建http请求
+            HttpPost httpPost = new HttpPost(url);
+            httpPost.setHeader("Authorization", authHeader);
+            httpPost.addHeader("Content-Type", "application/json");
+            //创建请求内容
+            StringEntity entity = new StringEntity(param.toString());
+            httpPost.setEntity(entity);
+            response = httpClient.execute(httpPost);
+            result = EntityUtils.toString(response.getEntity(),"utf-8");
+            System.out.println(result);
+        }catch (Exception e){
+            e.printStackTrace();
+        }finally {
+            //关闭资源
+            if(response != null){
+                try {
+                    response.close();
+                }catch (IOException ioe){
+                    ioe.printStackTrace();
+                }
+            }
+            if(httpClient != null){
+                try{
+                    httpClient.close();
+                }catch (IOException ioe){
+                    ioe.printStackTrace();
+                }
+            }
+        }
+        return result;
     }
 }
