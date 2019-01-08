@@ -26,7 +26,11 @@ public class ElaController {
     public static String processMethod (String params) throws Exception {
 
         //read config
-        Config.getConfig();
+        try {
+            Config.getConfig();
+        }catch (Exception e){
+            return e.toString();
+        }
 
         LOGGER.info(params);
         JSONObject jsonObject = JSONObject.fromObject(params);

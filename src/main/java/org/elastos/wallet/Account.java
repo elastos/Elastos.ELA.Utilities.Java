@@ -72,7 +72,7 @@ public class Account {
                 return Helper.toHexString(bytes);
             }
         }catch (Exception e){
-            throw new Exception(ErrorCode.ENCRIPT_PRIVATE_KEY_ERROR);
+            throw new Exception(ErrorCode.exceptionError("encript privatekey error :" + e));
         }
         return Helper.toHexString(d);
     }
@@ -95,22 +95,22 @@ public class Account {
             encryptedPrivateKey = new String(Base64.getEncoder().encode(encryptedkey));
         }catch (Exception e){
             e.printStackTrace();
-            throw new Exception(ErrorCode.ENCRIPT_PRIVATE_KEY_ERROR);
+            throw new Exception(ErrorCode.exceptionError("encript privatekey error :" + e));
         }
     }
 
     public static byte[] getGcmDecodedPrivateKey(String encryptedPrivateKey, String passphrase ,String address ,byte[] salt , int n) throws Exception {
         if (encryptedPrivateKey == null) {
-            throw new Exception(ErrorCode.PRIKEY_LENGTH_ERROR);
+            throw new Exception(ErrorCode.paramNotNull("encryptedPrivateKey"));
         }
         if (salt.length != 16) {
-            throw new Exception(ErrorCode.SALT_LENGTHE_RROR);
+            throw new Exception(ErrorCode.invalidParam("salt n dkLen length error"));
         }
         byte[] encryptedkey = new byte[]{};
         try{
             encryptedkey = Base64.getDecoder().decode(encryptedPrivateKey);
         }catch (Exception e){
-            throw new Exception(ErrorCode.ParamErr("encryptedPriKey is wrong"));
+            throw new Exception(ErrorCode.invalidParam("encryptedPriKey is wrong"));
         }
 
         int N = n;
@@ -132,10 +132,10 @@ public class Account {
             cipher.updateAAD(address.getBytes());
             rawkey = cipher.doFinal(encryptedkey);
         } catch (Exception e) {
-            throw new Exception(ErrorCode.ENCRYPTED_PRIVATE_KEY_ADDRESS_PASSWORD_ERR);
+            throw new Exception(ErrorCode.invalidParam("encryptedPrivateKey address password not match"));
         }
         if (!address.equals(Ela.getAddressFromPrivate(parsePrivateKey(rawkey)))) {
-            throw new Exception(ErrorCode.ENCRYPTED_PRIVATE_KEY_ADDRESS_PASSWORD_ERR);
+            throw new Exception(ErrorCode.invalidParam("encryptedPrivateKey address password not match"));
         }
         return rawkey;
     }

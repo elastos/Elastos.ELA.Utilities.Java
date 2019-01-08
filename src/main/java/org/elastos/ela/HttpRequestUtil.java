@@ -13,6 +13,7 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
+import org.elastos.common.ErrorCode;
 
 import java.io.*;
 import java.nio.charset.Charset;
@@ -97,21 +98,21 @@ public class HttpRequestUtil {
             result = EntityUtils.toString(response.getEntity(),"utf-8");
             System.out.println(result);
         }catch (Exception e){
-            e.printStackTrace();
+            return ErrorCode.exceptionError(e.toString());
         }finally {
             //关闭资源
             if(response != null){
                 try {
                     response.close();
                 }catch (IOException ioe){
-                    ioe.printStackTrace();
+                    return ErrorCode.exceptionError(ioe.toString());
                 }
             }
             if(httpClient != null){
                 try{
                     httpClient.close();
                 }catch (IOException ioe){
-                    ioe.printStackTrace();
+                    return ErrorCode.exceptionError(ioe.toString());
                 }
             }
         }

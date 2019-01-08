@@ -126,6 +126,5 @@ public class Config {
 
             Config.setUser(rpcConfiguration.getString(InterfaceParams.USER));
             Config.setPass(rpcConfiguration.getString(InterfaceParams.PASS));
-
     }
 }
