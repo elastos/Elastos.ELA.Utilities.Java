@@ -31,25 +31,17 @@ public class Tx {
     private PayloadInvoke payloadInvoke;
 
     //Transction types
-    static byte COIN_BASE = 0x00;
-    static byte REGISTER_ASSET = 0x01;
-    static byte TRANSFER_ASSET = 0x02;
-    static byte RECORD = 0x03;
-    static byte Deploy = 0x04;
-    static byte SIDECHAINPOW = 0x05;
-    static byte RECHARGE_TO_SIDE_CHAIN = 0x06;
-    static byte WITHDRAW_FROM_SIDE_CHAIN = 0x07;
-    static byte TRANSFER_CROSS_CHAIN_ASSET = 0x08;
-    static byte INVOKE = 0x09;
+    final static byte COIN_BASE = 0x00;
+    final static byte REGISTER_ASSET = 0x01;
+    final static byte TRANSFER_ASSET = 0x02;
+    final static byte RECORD = 0x03;
+    final static byte Deploy = 0x04;
+    final static byte SIDECHAINPOW = 0x05;
+    final static byte RECHARGE_TO_SIDE_CHAIN = 0x06;
+    final static byte WITHDRAW_FROM_SIDE_CHAIN = 0x07;
+    final static byte TRANSFER_CROSS_CHAIN_ASSET = 0x08;
+    final static byte INVOKE = 0x09;
 
-    // Address types
-    public static byte SMART_CONTRACT =(byte)0xAB;
-    public static byte TAIL_CALL = 0x69;
-
-    static byte STANDARD =(byte)0xAC;
-    static byte REGISTER_ID =(byte)0xAD;
-    static byte MULTI_SIG =(byte)0xAE;
-    static byte CROSS_CHAIN =(byte)0xAF;
 
     Map<String,String> hashMapPriv = new HashMap<String,String>();
 
@@ -140,31 +132,26 @@ public class Tx {
 
     // commonality transaction parameter
     private static void commonalityTransaction(Tx tx, byte TransactionType, UTXOTxInput[] inputs, TxOutput[] outputs){
-        tx.UTXOInputs = inputs;
-        tx.Outputs = outputs;
-        tx.TxType = TransactionType;
-        tx.Programs = new ArrayList<Program>();
+        commonalityTx(tx,TransactionType,inputs,outputs);
 
         tx.Attributes = new TxAttribute[1];
         TxAttribute ta = TxAttribute.NewTxNonceAttribute();
         tx.Attributes[0] = ta;
-
-        for(UTXOTxInput txin : tx.UTXOInputs){
-
-            tx.hashMapPriv.put(txin.getProgramHash(),txin.getPrivateKey());
-        }
-        //使用私钥构造出公钥,通过公钥构造出contract,通过contract构造出programhash,写入到 UTXOInputs
     }
 
     private static void commonalityTransaction(Tx tx, byte TransactionType, UTXOTxInput[] inputs, TxOutput[] outputs, String memo){
-        tx.UTXOInputs = inputs;
-        tx.Outputs = outputs;
-        tx.TxType = TransactionType;
-        tx.Programs = new ArrayList<Program>();
+        commonalityTx(tx,TransactionType,inputs,outputs);
 
         tx.Attributes = new TxAttribute[1];
         TxAttribute ta = TxAttribute.NewTxNonceAttribute(memo);
         tx.Attributes[0] = ta;
+    }
+
+    private static void commonalityTx(Tx tx, byte TransactionType, UTXOTxInput[] inputs, TxOutput[] outputs){
+        tx.UTXOInputs = inputs;
+        tx.Outputs = outputs;
+        tx.TxType = TransactionType;
+        tx.Programs = new ArrayList<Program>();
 
         for(UTXOTxInput txin : tx.UTXOInputs){
 
@@ -188,37 +175,6 @@ public class Tx {
         }
     }
 
-    public static Map deserialize(DataInputStream o) throws IOException {
-        return deSerializeUnsigned(o);
-    }
-
-    public byte[][] getUniqAndOrdedProgramHashes() {
-
-
-        String[] keys = (String[])hashMapPriv.keySet().toArray(new String[0]);
-
-        byte[][] rhashes = new byte[keys.length][];
-        for(int i=0;i<keys.length;i++){
-            rhashes[i] = DatatypeConverter.parseHexBinary(keys[i]);
-        }
-
-        Util.sortByteArrayArrayUseRevertBytesSequence(rhashes);
-
-
-        return rhashes;
-    }
-
-
-
-    public void SetPrograms(List<Program> programs) {
-        this.Programs = programs;
-    }
-
-    public List<Program> GetPrograms() {
-
-        return this.Programs;
-    }
-
     //serialize the Transaction data without contracts
     public void serializeUnsigned(DataOutputStream o) throws Exception{
         //txType
@@ -227,32 +183,8 @@ public class Tx {
         //PayloadVersion
         o.writeByte(this.PayloadVersion);
 
-        //PayloadRecord
-        if (this.parloadRecord != null){
-            this.parloadRecord.Serialize(o);
-        }
-
-        //CrossChainAsset
-        if ( this.CrossChainAsset != null){
-            Util.WriteVarUint(o, this.CrossChainAsset.length);
-            for (PayloadTransferCrossChainAsset ca : this.CrossChainAsset)
-                ca.Serialize(o);
-        }
-
-        //payloadRegisterAsset
-        if ( this.payloadRegisterAsset != null) {
-            this.payloadRegisterAsset.Serialize(o);
-        }
-
-        //payloadDeploy
-        if ( this.payloadDeploy != null) {
-            this.payloadDeploy.Serialize(o);
-        }
-
-        //payloadDeploy
-        if ( this.payloadInvoke != null) {
-            this.payloadInvoke.Serialize(o);
-        }
+        //Payload
+        getPayload(o);
 
         //[]*txAttribute
         Util.WriteVarUint(o, this.Attributes.length);
@@ -277,7 +209,10 @@ public class Tx {
         }
 
         o.writeInt(Integer.reverseBytes(this.LockTime));
-        return;
+    }
+
+    public static Map deserialize(DataInputStream o) throws IOException {
+        return deSerializeUnsigned(o);
     }
 
     public static Map deSerializeUnsigned(DataInputStream o) throws IOException {
@@ -325,9 +260,47 @@ public class Tx {
         }
         return this.hash;
     }
-    
-    public byte[] GetMessage() {
-        return new byte[0];
+
+    public byte[][] getUniqAndOrdedProgramHashes() {
+
+
+        String[] keys = (String[])hashMapPriv.keySet().toArray(new String[0]);
+
+        byte[][] rhashes = new byte[keys.length][];
+        for(int i=0;i<keys.length;i++){
+            rhashes[i] = DatatypeConverter.parseHexBinary(keys[i]);
+        }
+
+        Util.sortByteArrayArrayUseRevertBytesSequence(rhashes);
+
+
+        return rhashes;
+    }
+
+    private void getPayload(DataOutputStream o) throws Exception {
+        switch (this.TxType){
+            case COIN_BASE:
+                break;
+            case REGISTER_ASSET:
+                this.payloadRegisterAsset.Serialize(o);
+                break;
+            case TRANSFER_ASSET:
+                break;
+            case RECORD:
+                this.parloadRecord.Serialize(o);
+                break;
+            case Deploy:
+                this.payloadDeploy.Serialize(o);
+                break;
+            case TRANSFER_CROSS_CHAIN_ASSET:
+                Util.WriteVarUint(o, this.CrossChainAsset.length);
+                for (PayloadTransferCrossChainAsset ca : this.CrossChainAsset)
+                    ca.Serialize(o);
+                break;
+            case INVOKE:
+                this.payloadInvoke.Serialize(o);
+                break;
+        }
     }
 }
 
