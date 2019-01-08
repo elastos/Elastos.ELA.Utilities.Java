@@ -2,9 +2,7 @@ package org.elastos.ela;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
-import org.apache.commons.io.FileUtils;
 import org.elastos.api.Basic;
-import org.elastos.api.Verify;
 import org.elastos.common.*;
 import org.elastos.ela.bitcoinj.Utils;
 import org.elastos.ela.payload.PayloadRecord;
@@ -13,7 +11,6 @@ import org.elastos.ela.payload.PayloadTransferCrossChainAsset;
 import org.elastos.framework.rpc.Rpc;
 
 import javax.xml.bind.DatatypeConverter;
-import java.io.File;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.*;

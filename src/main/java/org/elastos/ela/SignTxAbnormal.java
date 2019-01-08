@@ -1,5 +1,6 @@
 package org.elastos.ela;
 
+import org.elastos.common.Common;
 import org.elastos.common.ErrorCode;
 import org.elastos.common.SDKException;
 import org.elastos.common.Util;
@@ -53,7 +54,7 @@ public class SignTxAbnormal {
         try {
             for(int i = 0 ; i < privateKeySign.size() ; i ++){
                 ECKey ec = ECKey.fromPrivate(DatatypeConverter.parseHexBinary(privateKeySign.get(i)));
-                byte[] code = Util.CreateSingleSignatureRedeemScript(ec.getPubBytes(),1);
+                byte[] code = Util.CreateSingleSignatureRedeemScript(ec.getPubBytes(), Common.PREFIX_SINGLESIG);
                 tx.sign(privateKeySign.get(i), code);
             }
 

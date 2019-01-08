@@ -4,6 +4,7 @@ import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.elastos.api.Basic;
 import org.elastos.api.ELATransaction;
+import org.elastos.common.Common;
 import org.elastos.ela.bitcoinj.Utils;
 import org.junit.Test;
 import static org.elastos.ela.payload.PayloadRegisterAsset.ElaPrecision;
@@ -82,7 +83,7 @@ public class ElaTest {
 //                "Eazj14ifau5eH1SP5F8MJRuiSsPMiGbJV1"));
 
         List<TxOutput>  outputs = new LinkedList<TxOutput>();
-        outputs.add(new TxOutput("EXkNxfzanRVZumirTudiTBfvMyV2Rt6w95","0.00001",Common.SYSTEM_ASSET_ID,ElaPrecision));
+        outputs.add(new TxOutput("EXkNxfzanRVZumirTudiTBfvMyV2Rt6w95","0.00001", Common.SYSTEM_ASSET_ID,ElaPrecision));
 
         RawTx rawTx = Ela.makeAndSignTx(inputs.toArray(new UTXOTxInput[inputs.size()]),outputs.toArray(new TxOutput[outputs.size()]));
         System.out.println("rawTx:"+rawTx.getRawTxString());

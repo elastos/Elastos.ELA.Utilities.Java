@@ -106,36 +106,18 @@ public class Util {
      * @param signType
      * @return
      */
-    public static byte[] ToCodeHash(byte[] code, int signType) {
+    public static byte[] ToCodeHash(byte[] code, byte signType) {
 
         byte[] f = Utils.sha256hash160(code);
-        byte[] g = new byte[f.length+1];
-        // 1 是单签
-        if (signType == 1) {
-            g[0] = 33;
-            System.arraycopy(f,0,g,1,f.length);
-        // 2 是多签
-        } else if (signType == 2) {
-            g[0] = 18;
-        // 3 身份id
-        } else if (signType == 3){
-            g[0] = 103;
-        // 4 是生成X开头
-        }else if (signType == 4){
-            g[0] = (byte)0x4B;
-        // 5 合约地址C开头
-        }else if (signType == 5){
-            g[0] = 28;
+        byte[] g = new byte[f.length + 1];
+        if (signType == Common.PREFIX_CONTRANCT){
+            g[0] = signType;
             f = Utils.reverseBytes(f);
-        }else return null;
+        }else{
+            g[0] = signType;
+        }
         System.arraycopy(f,0,g,1,f.length);
         return g;
-
-    }
-
-    public static byte[] ToCodeHash(byte[] code) {
-        byte[] codeHash = Utils.sha256hash160(code);
-        return Utils.reverseBytes(codeHash);
     }
 
 
@@ -155,17 +137,11 @@ public class Util {
         return Base58.encode(g);
     }
 
-    public static byte[] CreateSingleSignatureRedeemScript(byte[] pubkey, int signType) {
+    public static byte[] CreateSingleSignatureRedeemScript(byte[] pubkey, byte signType) {
         byte[] script = new byte[35];
         script[0] = 33;
         System.arraycopy(pubkey,0,script,1,33);
-        // 1 单签
-        if (signType == 1){
-            script[34] = (byte)0xAC;
-        // 3 身份id
-        }else if (signType == 3){
-            script[34] = (byte)0xAD;
-        }
+        script[34] = signType;
         return script;
     }
 

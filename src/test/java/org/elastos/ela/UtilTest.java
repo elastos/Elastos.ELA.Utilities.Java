@@ -1,5 +1,6 @@
 package org.elastos.ela;
 
+import org.elastos.common.Common;
 import org.elastos.common.SDKException;
 import org.elastos.common.Util;
 import org.junit.Test;
@@ -80,7 +81,7 @@ public class UtilTest {
     public void genNeoContranctHash() throws SDKException {
         String code = "00c56b6161012b61047465737452c168124e656f2e52756e74696d652e4e6f7469667961616c7566";
         byte[] codeByte = DatatypeConverter.parseHexBinary(code);
-        byte[] codeHash = Util.ToCodeHash(codeByte,5);
+        byte[] codeHash = Util.ToCodeHash(codeByte, Common.PREFIX_CONTRANCT);
         String hashStr = DatatypeConverter.printHexBinary(codeHash);
         System.out.println("contractHash : " + hashStr);
         System.out.println("contractAddress : " + ECKey.toNeoContranctAddress(hashStr));

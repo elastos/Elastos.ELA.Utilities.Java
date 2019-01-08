@@ -1,5 +1,6 @@
 package org.elastos.ela;
 
+import org.elastos.common.Common;
 import org.elastos.common.Util;
 import org.elastos.ela.bitcoinj.Utils;
 import static org.elastos.ela.payload.PayloadRegisterAsset.ElaPrecision;

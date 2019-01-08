@@ -1,5 +1,6 @@
 package org.elastos.ela;
 
+import org.elastos.common.Common;
 import org.elastos.common.SDKException;
 import org.elastos.common.Util;
 import org.elastos.ela.bitcoinj.LazyECPoint;
@@ -151,31 +152,31 @@ public class ECKey {
         BigInteger y = point.getAffineYCoord().toBigInteger();
         return CURVE.getCurve().createPoint(x, y, compressed);
     }
-    public byte[] getProgram(int singType){
-        return Util.CreateSingleSignatureRedeemScript(this.getPubBytes(),singType);
-    }
-    public byte[] getSingleSignProgramHash(int signType){
-        return Util.ToCodeHash(this.getProgram(signType),signType);
-    }
 
     // 1 单签
     public String toAddress(){
-        return Util.ToAddress(this.getSingleSignProgramHash(1));
+        return Util.ToAddress(this.getSingleSignProgramHash(Common.PREFIX_SINGLESIG));
+    }
+    private byte[] getSingleSignProgramHash(byte signType){
+        return Util.ToCodeHash(this.getProgram(Common.SUFFIX_STANDARD),signType);
+    }
+    private byte[] getProgram(byte singType){
+        return Util.CreateSingleSignatureRedeemScript(this.getPubBytes(),singType);
     }
 
     // 3 身份id
     public String toIdentityID(){
-        return Util.ToAddress(this.getSingleSignProgramHash(3));
+        return Util.ToAddress(this.getSingleSignProgramHash(Common.PREFIX_IDENTITYID));
     }
 
     //生成X地址
     public static String toGenesisSignAddress(String GenesisBlockHash) throws SDKException {
         return Util.ToAddress(getGenesisSignProgramHash(GenesisBlockHash));
     }
-    public static byte[] getGenesisSignProgramHash(String GenesisBlockHash) throws SDKException {
-        return Util.ToCodeHash(getGenesisSignatureProgram(GenesisBlockHash),4);
+    private static byte[] getGenesisSignProgramHash(String GenesisBlockHash) throws SDKException {
+        return Util.ToCodeHash(getGenesisSignatureProgram(GenesisBlockHash),Common.PREFIX_CROSSCHAIN);
     }
-    public static byte[] getGenesisSignatureProgram(String GenesisBlockHash) throws SDKException {
+    private static byte[] getGenesisSignatureProgram(String GenesisBlockHash) throws SDKException {
         return Util.GenGenesisAddressRedeemScript(GenesisBlockHash);
     }
 
@@ -183,8 +184,8 @@ public class ECKey {
     public String toMultiSignAddress(List<PublicX> privateKeyList , int M) throws SDKException {
         return Util.ToAddress(getMultiSignProgramHash(privateKeyList , M));
     }
-    public byte[] getMultiSignProgramHash(List<PublicX> privateKeyList , int M) throws SDKException {
-        return Util.ToCodeHash(getMultiSignatureProgram(privateKeyList , M),2);
+    private byte[] getMultiSignProgramHash(List<PublicX> privateKeyList , int M) throws SDKException {
+        return Util.ToCodeHash(getMultiSignatureProgram(privateKeyList , M),Common.PREFIX_MULTISIG);
     }
 
     public static byte[] getMultiSignatureProgram(List<PublicX> privateKeyList, int M) throws SDKException {

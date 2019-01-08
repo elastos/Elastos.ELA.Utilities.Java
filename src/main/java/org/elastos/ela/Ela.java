@@ -2,6 +2,7 @@ package org.elastos.ela;
 
 
 
+import org.elastos.common.Common;
 import org.elastos.common.ErrorCode;
 import org.elastos.common.SDKException;
 import org.elastos.common.Util;
@@ -66,7 +67,7 @@ public class Ela {
             String privateKey = tx.hashMapPriv.get(DatatypeConverter.printHexBinary(phashes[i]));
             ECKey ec = ECKey.fromPrivate(DatatypeConverter.parseHexBinary(privateKey));
 
-            byte[] code = Util.CreateSingleSignatureRedeemScript(ec.getPubBytes(),1);
+            byte[] code = Util.CreateSingleSignatureRedeemScript(ec.getPubBytes(),Common.SUFFIX_STANDARD);
             tx.sign(privateKey,code);
         }
 
@@ -135,7 +136,7 @@ public class Ela {
             Tx tx = Tx.crossChainTransaction(TRANSFER_CROSS_CHAIN_ASSET, inputs, outputs ,CrossChainAsset);
             for(int i = 0 ; i < privateKeySign.size() ; i ++){
                 ECKey ec = ECKey.fromPrivate(DatatypeConverter.parseHexBinary(privateKeySign.get(i)));
-                byte[] code = Util.CreateSingleSignatureRedeemScript(ec.getPubBytes(),1);
+                byte[] code = Util.CreateSingleSignatureRedeemScript(ec.getPubBytes(),Common.SUFFIX_STANDARD);
                 tx.sign(privateKeySign.get(i), code);
             }
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -228,7 +229,7 @@ public class Ela {
      */
     public static String genNeoContractHash(String contract){
         byte[] codeByte = DatatypeConverter.parseHexBinary(contract);
-        byte[] codeHash = Util.ToCodeHash(codeByte,5);
+        byte[] codeHash = Util.ToCodeHash(codeByte, Common.PREFIX_CONTRANCT);
         return DatatypeConverter.printHexBinary(codeHash);
     }
 
