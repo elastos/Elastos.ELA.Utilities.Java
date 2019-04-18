@@ -1,5 +1,6 @@
 package org.elastos.api;
 
+import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.elastos.common.ErrorCode;
 import org.elastos.common.SDKException;
@@ -18,6 +19,7 @@ import static org.elastos.common.Util.isAscii;
 public class Verify {
     public enum Type {
         PrivateKey("privatekey"),
+        Publickey("publickey"),
         Address("address"),
         ChangeAddress("changeaddress"),
         Amount("amount"),
@@ -41,7 +43,17 @@ public class Verify {
 
         RpcConfiguration("RpcConfiguration"),
         User("User"),
-        Pass("Pass");
+        Pass("Pass"),
+
+        Payload("payload"),
+        OwnerPublicKey("ownerpublickey"),
+        NodePublicKey("nodepublickey"),
+        NickName("nickname"),
+        Url("url"),
+        Location("location"),
+        NetAddress("netaddress"),
+        Contents("contents"),
+        Candidates("candidates");
 
         private String type;
 
@@ -67,6 +79,22 @@ public class Verify {
                     }
                     try {
                         DatatypeConverter.parseHexBinary((String) pr);
+                    } catch (Exception e) {
+                        throw new SDKException(ErrorCode.invalidParam(type.getValue() + " " + e));
+                    }
+                } else throw new SDKException(ErrorCode.paramNotNull(type.getValue()));
+                break;
+
+            case OwnerPublicKey:
+            case NodePublicKey:
+            case Publickey:
+                Object pub = jsonObject.get(type.getValue());
+                if (pub != null) {
+                    if (((String) pub).length() != 66) {
+                        throw new SDKException(ErrorCode.invalidParam(type.getValue()));
+                    }
+                    try {
+                        DatatypeConverter.parseHexBinary((String) pub);
                     } catch (Exception e) {
                         throw new SDKException(ErrorCode.invalidParam(type.getValue() + " " + e));
                     }
@@ -102,6 +130,7 @@ public class Verify {
                 if (Host == null) throw new SDKException(ErrorCode.paramNotNull(type.getValue()));
                 break;
 
+            case Location:
             case Amount:
             case Precision:
             case Confirmation:
@@ -145,15 +174,29 @@ public class Verify {
                 } else throw new SDKException(ErrorCode.paramNotNull(type.getValue()));
                 break;
 
+            case Payload:
             case RpcConfiguration:
-                Object RpcConfiguration = jsonObject.get(type.getValue());
-                if (RpcConfiguration != null) {
-                    if (RpcConfiguration instanceof JSONObject) {
+                Object object = jsonObject.get(type.getValue());
+                if (object != null) {
+                    if (object instanceof JSONObject) {
                     } else
                         throw new SDKException(ErrorCode.invalidParam(type.getValue() + " requires JsonObject type"));
                 } else throw new SDKException(ErrorCode.paramNotNull(type.getValue()));
                 break;
 
+            case Contents:
+            case Candidates:
+                Object array = jsonObject.get(type.getValue());
+                if (array != null) {
+                    if (array instanceof JSONArray) {
+                    } else
+                        throw new SDKException(ErrorCode.invalidParam(type.getValue() + " requires JsonObject type"));
+                } else throw new SDKException(ErrorCode.paramNotNull(type.getValue()));
+                break;
+
+            case NickName:
+            case Url:
+            case NetAddress:
             case RegisterAssetFee:
             case User:
             case Fee:

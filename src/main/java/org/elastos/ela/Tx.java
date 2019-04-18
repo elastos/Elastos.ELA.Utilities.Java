@@ -211,6 +211,10 @@ public class Tx {
 
     //serialize the Transaction data without contracts
     public void serializeUnsigned(DataOutputStream o) throws Exception {
+
+        //tx version
+        o.write(0x09);
+
         //txType
         o.writeByte(this.TxType);
 

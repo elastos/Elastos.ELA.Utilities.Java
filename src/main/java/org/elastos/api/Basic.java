@@ -99,6 +99,12 @@ public class Basic {
      * @return String
      */
     public static String genPledgeAddress(JSONObject jsonObject) {
+        try {
+            Verify.verifyParameter(Verify.Type.Publickey, jsonObject);
+        } catch (Exception e) {
+            LOGGER.error(e.toString());
+            return e.toString();
+        }
         String publicKey = jsonObject.getString(PUBLICKEY);
         String address = ECKey.getPledgeAddress(DatatypeConverter.parseHexBinary(publicKey));
 
@@ -712,6 +718,12 @@ public class Basic {
         final JSONObject PayloadObject = json_transaction.getJSONObject(PAYLOAD);
 
         Verify.verifyParameter(Verify.Type.PrivateKey, PayloadObject);
+        Verify.verifyParameter(Verify.Type.OwnerPublicKey, PayloadObject);
+        Verify.verifyParameter(Verify.Type.NodePublicKey, PayloadObject);
+        Verify.verifyParameter(Verify.Type.NickName, PayloadObject);
+        Verify.verifyParameter(Verify.Type.Url, PayloadObject);
+        Verify.verifyParameter(Verify.Type.Location, PayloadObject);
+        Verify.verifyParameter(Verify.Type.NetAddress, PayloadObject);
 
         String privateKey = PayloadObject.getString(PRIVATEKEY);
         String ownerPublicKey = PayloadObject.getString(OWNER_PUBLICKEY);
@@ -727,6 +739,14 @@ public class Basic {
     public static PayloadUpdateProducer payloadUpdateProducer(JSONObject json_transaction) throws SDKException {
         final JSONObject PayloadObject = json_transaction.getJSONObject(PAYLOAD);
 
+        Verify.verifyParameter(Verify.Type.PrivateKey, PayloadObject);
+        Verify.verifyParameter(Verify.Type.OwnerPublicKey, PayloadObject);
+        Verify.verifyParameter(Verify.Type.NodePublicKey, PayloadObject);
+        Verify.verifyParameter(Verify.Type.NickName, PayloadObject);
+        Verify.verifyParameter(Verify.Type.Url, PayloadObject);
+        Verify.verifyParameter(Verify.Type.Location, PayloadObject);
+        Verify.verifyParameter(Verify.Type.NetAddress, PayloadObject);
+
         String privateKey = PayloadObject.getString(PRIVATEKEY);
         String ownerPublicKey = PayloadObject.getString(OWNER_PUBLICKEY);
         String nodePublicKey = PayloadObject.getString(NODE_PUBLICKEY);
@@ -740,24 +760,36 @@ public class Basic {
     public static ProcessProducer processProducer(JSONObject json_transaction) throws SDKException {
         final JSONObject PayloadObject = json_transaction.getJSONObject(PAYLOAD);
 
+        Verify.verifyParameter(Verify.Type.PrivateKey, PayloadObject);
+        Verify.verifyParameter(Verify.Type.OwnerPublicKey, PayloadObject);
+
         String privateKey = PayloadObject.getString(PRIVATEKEY);
         String publicKey = PayloadObject.getString(OWNER_PUBLICKEY);
         return new ProcessProducer(DatatypeConverter.parseHexBinary(publicKey), DatatypeConverter.parseHexBinary(privateKey));
     }
 
-    public static LinkedList<TxOutput> parseOutputsVote(JSONArray outputs) {
+    public static LinkedList<TxOutput> parseOutputsVote(JSONArray outputs) throws SDKException {
         LinkedList<TxOutput> outputList = new LinkedList<TxOutput>();
         for (int t = 0; t < outputs.size(); t++) {
             JSONObject output = (JSONObject) outputs.get(t);
+
+            Verify.verifyParameter(Verify.Type.Address, output);
+            Verify.verifyParameter(Verify.Type.AmountStr, output);
+
             String amount = output.getString(AMOUNT);
             String address = output.getString(ADDRESS);
 
             Object payload = output.get(PAYLOAD);
             if (payload != null){
                 JSONObject p = (JSONObject) payload;
+
+                Verify.verifyParameter(Verify.Type.Contents, p);
+
                 Object content = p.get(CONTENTS);
+
                 if (content != null) {
                     JSONArray contents = (JSONArray) content;
+
                     VoteContent[] voteContents = parseOuputPayload(contents,VoteContent.DELEGATE);
 
                     VoteOutput voteOutput = new VoteOutput(VoteOutput.VERSION, voteContents);
@@ -772,18 +804,24 @@ public class Basic {
         return outputList;
     }
 
-    private static VoteContent[] parseOuputPayload(JSONArray outputPayloads , byte voteType) {
+    private static VoteContent[] parseOuputPayload(JSONArray outputPayloads , byte voteType) throws SDKException {
         LinkedList<VoteContent> voteContentList = new LinkedList<VoteContent>();
 
         for (Object outputPayload : outputPayloads) {
             JSONObject payload = (JSONObject) outputPayload;
+
+            Verify.verifyParameter(Verify.Type.Candidates, payload);
+
             JSONArray candidates = payload.getJSONArray(CANDIDATES);
 
             LinkedList<byte[]> candidatesList = new LinkedList<byte[]>();
 
             for (Object candidate : candidates) {
-                JSONObject addresses = (JSONObject) candidate;
-                String publicKey = addresses.getString(PUBLICKEY);
+                JSONObject c = (JSONObject) candidate;
+
+                Verify.verifyParameter(Verify.Type.Publickey, c);
+
+                String publicKey = c.getString(PUBLICKEY);
                 candidatesList.add(DatatypeConverter.parseHexBinary(publicKey));
             }
             voteContentList.add(new VoteContent(voteType, candidatesList));
