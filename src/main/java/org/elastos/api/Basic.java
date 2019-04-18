@@ -94,6 +94,18 @@ public class Basic {
     }
 
     /**
+     * generate pledge address
+     * @param jsonObject privateKey
+     * @return String
+     */
+    public static String genPledgeAddress(JSONObject jsonObject) {
+        String publicKey = jsonObject.getString(PUBLICKEY);
+        String address = ECKey.getPledgeAddress(DatatypeConverter.parseHexBinary(publicKey));
+
+        LOGGER.info(getSuccess(address));
+        return getSuccess(address);
+    }
+    /**
      * generate identity id
      *
      * @param jsonObject 私钥

@@ -26,6 +26,7 @@ import java.util.List;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
+import static org.elastos.common.Common.SUFFIX_STANDARD;
 
 /**
  * Created by nan on 18/1/14.
@@ -37,14 +38,14 @@ public class ECKey {
     private final BigInteger priv;
     private final LazyECPoint pub;
 
-    static{
+    static {
         FixedPointUtil.precompute(CURVE_PARAMS.getG(), 12);
         CURVE = new ECDomainParameters(CURVE_PARAMS.getCurve(), CURVE_PARAMS.getG(), CURVE_PARAMS.getN(),
                 CURVE_PARAMS.getH());
     }
 
 
-    public ECKey(){
+    public ECKey() {
         ECKeyPairGenerator generator = new ECKeyPairGenerator();
         ECKeyGenerationParameters keygenParams = new ECKeyGenerationParameters(CURVE, secureRandom);
         generator.init(keygenParams);
@@ -58,30 +59,32 @@ public class ECKey {
     public byte[] getPrivateKeyBytes() {
         return Utils.bigIntegerToBytes(this.priv, 32);
     }
-    public byte[] getPubBytes(){
+
+    public byte[] getPubBytes() {
         return pub.getEncoded();
     }
 
-    public ECFieldElement getPublickeyX(){
+    public ECFieldElement getPublickeyX() {
         return pub.getX();
     }
 
-    public static byte[] generateKey(int len){
+    public static byte[] generateKey(int len) {
         byte[] key = new byte[len];
         SecureRandom secureRandom = new SecureRandom();
         secureRandom.nextBytes(key);
         return key;
     }
 
-    public static byte[] generateKey(){
+    public static byte[] generateKey() {
         return generateKey(32);
     }
+
     /**
      * Returns public key point from the given private key. To convert a byte array into a BigInteger, use <tt>
      * new BigInteger(1, bytes);</tt>
      */
     public static byte[] publicBytesFromPrivate(byte[] priv) {
-        BigInteger privKey = new BigInteger(1,priv);
+        BigInteger privKey = new BigInteger(1, priv);
         /*
          * TODO: FixedPointCombMultiplier currently doesn't support scalars longer than the group order,
          * but that could change in future versions.
@@ -128,6 +131,7 @@ public class ECKey {
         ECPoint point = publicPointFromPrivate(privKey);
         return new ECKey(privKey, getPointWithCompression(point, compressed));
     }
+
     /**
      * Creates an ECKey given the private key only. The public key is calculated from it (this is slow). The resulting
      * public key is compressed.
@@ -154,18 +158,20 @@ public class ECKey {
     }
 
     // 1 单签
-    public String toAddress(){
+    public String toAddress() {
         return Util.ToAddress(this.getSingleSignProgramHash(Common.PREFIX_SINGLESIG));
     }
-    private byte[] getSingleSignProgramHash(byte signType){
-        return Util.ToCodeHash(this.getProgram(Common.SUFFIX_STANDARD),signType);
+
+    private byte[] getSingleSignProgramHash(byte signType) {
+        return Util.ToCodeHash(this.getProgram(SUFFIX_STANDARD), signType);
     }
-    private byte[] getProgram(byte singType){
-        return Util.CreateSingleSignatureRedeemScript(this.getPubBytes(),singType);
+
+    private byte[] getProgram(byte singType) {
+        return Util.CreateSingleSignatureRedeemScript(this.getPubBytes(), singType);
     }
 
     // 3 身份id
-    public String toIdentityID(){
+    public String toIdentityID() {
         return Util.ToAddress(this.getSingleSignProgramHash(Common.PREFIX_IDENTITYID));
     }
 
@@ -173,28 +179,38 @@ public class ECKey {
     public static String toGenesisSignAddress(String GenesisBlockHash) throws SDKException {
         return Util.ToAddress(getGenesisSignProgramHash(GenesisBlockHash));
     }
+
     private static byte[] getGenesisSignProgramHash(String GenesisBlockHash) throws SDKException {
-        return Util.ToCodeHash(getGenesisSignatureProgram(GenesisBlockHash),Common.PREFIX_CROSSCHAIN);
+        return Util.ToCodeHash(getGenesisSignatureProgram(GenesisBlockHash), Common.PREFIX_CROSSCHAIN);
     }
+
     private static byte[] getGenesisSignatureProgram(String GenesisBlockHash) throws SDKException {
         return Util.GenGenesisAddressRedeemScript(GenesisBlockHash);
     }
 
     //生成多签地址
-    public String toMultiSignAddress(List<PublicX> privateKeyList , int M) throws SDKException {
-        return Util.ToAddress(getMultiSignProgramHash(privateKeyList , M));
+    public String toMultiSignAddress(List<PublicX> privateKeyList, int M) throws SDKException {
+        return Util.ToAddress(getMultiSignProgramHash(privateKeyList, M));
     }
-    private byte[] getMultiSignProgramHash(List<PublicX> privateKeyList , int M) throws SDKException {
-        return Util.ToCodeHash(getMultiSignatureProgram(privateKeyList , M),Common.PREFIX_MULTISIG);
+
+    private byte[] getMultiSignProgramHash(List<PublicX> privateKeyList, int M) throws SDKException {
+        return Util.ToCodeHash(getMultiSignatureProgram(privateKeyList, M), Common.PREFIX_MULTISIG);
     }
 
     public static byte[] getMultiSignatureProgram(List<PublicX> privateKeyList, int M) throws SDKException {
-        return Util.CreatemultiSignatureRedeemScript(privateKeyList,M);
+        return Util.CreatemultiSignatureRedeemScript(privateKeyList, M);
     }
 
     //生成NEO合约地址
-    public static String toNeoContranctAddress(String contranctHash){
+    public static String toNeoContranctAddress(String contranctHash) {
         byte[] hash = DatatypeConverter.parseHexBinary(contranctHash);
         return Util.ToAddress(hash);
+    }
+
+    //生成D开头地址
+    public static String getPledgeAddress(byte[] publicKey) {
+        byte[] redeemScript = Util.CreateSingleSignatureRedeemScript(publicKey, SUFFIX_STANDARD);
+        byte[] programHash = Util.ToCodeHash(redeemScript, Common.PREFIX_PLEDGE);
+        return Util.ToAddress(programHash);
     }
 }

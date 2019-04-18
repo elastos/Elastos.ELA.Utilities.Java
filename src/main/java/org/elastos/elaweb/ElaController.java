@@ -74,6 +74,9 @@ public class ElaController {
             case "checkaddress":
                 return Basic.checkAddress(param);
 
+            case "genpledgeaddress":
+                return Basic.genPledgeAddress(param);
+
             case "genregistertx":
                 return TokenTransaction.genRegisterTx(param);
 

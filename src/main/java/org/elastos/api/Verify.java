@@ -45,7 +45,7 @@ public class Verify {
 
         private String type;
 
-        private Type(String t) {
+        Type(String t) {
             this.type = t;
         }
 
