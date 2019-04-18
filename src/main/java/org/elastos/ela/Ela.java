@@ -16,6 +16,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.elastos.ela.Tx.*;
+import static org.elastos.ela.Tx.REGISTER_PRODUCER;
+import static org.elastos.ela.Tx.UPDATE_PRODUCER;
 
 /**
  * Created by nan on 18/1/10.
@@ -58,6 +60,26 @@ public class Ela {
 
     public static RawTx invokenContractTransaction(UTXOTxInput[] inputs, TxOutput[] outputs, PayloadInvoke payloadInvoke) throws Exception {
         Tx tx = Tx.invokeContractTransaction(INVOKE, inputs, outputs, payloadInvoke);
+        return singleSignTx(tx);
+    }
+
+    public static RawTx registerProducerTransaction(UTXOTxInput[] inputs, TxOutput[] outputs, PayloadRegisterProducer payloadRegisterProducer) throws Exception {
+        Tx tx = Tx.registerProducerTransaction(REGISTER_PRODUCER, inputs, outputs, payloadRegisterProducer);
+        return singleSignTx(tx);
+    }
+
+    public static RawTx updateProducerTransaction(UTXOTxInput[] inputs, TxOutput[] outputs, PayloadUpdateProducer updateProducer) throws Exception {
+        Tx tx = Tx.updateProducerTransaction(UPDATE_PRODUCER, inputs, outputs, updateProducer);
+        return singleSignTx(tx);
+    }
+
+    public static RawTx processProducerTransaction(UTXOTxInput[] inputs, TxOutput[] outputs, ProcessProducer processProducer, byte txType) throws Exception {
+        Tx tx = Tx.processProducerTransaction(txType, inputs, outputs, processProducer);
+        return singleSignTx(tx);
+    }
+
+    public static RawTx returnProducerTransaction(UTXOTxInput[] inputs, TxOutput[] outputs) throws Exception {
+        Tx tx = Tx.newTransferAssetTransaction(RETURN_PLEDGECOIN,inputs, outputs);
         return singleSignTx(tx);
     }
 

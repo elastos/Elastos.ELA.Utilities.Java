@@ -55,4 +55,17 @@ public class InterfaceParams {
     public static String RPC_CONFIGURATION = "RpcConfiguration";
     public static String USER = "User";
     public static String PASS = "Pass";
+
+    //   ======================= producer =========================
+    public final static String OWNER_PUBLICKEY = "ownerpublickey";
+    public final static String NODE_PUBLICKEY = "nodepublickey";
+    public final static String VERSION = "version";
+    public final static String OUTPUT_TYPE = "outputtype";
+    public final static String CONTENTS = "contents";
+    public final static String VOTE_TYPE = "votetype";
+    public final static String CANDIDATES = "candidates";
+    public final static String NICK_NAME = "nickname";
+    public final static String URL = "url";
+    public final static String LOCATION = "location";
+    public final static String NET_ADDRESS = "netaddress";
 }

@@ -16,7 +16,7 @@ import static org.elastos.common.Util.isAscii;
  * @time: 2018/9/21
  */
 public class Verify {
-    public enum Type{
+    public enum Type {
         PrivateKey("privatekey"),
         Address("address"),
         ChangeAddress("changeaddress"),
@@ -48,190 +48,123 @@ public class Verify {
         private Type(String t) {
             this.type = t;
         }
-        public String getValue(){
+
+        public String getValue() {
             return type;
         }
     }
 
 
-    public static void verifyParameter(Type type , JSONObject jsonObject) throws SDKException {
-        switch (type){
+    public static void verifyParameter(Type type, JSONObject jsonObject) throws SDKException {
+        switch (type) {
+            case AssetId:
             case BlockHash:
-                Object BlockHashUpper = jsonObject.get(type.getValue());
-                if (BlockHashUpper != null) {
-                    if (((String)BlockHashUpper).length() != 64){
+            case PrivateKey:
+                Object pr = jsonObject.get(type.getValue());
+                if (pr != null) {
+                    if (((String) pr).length() != 64) {
                         throw new SDKException(ErrorCode.invalidParam(type.getValue()));
                     }
                     try {
-                        DatatypeConverter.parseHexBinary((String)BlockHashUpper);
-                    }catch (Exception e){
+                        DatatypeConverter.parseHexBinary((String) pr);
+                    } catch (Exception e) {
                         throw new SDKException(ErrorCode.invalidParam(type.getValue() + " " + e));
                     }
-                }else throw new SDKException(ErrorCode.paramNotNull(type.getValue()));
-                break;
-            case AmountStr:
-                Object AmountStrLower = jsonObject.get(type.getValue());
-                if (AmountStrLower != null) {
-                    if (AmountStrLower instanceof String ){}else throw new SDKException(ErrorCode.invalidParam(type.getValue() + " requires String type"));
-                }else throw new SDKException(ErrorCode.paramNotNull(type.getValue())) ;
+                } else throw new SDKException(ErrorCode.paramNotNull(type.getValue()));
                 break;
 
-            case AssetId:
-                Object AssetIdLower = jsonObject.get(type.getValue());
-                if (AssetIdLower != null) {
-                    if (((String)AssetIdLower).length() != 64){
-                        throw new SDKException(ErrorCode.invalidParam(type.getValue()));
-                    }
-                    try {
-                        DatatypeConverter.parseHexBinary((String)AssetIdLower);
-                    }catch (Exception e){
-                        throw new SDKException(ErrorCode.invalidParam(type.getValue() + " " + e));
-                    }
-                }else throw new SDKException(ErrorCode.paramNotNull(type.getValue()));
-                break;
-            case PrivateKey:
-                Object PrivateKeyLower = jsonObject.get(type.getValue());
-                if (PrivateKeyLower != null) {
-                    if (((String)PrivateKeyLower).length() != 64){
-                        throw new SDKException(ErrorCode.invalidParam(type.getValue()));
-                    }
-                    try {
-                        DatatypeConverter.parseHexBinary((String)PrivateKeyLower);
-                    }catch (Exception e){
-                        throw new SDKException(ErrorCode.invalidParam(type.getValue() + " " + e));
-                    }
-                }else throw new SDKException(ErrorCode.paramNotNull(type.getValue()));
-                break;
             case Txid:
                 Object TxidLower = jsonObject.get(type.getValue());
                 if (TxidLower != null) {
-                    if (((String)TxidLower).length() != 64){
+                    if (((String) TxidLower).length() != 64) {
                         throw new SDKException(ErrorCode.invalidParam(type.getValue()));
                     }
-                }else throw new SDKException(ErrorCode.paramNotNull(type.getValue()));
+                } else throw new SDKException(ErrorCode.paramNotNull(type.getValue()));
                 break;
-            case Password:
-                Object PasswordLower = jsonObject.get(type.getValue());
-                if (PasswordLower != null) {
-                    if (!(PasswordLower instanceof String)){
-                        throw new SDKException(ErrorCode.invalidParam(type.getValue() + " requires String type"));
-                    }
-                }else throw new SDKException(ErrorCode.paramNotNull(type.getValue()));
-                break;
+
+            case ChangeAddress:
             case Address:
-                Object AddressLower = jsonObject.get(type.getValue());
-                if (AddressLower != null) {
+                Object addr = jsonObject.get(type.getValue());
+                if (addr != null) {
                     try {
-                        byte[] sh = ToScriptHash((String) AddressLower);
-                        if(sh[0]!=33 && sh[0]!=18 && sh[0]!=28){
+                        byte[] sh = ToScriptHash((String) addr);
+                        if (sh[0] != 33 && sh[0] != 18 && sh[0] != 28 && sh[0] != 31) {
                             throw new SDKException(ErrorCode.invalidParam(type.getValue()));
                         }
-                    }catch (Exception e) {
+                    } catch (Exception e) {
                         throw new SDKException(ErrorCode.invalidParam(type.getValue() + " " + e));
                     }
-                }else throw new SDKException(ErrorCode.paramNotNull(type.getValue()));
+                } else throw new SDKException(ErrorCode.paramNotNull(type.getValue()));
                 break;
-            case ChangeAddress:
-                Object ChangeAddress = jsonObject.get(type.getValue());
-                if (ChangeAddress != null) {
-                    try {
-                        byte[] sh = ToScriptHash((String) ChangeAddress);
-                        if(sh[0]!=33&&sh[0]!=18){
-                            throw new SDKException(ErrorCode.invalidParam(type.getValue()));
-                        }
-                    }catch (Exception e) {
-                        throw new SDKException(ErrorCode.invalidParam(type.getValue()));
-                    }
-                }else throw new SDKException(ErrorCode.paramNotNull(type.getValue()));
-                break;
+
             case Host:
                 Object Host = jsonObject.get(type.getValue());
                 if (Host == null) throw new SDKException(ErrorCode.paramNotNull(type.getValue()));
                 break;
+
             case Amount:
-                Object AmountLower = jsonObject.get(type.getValue());
-                if (AmountLower != null) {
-                    if (AmountLower instanceof Long || AmountLower instanceof Integer && (int)AmountLower >= 0){}else throw new SDKException(ErrorCode.invalidParam(type.getValue() + " requires int type"));
-                }else throw new SDKException(ErrorCode.paramNotNull(type.getValue()));
-                break;
-            case M:
-                Object MUpper = jsonObject.get(type.getValue());
-                if (MUpper != null) {
-                    if (MUpper instanceof Integer && (int)MUpper >= 0){}else throw new SDKException(ErrorCode.invalidParam(type.getValue() + " requires int type"));
-                }else throw new SDKException(ErrorCode.paramNotNull(type.getValue()));
-                break;
-            case Fee:
-                Object fee = jsonObject.get(type.getValue());
-                if (fee != null) {
-                    if (fee instanceof String){}else throw new SDKException(ErrorCode.invalidParam(type.getValue() + " requires String type"));
-                }else throw new SDKException(ErrorCode.paramNotNull(type.getValue())) ;
-                break;
-            case RegisterAssetFee:
-                Object RegisterAssetFee = jsonObject.get(type.getValue());
-                if (RegisterAssetFee != null) {
-                    if (RegisterAssetFee instanceof String){}else throw new SDKException(ErrorCode.invalidParam(type.getValue() + " requires String type"));
-                }else throw new SDKException(ErrorCode.paramNotNull(type.getValue())) ;
-                break;
+            case Precision:
             case Confirmation:
-                Object Confirmation = jsonObject.get(type.getValue());
-                if (Confirmation != null) {
-                    if (Confirmation instanceof Integer && (int)Confirmation >= 0){}else throw new SDKException(ErrorCode.invalidParam(type.getValue() + " requires int type"));
-                }else throw new SDKException(ErrorCode.paramNotNull(type.getValue()));
-                break;
+            case M:
             case Vout:
-                Object IndexLower = jsonObject.get(type.getValue());
-                if (IndexLower != null) {
-                    if (IndexLower instanceof Long || IndexLower instanceof Integer && (int)IndexLower  >= 0){}else throw new SDKException(ErrorCode.invalidParam(type.getValue() + " requires int type"));
-                }else throw new SDKException(ErrorCode.paramNotNull(type.getValue()));
+                Object in = jsonObject.get(type.getValue());
+                if (in != null) {
+                    if (in instanceof Long || in instanceof Integer && (int) in >= 0) {
+                    } else throw new SDKException(ErrorCode.invalidParam(type.getValue() + " requires int type"));
+                } else throw new SDKException(ErrorCode.paramNotNull(type.getValue()));
                 break;
+
             case RecordType:
                 Object RecordTypeLower = jsonObject.get(type.getValue());
                 if (RecordTypeLower != null) {
-                    if (Util.isChinese((String)RecordTypeLower))throw new SDKException(ErrorCode.invalidParam(type.getValue() + " cannot be Chinese"));
-                }else throw new SDKException(ErrorCode.paramNotNull(type.getValue()));
+                    if (Util.isChinese((String) RecordTypeLower))
+                        throw new SDKException(ErrorCode.invalidParam(type.getValue() + " cannot be Chinese"));
+                } else throw new SDKException(ErrorCode.paramNotNull(type.getValue()));
                 break;
+
             case RecordData:
                 Object RecordDataLower = jsonObject.get(type.getValue());
                 if (RecordDataLower != null) {
-                }else throw new SDKException(ErrorCode.paramNotNull(type.getValue()));
+                } else throw new SDKException(ErrorCode.paramNotNull(type.getValue()));
                 break;
 
             case Name:
                 Object NameLower = jsonObject.get(type.getValue());
                 if (NameLower != null) {
-                    boolean isWord=((String)NameLower).matches("[a-zA-Z0-9]+");
-                    if (!isWord)throw new SDKException(ErrorCode.invalidParam(type.getValue() + " can only be an english character and number"));
-                }else throw new SDKException(type.getValue() + " can not be empty");
+                    boolean isWord = ((String) NameLower).matches("[a-zA-Z0-9]+");
+                    if (!isWord)
+                        throw new SDKException(ErrorCode.invalidParam(type.getValue() + " can only be an english character and number"));
+                } else throw new SDKException(type.getValue() + " can not be empty");
                 break;
+
             case Description:
                 Object DescriptionLower = jsonObject.get(type.getValue());
                 if (DescriptionLower != null) {
-                    if (!isAscii((String)DescriptionLower))throw new SDKException(ErrorCode.invalidParam(type.getValue() + " description can only be ASCII"));
-                }else throw new SDKException(ErrorCode.paramNotNull(type.getValue()));
+                    if (!isAscii((String) DescriptionLower))
+                        throw new SDKException(ErrorCode.invalidParam(type.getValue() + " description can only be ASCII"));
+                } else throw new SDKException(ErrorCode.paramNotNull(type.getValue()));
                 break;
-            case Precision:
-                Object PrecisionLower = jsonObject.get(type.getValue());
-                if (PrecisionLower != null) {
-                    if (PrecisionLower instanceof Integer && (int)PrecisionLower >= 0){}else throw new SDKException(ErrorCode.invalidParam(type.getValue() + " requires int type"));
-                }else throw new SDKException(ErrorCode.paramNotNull(type.getValue()));
-                break;
+
             case RpcConfiguration:
                 Object RpcConfiguration = jsonObject.get(type.getValue());
                 if (RpcConfiguration != null) {
-                    if (RpcConfiguration instanceof JSONObject){}else throw new SDKException(ErrorCode.invalidParam(type.getValue() + " requires JsonObject type"));
-                }else throw new SDKException(ErrorCode.paramNotNull(type.getValue())) ;
+                    if (RpcConfiguration instanceof JSONObject) {
+                    } else
+                        throw new SDKException(ErrorCode.invalidParam(type.getValue() + " requires JsonObject type"));
+                } else throw new SDKException(ErrorCode.paramNotNull(type.getValue()));
                 break;
+
+            case RegisterAssetFee:
             case User:
-                Object User = jsonObject.get(type.getValue());
-                if (User != null) {
-                    if (User instanceof String){}else throw new SDKException(ErrorCode.invalidParam(type.getValue() + " requires String type"));
-                }else throw new SDKException(ErrorCode.paramNotNull(type.getValue())) ;
-                break;
+            case Fee:
+            case Password:
+            case AmountStr:
             case Pass:
-                Object Pass = jsonObject.get(type.getValue());
-                if (Pass != null) {
-                    if (Pass instanceof String){}else throw new SDKException(ErrorCode.invalidParam(type.getValue() + " requires String type"));
-                }else throw new SDKException(ErrorCode.paramNotNull(type.getValue())) ;
+                Object str = jsonObject.get(type.getValue());
+                if (str != null) {
+                    if (str instanceof String) {
+                    } else throw new SDKException(ErrorCode.invalidParam(type.getValue() + " requires String type"));
+                } else throw new SDKException(ErrorCode.paramNotNull(type.getValue()));
                 break;
         }
     }

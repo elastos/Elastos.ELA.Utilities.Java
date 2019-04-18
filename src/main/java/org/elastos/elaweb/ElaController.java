@@ -4,7 +4,6 @@ import net.sf.json.JSONObject;
 import org.elastos.api.*;
 import org.elastos.common.Config;
 import org.elastos.common.ErrorCode;
-import org.elastos.ela.UsableUtxo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,18 +16,20 @@ import org.slf4j.LoggerFactory;
 public class ElaController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ElaController.class);
+
     /**
      * 处理请求
+     *
      * @param params
      * @return
      * @throws Exception
      */
-    public static String processMethod (String params) throws Exception {
+    public static String processMethod(String params) throws Exception {
 
         //read config
         try {
             Config.getConfig();
-        }catch (Exception e){
+        } catch (Exception e) {
             return e.toString();
         }
 
@@ -163,6 +164,24 @@ public class ElaController {
 
             case "getreceivedbyaddress":
                 return ElaApi.getreceivedbyaddress(param);
+
+            case "genvotetx":
+                return DposTransaction.genVoteTx(param);
+
+            case "genregisterproducertx":
+                return DposTransaction.genRegisterProducerTx(param);
+
+            case "genupdateproducertx":
+                return DposTransaction.genUpdateProducerTx(param);
+
+            case "gencancelproducertx":
+                return DposTransaction.genCancelProducerTx(param);
+
+            case "genreturndepositcointx":
+                return DposTransaction.genreturndepositcointx(param);
+
+            case "genactivateproducertx":
+                return DposTransaction.genActivateProducerTx(param);
 
             default:
                 return ErrorCode.ParamErr(method + " method does not exist");
