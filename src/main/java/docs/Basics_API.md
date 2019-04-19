@@ -131,6 +131,7 @@ description:obtain the genesis address based on the genesis block hash
 
 ```
 
+
 ##### Response
 ```
 {
@@ -144,6 +145,31 @@ description:obtain the genesis address based on the genesis block hash
 }
 
 ```
+
+## genpledgeaddress
+description: register producer need a pledge address
+
+##### Request
+```
+{
+    "method":"genpledgeaddress",
+    "params":{"publickey":"03685AEE88A61A48D57FF6419ACB2F2A1FAA9021223DFF3EAB561B4EE2BFB0082F"}
+}
+
+```
+
+
+##### Response
+```
+{
+    "result": "DrLVGAN91H52qD729sjStbbdbDvZHvVMcg",
+    "id": null,
+    "jsonrpc": "2.0",
+    "error": null
+}
+
+```
+
 
 ## checkaddress
 description:verify that the address is ela address
