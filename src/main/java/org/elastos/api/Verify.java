@@ -190,7 +190,7 @@ public class Verify {
                 if (array != null) {
                     if (array instanceof JSONArray) {
                     } else
-                        throw new SDKException(ErrorCode.invalidParam(type.getValue() + " requires JsonObject type"));
+                        throw new SDKException(ErrorCode.invalidParam(type.getValue() + " requires JsonArray type"));
                 } else throw new SDKException(ErrorCode.paramNotNull(type.getValue()));
                 break;
 
