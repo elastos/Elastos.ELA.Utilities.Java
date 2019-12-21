@@ -6,14 +6,14 @@ import com.alibaba.fastjson.serializer.SerializerFeature;
 import java.util.HashMap;
 
 public class ErrorCode {
-    public static String getError(int code, String msg) {
+    private static String getError(int code, String msg) {
 
-        HashMap m = new HashMap();
+        HashMap<String, Object> m = new HashMap<String, Object>();
         m.put("code",code);
         m.put("id",null);
         m.put("message",msg);
 
-        HashMap map = new HashMap();
+        HashMap<String, java.io.Serializable> map = new HashMap<>();
         map.put("error", m);
         map.put("jsonrpc", "2.0");
         map.put("result", null);

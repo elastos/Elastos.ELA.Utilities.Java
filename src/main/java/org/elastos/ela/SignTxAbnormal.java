@@ -13,9 +13,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.List;
 
-import static org.elastos.ela.Tx.RECORD;
-import static org.elastos.ela.Tx.REGISTER_ASSET;
-import static org.elastos.ela.Tx.TRANSFER_ASSET;
+import static org.elastos.ela.Tx.*;
 
 /**
  * Created by donglei on 18/6/6.
@@ -29,33 +27,38 @@ public class SignTxAbnormal {
      * @return  原始交易数据 可以使用rest接口api/v1/transaction发送给节点
      * @throws IOException
      */
-    public static RawTx makeSingleSignTx(UTXOTxInput[] inputs, TxOutput[] outputs , List<String> privateKeySign) throws SDKException {
+    static RawTx makeSingleSignTx(UTXOTxInput[] inputs, TxOutput[] outputs , List<String> privateKeySign) throws SDKException {
         Tx tx = Tx.newTransferAssetTransaction(Tx.TRANSFER_ASSET,inputs, outputs);
         return SingleSignTx(tx,privateKeySign);
     }
 
-    public static RawTx makeSingleSignTx(UTXOTxInput[] inputs, TxOutput[] outputs , List<String> privateKeySign, PayloadRecord payloadRecord) throws SDKException {
+    static RawTx makeSingleSignTx(UTXOTxInput[] inputs, TxOutput[] outputs , List<String> privateKeySign, PayloadRecord payloadRecord) throws SDKException {
         Tx tx = Tx.recordTransaction(RECORD,inputs, outputs,payloadRecord);
         return SingleSignTx(tx,privateKeySign);
     }
 
-    public static RawTx makeSingleSignTx(UTXOTxInput[] inputs, TxOutput[] outputs , List<String> privateKeySign, String memo) throws SDKException {
+    static RawTx makeSingleSignTx(UTXOTxInput[] inputs, TxOutput[] outputs, List<String> privateKeySign, String memo) throws SDKException {
         Tx tx = Tx.newTransferAssetTransaction(TRANSFER_ASSET,inputs, outputs,memo);
         return SingleSignTx(tx,privateKeySign);
     }
 
-    public static RawTx makeSingleSignTxByToken(UTXOTxInput[] inputs, TxOutput[] outputs , List<String> privateKeySign, PayloadRegisterAsset payload) throws SDKException {
+    static RawTx makeSingleSignTxByDid(UTXOTxInput[] inputs, TxOutput[] outputs, List<String> privateKeySign, String payload) throws SDKException {
+        Tx tx = Tx.didTransaction(REGISTER_DID,inputs, outputs,payload);
+        return SingleSignTx(tx,privateKeySign);
+    }
+
+    static RawTx makeSingleSignTxByToken(UTXOTxInput[] inputs, TxOutput[] outputs , List<String> privateKeySign, PayloadRegisterAsset payload) throws SDKException {
         Tx tx = Tx.registerAssetTransaction(REGISTER_ASSET,inputs, outputs,payload);
         return SingleSignTx(tx,privateKeySign);
     }
 
-    public static RawTx SingleSignTx(Tx tx,List<String> privateKeySign) throws SDKException {
+    private static RawTx SingleSignTx(Tx tx, List<String> privateKeySign) throws SDKException {
 
         try {
-            for(int i = 0 ; i < privateKeySign.size() ; i ++){
-                ECKey ec = ECKey.fromPrivate(DatatypeConverter.parseHexBinary(privateKeySign.get(i)));
+            for (String s : privateKeySign) {
+                ECKey ec = ECKey.fromPrivate(DatatypeConverter.parseHexBinary(s));
                 byte[] code = Util.CreateSingleSignatureRedeemScript(ec.getPubBytes(), Common.SUFFIX_STANDARD);
-                tx.sign(privateKeySign.get(i), code);
+                tx.sign(s, code);
             }
 
             ByteArrayOutputStream baos = new ByteArrayOutputStream();

@@ -123,7 +123,7 @@ public class Verify {
                 if (AddressLower != null) {
                     try {
                         byte[] sh = ToScriptHash((String) AddressLower);
-                        if(sh[0]!=33 && sh[0]!=18 && sh[0]!=28){
+                        if(sh[0]!=33 && sh[0]!=18 && sh[0]!=28 && sh[0] != 103){
                             throw new SDKException(ErrorCode.invalidParam(type.getValue()));
                         }
                     }catch (Exception e) {

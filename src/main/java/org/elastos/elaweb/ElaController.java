@@ -4,9 +4,6 @@ import net.sf.json.JSONObject;
 import org.elastos.api.*;
 import org.elastos.common.Config;
 import org.elastos.common.ErrorCode;
-import org.elastos.ela.UsableUtxo;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 
 /**
@@ -14,16 +11,15 @@ import org.slf4j.LoggerFactory;
  * @contact: tandonglei28@gmail.com
  * @time: 2018/5/20
  */
-public class ElaController {
+class ElaController {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ElaController.class);
     /**
      * 处理请求
      * @param params
      * @return
      * @throws Exception
      */
-    public static String processMethod (String params) throws Exception {
+    static String processMethod(String params) throws Exception {
 
         //read config
         try {
@@ -32,7 +28,6 @@ public class ElaController {
             return e.toString();
         }
 
-        LOGGER.info(params);
         JSONObject jsonObject = JSONObject.fromObject(params);
         String method = jsonObject.getString("method");
         JSONObject param = jsonObject.getJSONObject("params");
@@ -133,6 +128,12 @@ public class ElaController {
 
             case "geninvokecontracttx":
                 return NeoContractTransaction.genInvokeContractTx(param);
+
+            case "gendidtx":
+                return DidTransaction.genDidTx(param);
+
+            case "gendidtxbyprivatekey":
+                return DidTransaction.genDidTxByPrivateKey(param);
 
             case "getblockcount":
                 return ElaApi.getblockcount();

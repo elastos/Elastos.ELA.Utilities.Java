@@ -1,10 +1,12 @@
 package org.elastos.ela;
 
+import com.sun.xml.internal.messaging.saaj.util.ByteOutputStream;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.elastos.api.Basic;
 import org.elastos.api.ELATransaction;
 import org.elastos.common.Common;
+import org.elastos.common.Util;
 import org.elastos.ela.bitcoinj.Utils;
 import org.junit.Test;
 import static org.elastos.ela.payload.PayloadRegisterAsset.ElaPrecision;
@@ -126,9 +128,30 @@ public class ElaTest {
     }
 
     @Test
-    public void test(){
-        String  result = "[qqq,www]";
-        JSONArray addressArray = JSONArray.fromObject(result);
+    public void test() throws IOException {
+        String rawTxString = "020001022242566678696446644B61657463326654376A35785342684A595834457A557053514501D0021094539952F33A05245F4319E9B59843874FFBFB31FCF2A239337DEE6CC600000000000001B037DB964A231458D2D6FFD5EA18944C4F90E63D547C5D3B9874DF66A4EAD0A30070AE1993A70A000000000021C3B5C32D6FE7CAC86A855276D087C443FB12178B00000000014140934D6679F3E5ECCDACD96AA6AD6771E37045E0F978B934DAD2E3A305542345E88BC1191AA1B93870575D2328E1AA4A89AADC0E577FEE5399C34837C6AA835CB02321037F3CAEDE72447B6082C1E8F7705FFD1ED6E24F348130D34CBC7C0A35C9E993F5AC";
+
+        byte[] rawTxByte = DatatypeConverter.parseHexBinary(rawTxString);
+        ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(rawTxByte);
+        DataInputStream dos = new DataInputStream(byteArrayInputStream);
+
+        ByteArrayOutputStream outs = new ByteArrayOutputStream();
+        DataOutputStream out = new DataOutputStream(outs);
+
+        int temp = 0;
+        while ((temp = dos.read()) != -1){
+            out.write(temp);
+//            int len =  (int)Util.ReadVarUint(dos);
+//            System.out.println("len:"+ len);
+//            byte[] b = new  byte[len];
+//            out.writeByte(dos.read(b,0,len));
+        }
+
+
+        String s = DatatypeConverter.printHexBinary(outs.toByteArray());
+        System.out.println(s);
+        System.out.println(rawTxString.equals(s));
+
     }
 
 }

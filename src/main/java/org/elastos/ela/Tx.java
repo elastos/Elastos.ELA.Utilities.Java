@@ -5,10 +5,7 @@ import org.elastos.ela.bitcoinj.Sha256Hash;
 import org.elastos.ela.payload.*;
 
 import javax.xml.bind.DatatypeConverter;
-import java.io.ByteArrayOutputStream;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.util.*;
 
 /**
@@ -29,6 +26,7 @@ public class Tx {
     private PayloadTransferCrossChainAsset[] CrossChainAsset;
     private PayloadDeploy payloadDeploy;
     private PayloadInvoke payloadInvoke;
+    private String payloadDid;
 
     //Transction types
     final static byte COIN_BASE = 0x00;
@@ -41,6 +39,7 @@ public class Tx {
     final static byte WITHDRAW_FROM_SIDE_CHAIN = 0x07;
     final static byte TRANSFER_CROSS_CHAIN_ASSET = 0x08;
     final static byte INVOKE = 0x09;
+    final static byte REGISTER_DID = 0x0a;
 
 
     Map<String,String> hashMapPriv = new HashMap<String,String>();
@@ -56,7 +55,7 @@ public class Tx {
     }
 
     // multi sign
-    public void multiSign(String privateKey,byte[] code) throws Exception {
+    void multiSign(String privateKey, byte[] code) throws Exception {
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         DataOutputStream dos = new DataOutputStream(baos);
@@ -126,6 +125,13 @@ public class Tx {
     public static Tx invokeContractTransaction(byte TransactionType, UTXOTxInput[] inputs, TxOutput[] outputs, PayloadInvoke payloadInvoke) {
         Tx tx = new Tx();
         tx.payloadInvoke = payloadInvoke;
+        commonalityTransaction(tx,TransactionType,inputs,outputs);
+        return tx;
+    }
+
+    public static Tx didTransaction(byte TransactionType, UTXOTxInput[] inputs, TxOutput[] outputs, String payload) {
+        Tx tx = new Tx();
+        tx.payloadDid = payload;
         commonalityTransaction(tx,TransactionType,inputs,outputs);
         return tx;
     }
@@ -299,6 +305,15 @@ public class Tx {
                 break;
             case INVOKE:
                 this.payloadInvoke.Serialize(o);
+                break;
+            case REGISTER_DID:
+                byte[] payload = DatatypeConverter.parseHexBinary(this.payloadDid);
+                ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(payload);
+                DataInputStream dos = new DataInputStream(byteArrayInputStream);
+                int temp;
+                while ((temp = dos.read()) != -1) {
+                    o.write(temp);
+                }
                 break;
         }
     }

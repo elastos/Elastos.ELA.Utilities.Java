@@ -69,14 +69,11 @@ description:constructing single sign transaction
 #### Tips：
 - Do not calculate utxo
 - No need to calculate the amount of the change address，Get the utxo sorted from small to large, and automatically calculate the change amount according to the output amount.
-- java-config.json files need to be placed in the same level directory of the Java program to connect nodes to get utxo
 
 #### Parameter Description
 
 | name  | type | description |
 | ------ | ---- | ----------- |
-| Host| string | Server IP and RPC ports where the node program resides | 
-| Fee| string | The single output or multiple input and output fees of a transaction are the same | 
 | Confirmation| string | Number of block confirmation transactions | 
 | privatekey | string | Utxo address corresponds to the private key，Automatic acquisition of utxo| 
 | address | string | arrival address | 
@@ -85,16 +82,6 @@ description:constructing single sign transaction
 
 #### 接口名：genrawtxbyprivatekey
 
-- ##### java-config.json
-
-```
-{
-  "Host": "127.0.0.1:11336",
-  "Fee":"0.0005",
-  "Confirmation":16
-}
-
-```
 
 ##### Request
 

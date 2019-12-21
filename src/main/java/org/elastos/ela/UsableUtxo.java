@@ -31,7 +31,7 @@ public class UsableUtxo {
 
     public static String txHash;
 
-    public static List<String> addrList;
+    private static List<String> addrList;
 
 
     // ELA
@@ -59,8 +59,7 @@ public class UsableUtxo {
     // crossChain
     public static RawTx makeAndSignTxByCrossChain(List<String> privates , LinkedList<TxOutput> txOutputs , PayloadTransferCrossChainAsset[] payloadTransferCrossChainAssets, String changeAddress) throws SDKException {
         List<String> availablePrivates = getChangeAmountAndUsableUtxo(privates,txOutputs,changeAddress);
-        RawTx rawTx = Ela.crossChainSignTx(inputList.toArray(new UTXOTxInput[inputList.size()]),txOutputs.toArray(new TxOutput[txOutputs.size()]),payloadTransferCrossChainAssets, availablePrivates);
-        return rawTx;
+        return Ela.crossChainSignTx(inputList.toArray(new UTXOTxInput[inputList.size()]),txOutputs.toArray(new TxOutput[txOutputs.size()]),payloadTransferCrossChainAssets, availablePrivates);
     }
 
     //token
@@ -75,8 +74,14 @@ public class UsableUtxo {
         return rawTx.getRawTxString();
     }
 
+    public static String makeAndSignTxByDid(List<String> privates , LinkedList<TxOutput> outputs , String changeAddress,String payload) throws SDKException {
+        List<String> availablePrivates = getChangeAmountAndUsableUtxo(privates, outputs, changeAddress);
+        RawTx rawTx = SignTxAbnormal.makeSingleSignTxByDid(inputList.toArray(new UTXOTxInput[inputList.size()]), outputs.toArray(new TxOutput[outputs.size()]), availablePrivates, payload);
+        txHash = rawTx.getTxHash();
+        return rawTx.getRawTxString();
+    }
 
-    public static List<String> getChangeAmountAndUsableUtxo(List<String> privates , LinkedList<TxOutput> outputs , String ChangeAddress) throws SDKException {
+    private static List<String> getChangeAmountAndUsableUtxo(List<String> privates, LinkedList<TxOutput> outputs, String ChangeAddress) throws SDKException {
         //add changeAddress
         getChangeAddressAmount(privates,outputs , ChangeAddress);
         // Address to heavy ， The private key corresponding to utxo is used for signature
@@ -84,7 +89,7 @@ public class UsableUtxo {
         return availablePrivate(privates, addrArray);
     }
 
-    public static String getUtxoAndConfig(List<String> privates, String assetid) throws SDKException {
+    private static String getUtxoAndConfig(List<String> privates, String assetid) throws SDKException {
         //privatekey to heavy
         ArrayList<String> privateList = new ArrayList<String>(new HashSet<String>(privates));
         //get utxo
@@ -102,7 +107,7 @@ public class UsableUtxo {
     }
 
 
-    public static void getChangeAddressAmount(List<String> privates, LinkedList<TxOutput> outputs, String changeAddress) throws SDKException {
+    private static void getChangeAddressAmount(List<String> privates, LinkedList<TxOutput> outputs, String changeAddress) throws SDKException {
 
         if (outputs.size() != 0){
             // Token Transfer
@@ -126,7 +131,7 @@ public class UsableUtxo {
     }
 
 
-    public static void addElaOutputs(List<String> privates,LinkedList<TxOutput> outputs, String changeAddress,  long outputValue) throws SDKException {
+    private static void addElaOutputs(List<String> privates, LinkedList<TxOutput> outputs, String changeAddress, long outputValue) throws SDKException {
         String utxo = getUtxoAndConfig(privates,Common.SYSTEM_ASSET_ID);
 
         List<UTXOInputSort> UTXOInputList = getUtxo(utxo);
@@ -147,7 +152,7 @@ public class UsableUtxo {
         }
     }
 
-    public static void addTokenOutputs(List<String> privates,LinkedList<TxOutput> outputs, String changeAddress,  BigInteger tokenOutputValue) throws SDKException {
+    private static void addTokenOutputs(List<String> privates, LinkedList<TxOutput> outputs, String changeAddress, BigInteger tokenOutputValue) throws SDKException {
 
         byte[] tokenAssetID = outputs.get(0).getTokenAssetID();
         String tokenAssetIDStr = DatatypeConverter.printHexBinary(Utils.reverseBytes(tokenAssetID)).toLowerCase();
@@ -166,20 +171,19 @@ public class UsableUtxo {
         }
     }
 
-    public static long registerAssetFee(List<UTXOInputSort> UTXOInputList) throws SDKException {
+    private static long registerAssetFee(List<UTXOInputSort> UTXOInputList) throws SDKException {
         //usable intput value
         long inputValue = 0;
         addrList = new ArrayList<String>();
-        for (int j = 0 ; j < UTXOInputList.size() ; j++){
-            UTXOInputSort input = UTXOInputList.get(j);
+        for (UTXOInputSort input : UTXOInputList) {
             String inputTxid = input.getTxid();
             String inputAddress = input.getAddress();
             int inputVont = input.getVont();
 
-            inputValue += Util.multiplyAmountELA(new BigDecimal(input.getAmount()),ElaPrecision).longValue();
-            inputList.add(new UTXOTxInput(inputTxid,inputVont,"",inputAddress));
+            inputValue += Util.multiplyAmountELA(new BigDecimal(input.getAmount()), ElaPrecision).longValue();
+            inputList.add(new UTXOTxInput(inputTxid, inputVont, "", inputAddress));
             addrList.add(inputAddress);
-            if (inputValue >= Config.getRegisterAssetFee()){
+            if (inputValue >= Config.getRegisterAssetFee()) {
                 break;
             }
         }
@@ -189,21 +193,20 @@ public class UsableUtxo {
         }else throw new SDKException(ErrorCode.ParamErr("Utxo deficiency , inputValue : " + Util.divideAmountELA(new BigDecimal(inputValue), ElaPrecision).toString() + " , registerAssetFee :" + Util.divideAmountELA(new BigDecimal(Config.getRegisterAssetFee()), ElaPrecision).toString()));
     }
 
-    public static  long getInputsValue(List<UTXOInputSort> UTXOInputList,long outputValue) throws SDKException {
+    private static  long getInputsValue(List<UTXOInputSort> UTXOInputList, long outputValue) throws SDKException {
         //usable intput value
         long inputValue = 0;
         addrList = new ArrayList<String>();
-        for (int j = 0 ; j < UTXOInputList.size() ; j++){
-            UTXOInputSort input = UTXOInputList.get(j);
+        for (UTXOInputSort input : UTXOInputList) {
             String inputTxid = input.getTxid();
             String inputAddress = input.getAddress();
             int inputVont = input.getVont();
 
-            inputValue += Util.multiplyAmountELA(new BigDecimal(input.getAmount()),ElaPrecision).longValue();
-            inputList.add(new UTXOTxInput(inputTxid,inputVont,"",inputAddress));
+            inputValue += Util.multiplyAmountELA(new BigDecimal(input.getAmount()), ElaPrecision).longValue();
+            inputList.add(new UTXOTxInput(inputTxid, inputVont, "", inputAddress));
             addrList.add(inputAddress);
 
-            if (inputValue >= outputValue + Config.getFee()){
+            if (inputValue >= outputValue + Config.getFee()) {
                 break;
             }
         }
@@ -213,23 +216,22 @@ public class UsableUtxo {
         }else throw new SDKException(ErrorCode.ParamErr("Utxo deficiency , inputValue : " + Util.divideAmountELA(new BigDecimal(inputValue), ElaPrecision).toString() + " , outputValue :" + Util.divideAmountELA(new BigDecimal(outputValue), ElaPrecision).toString() + " , fee :" + Util.divideAmountELA(new BigDecimal(Config.getFee()), ElaPrecision).toString()));
     }
 
-    public static  BigInteger getTokenInputsValue(List<UTXOInputSort> UTXOInputList,BigInteger tokenOutputValue) throws SDKException {
+    private static  BigInteger getTokenInputsValue(List<UTXOInputSort> UTXOInputList, BigInteger tokenOutputValue) throws SDKException {
         //usable intput token value
         int i = 0;
         BigInteger inputValue = new BigInteger("0");
         addrList = new ArrayList<String>();
-        for (int j = 0 ; j < UTXOInputList.size() ; j++){
-            UTXOInputSort input = UTXOInputList.get(j);
+        for (UTXOInputSort input : UTXOInputList) {
             String inputTxid = input.getTxid();
             String inputAddress = input.getAddress();
             int inputVont = input.getVont();
 
-            inputValue = Util.multiplyAmountELA(new BigDecimal(input.getAmount()),MaxPrecision).toBigIntegerExact().add(inputValue);
-            inputList.add(new UTXOTxInput(inputTxid,inputVont,"",inputAddress));
+            inputValue = Util.multiplyAmountELA(new BigDecimal(input.getAmount()), MaxPrecision).toBigIntegerExact().add(inputValue);
+            inputList.add(new UTXOTxInput(inputTxid, inputVont, "", inputAddress));
             addrList.add(inputAddress);
 
             i = inputValue.compareTo(tokenOutputValue);
-            if (i >= 0){
+            if (i >= 0) {
                 break;
             }
         }
@@ -241,27 +243,25 @@ public class UsableUtxo {
 
     }
 
-    public static long getOutputValue(LinkedList<TxOutput> outputs){
+    private static long getOutputValue(LinkedList<TxOutput> outputs){
         long outputValue = 0;
-        for (int k = 0 ; k < outputs.size() ; k++){
-            TxOutput output = outputs.get(k);
+        for (TxOutput output : outputs) {
             long value = output.getValue();
             outputValue += value;
         }
         return outputValue;
     }
 
-    public static BigInteger getTokenOutputValue(LinkedList<TxOutput> outputs){
+    private static BigInteger getTokenOutputValue(LinkedList<TxOutput> outputs){
         BigInteger tokenValue = new BigInteger("0");
-        for (int k = 0 ; k < outputs.size() ; k++){
-            TxOutput output = outputs.get(k);
+        for (TxOutput output : outputs) {
             BigInteger value = output.getTokenValue();
             tokenValue = tokenValue.add(value);
         }
         return tokenValue;
     }
 
-    public static List<UTXOInputSort> getUtxo(String utxo) throws SDKException {
+    private static List<UTXOInputSort> getUtxo(String utxo) throws SDKException {
         JSONObject jsonObject = JSONObject.fromObject(utxo);
         String error = jsonObject.getString("error");
         if (error != "null"){
@@ -280,18 +280,18 @@ public class UsableUtxo {
 
         JSONArray jsonArray = jsonObject.getJSONArray("result");
         List<UTXOInputSort> UTXOInputList = new ArrayList<UTXOInputSort>();
-        for (int i=0 ; i < jsonArray.size() ; i++){
-            JSONObject result = (JSONObject) jsonArray.get(i);
+        for (Object o : jsonArray) {
+            JSONObject result = (JSONObject) o;
             String txid = result.getString("txid");
             String address = result.getString("address");
             int vout = result.getInt("vout");
 
             String blockHash = getBlockHash(txid);
 
-            if (blockHash != null){
-                boolean boo = unlockeUtxo(blockHash, txid , vout);
-                if (boo){
-                    UTXOInputList.add(new UTXOInputSort(txid,address,vout,utxoAmount));
+            if (blockHash != null) {
+                boolean boo = unlockeUtxo(blockHash, txid, vout);
+                if (boo) {
+                    UTXOInputList.add(new UTXOInputSort(txid, address, vout, utxoAmount));
                 }
             }
         }
@@ -312,7 +312,7 @@ public class UsableUtxo {
      * @param vout
      * @return
      */
-    public static Boolean unlockeUtxo(String blockHash , String txid , int vout){
+    private static Boolean unlockeUtxo(String blockHash, String txid, int vout){
 
 //        System.out.println("==================== 通过区块Hash查询区块信息  ====================");
         String block = Rpc.getblock(blockHash, 2, Config.getRpcUrl());
@@ -328,10 +328,10 @@ public class UsableUtxo {
         JSONObject results = jsonObject.getJSONObject("result");
         JSONArray  txArray = results.getJSONArray("tx");
 
-        for (int i =0 ; i < txArray.size() ; i++){
-            JSONObject tx =(JSONObject) txArray.get(i);
+        for (Object o : txArray) {
+            JSONObject tx = (JSONObject) o;
             String txHash = tx.getString("txid");
-            if (txHash.equals(txid)){
+            if (txHash.equals(txid)) {
                 long locktime = tx.getLong("locktime");
 //                System.out.println("locktime = " + locktime);
 
@@ -343,13 +343,13 @@ public class UsableUtxo {
 
                 String value = output.getString("value");
                 utxoAmount = value;
-                if (outputlock == 0){
+                if (outputlock == 0) {
                     return true;
                 }
-                System.out.println("锁仓 txid : " + txid );
+                System.out.println("锁仓 txid : " + txid);
 //                JSONArray vinJson = tx.getJSONArray("vin");
 //
-                  // 步骤 2
+                // 步骤 2
 //                for(int j = 0 ; j < vinJson.size() ; i++){
 //                    JSONObject vin =(JSONObject) vinJson.get(j);
 //                    long sequence = vin.getLong("sequence");
@@ -358,7 +358,7 @@ public class UsableUtxo {
 //                        return true;
 //                    }
 //                }
-                  // 步骤 3
+                // 步骤 3
 //                System.out.println("uxto locked , txid :" + txid);
 //                if (locktime > outputlock){
 //                    return true;
@@ -373,13 +373,13 @@ public class UsableUtxo {
      * @param txid
      * @return
      */
-    public static String getBlockHash(String txid){
+    private static String getBlockHash(String txid){
 
         //        System.out.println("==================== 通过txid查询区块Hash  ====================");
         String Transcation =Rpc.getrawtransaction(txid,true,Config.getRpcUrl());
         JSONObject jsonObject = JSONObject.fromObject(Transcation);
         String error = jsonObject.getString("error");
-        if (error != "null"){
+        if (!error.equals("null")){
             JSONObject jsonError = JSONObject.fromObject(error);
             String message = jsonError.getString("message");
             System.out.println("获取区块信息失败 ：" + message);
@@ -401,21 +401,20 @@ public class UsableUtxo {
      * @param addressList
      * @return
      */
-    public static List<String> availablePrivate(List<String> privateList, List<String> addressList){
+    private static List<String> availablePrivate(List<String> privateList, List<String> addressList){
 
         if (privateList.size() != addressList.size()){
             List<String> availablePrivate = new ArrayList<String>();
 
-            HashMap privateMap = new HashMap<String,String>();
-            for (int i = 0; i < privateList.size();i++){
-                privateMap.put(Ela.getAddressFromPrivate(privateList.get(i)),privateList.get(i));
+            HashMap<String,String> privateMap = new HashMap<String,String>();
+            for (String s : privateList) {
+                privateMap.put(Ela.getAddressFromPrivate(s), s);
             }
-            Iterator keys = privateMap.keySet().iterator();
-            while (keys.hasNext()){
-                String key =(String)keys.next();
-                for (int j = 0; j<addressList.size();j++){
-                    if (key.equals(addressList.get(j))){
-                        availablePrivate.add((String)privateMap.get(key));
+            for (Object o : privateMap.keySet()) {
+                String key = (String) o;
+                for (String s : addressList) {
+                    if (key.equals(s)) {
+                        availablePrivate.add((String) privateMap.get(key));
                     }
                 }
             }
