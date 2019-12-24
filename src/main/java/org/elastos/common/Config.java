@@ -92,12 +92,12 @@ public class Config {
             File directory = new File ("");
             String courseFile = directory.getCanonicalPath();
 //        File file = new File(courseFile + "/src/main/resources/java-config.json.md");
-            File file = new File(courseFile + "/java-config.json.md");
+            File file = new File(courseFile + "/java-config.json");
             content = FileUtils.readFileToString(file,"UTF-8");
             jsonObject = JSONObject.fromObject(content);
 
         }catch (Exception e){
-            throw new SDKException(ErrorCode.ParamErr("reade java-config.json.md error : " + e.toString()));
+            throw new SDKException(ErrorCode.ParamErr("reade java-config.json error : " + e.toString()));
         }
             Verify.verifyParameter(Verify.Type.Host,jsonObject);
             Verify.verifyParameter(Verify.Type.Confirmation,jsonObject);
